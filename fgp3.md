@@ -14,9 +14,9 @@ Minimizing Screen Time
 
 UIC Student Themed App
 1. Commuter (tracks trains, buses, plan commute, connect to another commuters, share commute status with friends)
-2. Student Housing Portal (off-campus, etc.)
+2. Student Housing Portal (off-campus, etc.) - Zeel's Idea
 3. Course Registration (switching sections, better waitlist/open seat notification interface)
 
 Culturally Relevant App Design
-1. Cultural Clubs at UIC (broadcast events, collaborations)
+1. Cultural Clubs at UIC (broadcast events, collaborations) - Zeel's Idea
 2. Time Capsule (parents input information, passing down culture from first gen to second gen)
