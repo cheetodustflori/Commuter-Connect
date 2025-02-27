@@ -9,14 +9,14 @@ Florianne will be the project lead. Zeel will be the front-end developer. Eduard
 
 # Group Brainstorming
 Minimizing Screen Time
-1. Device Screen Timer for child based on age, parent settings, doctor-recommended settings
-2. Daily Challenges (Find events nearby, BeReal extreme, Trusted Organizer: add your own vents, goal tracker, app increments/decrements based on ability to meet goals) 
+1. Device Screen Timer for child based on age, parent settings, doctor-recommended settings [E-N]
+2. Daily Challenges (Find events nearby, BeReal extreme, Trusted Organizer: add your own vents, goal tracker, app increments/decrements based on ability to meet goals) [E-Y]
 
 UIC Student Themed App
-1. Commuter (tracks trains, buses, plan commute, connect to another commuters, share commute status with friends) (Eddie) [Z - Y]
-2. Student Housing Portal (off-campus, etc.) - Zeel's Idea [Z - N]
-3. Course Registration (switching sections, better waitlist/open seat notification interface) [Z - N]
+1. Commuter (tracks trains, buses, plan commute, connect to another commuters, share commute status with friends) (Eddie)
+2. Student Housing Portal (off-campus, etc.) - Zeel's Idea
+3. Course Registration (switching sections, better waitlist/open seat notification interface)
 
 Culturally Relevant App Design
-1. Cultural Clubs at UIC (broadcast events, collaborations) - Zeel's Idea [Z - Y]
-2. Time Capsule (parents input information, passing down culture from first gen to second gen)  (Eddie) [Z - N]
+1. Cultural Clubs at UIC (broadcast events, collaborations) - Zeel's Idea
+2. Time Capsule (parents input information, passing down culture from first gen to second gen)  (Eddie)
