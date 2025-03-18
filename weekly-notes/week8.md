@@ -1,4 +1,4 @@
-# 2 Weekly Meeting Notes:
+# 1 Weekly Meeting Notes:
 Please note that this is the required layout for the weekly notes.
 
 ## Overview:
