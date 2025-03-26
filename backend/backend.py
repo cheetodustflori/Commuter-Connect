@@ -8,7 +8,9 @@ from flask import request
 import os
 from dotenv import load_dotenv
 import requests
+import osmnx
 
+#pip install osmnx
 
 #set up the flask to recieve requests from front end
 app = Flask(__name__)
