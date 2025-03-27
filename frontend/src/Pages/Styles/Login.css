@@ -1,0 +1,81 @@
+body{
+    background-color: #769EB8;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    color: white;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(20vh, 20%, 40vh);
+}
+
+.leftContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+#welcomeText h3, 
+#welcomeText h1 {
+    margin: 0;
+}
+
+#welcomeText{
+    margin-left: 50px;
+}
+
+#welcomeText h3{
+    font-size: clamp(20px, 2.5vw, 40px);
+}
+
+#welcomeText h1{
+    font-size: clamp(40px, 5vw, 80px);
+}
+
+#trainImage{
+    width: clamp(200px, 40vw, 600px); /* Min: 200px, scales with viewport, Max: 600px */
+    height: auto;
+}
+
+.rightContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: white;
+    padding: clamp(40px, 5vw, 80px);
+    border-radius: 10px;
+   
+}
+
+#emailpassInput p,
+#emailpassInput input{
+    margin: 0;
+    width: 100%;
+    color: #5D576A;
+}
+
+#emailpassInput input{
+    border-color: #769EB8;
+    border-style: solid;
+}
+
+#button{
+    background-color: #769EB8;
+    color: white;
+    border-color: #769EB8;
+    border-style: solid;
+    cursor: pointer;
+}
+
+#signupLink p{
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    color: #769EB8;
+}
+
