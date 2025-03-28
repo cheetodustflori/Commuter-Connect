@@ -5,11 +5,11 @@ import SignUp from './Pages/SignUp';
 
 function App() {
   return (
-    <body>
+    <div>
       {/* <h1 className="text-2xl font-bold">Hello FGP 🍏</h1> */}
       {/* <Login/> */}
       <SignUp/>
-    </body>
+    </div>
   );
 }
 

@@ -7,13 +7,10 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSignIn = () => {
-        console.log("Sign In Button Clicked")
+    const handleCreateAccount = () => {
+        console.log("Create Account Button Clicked")
     };
 
-    const handleSignUp = () => {
-        console.log("Sign Up Button Clicked")
-    };
 
   return (
     <body>
@@ -53,7 +50,7 @@ const SignUp = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button id="button" onClick={handleSignIn}>Create Account</button>
+            <button id="button" onClick={handleCreateAccount}>Create Account</button>
 
         </div>
 
