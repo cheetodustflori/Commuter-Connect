@@ -1,3 +1,16 @@
+.scheduleAndBuddiesComponent{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.todaysCommuteScedule{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* width: 100%; */
+
+}
 .scheduleMain{
     background-color: white;
     height: 100vh;
@@ -5,6 +18,15 @@
     margin: 0;
     padding: 0;
     color:black;
+}
+
+.fullTitle{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 150px;
+    
 }
 
 #titleBar{
@@ -17,4 +39,8 @@
 
 #editScheduleId{
     font-size: 18px;
+}
+
+#line{
+
 }
