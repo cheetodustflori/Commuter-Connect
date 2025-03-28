@@ -1,5 +1,5 @@
 import React from 'react'
-import './Styles/CommuteRoute.css'
+import './Styles/CommuteScheduleRoute.css'
 import trainLogo from '../../Images/trainLogo.png'
 import { useState, useEffect } from "react";
 

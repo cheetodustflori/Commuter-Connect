@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
-import Schedule from './Pages/Schedule';
+import Schedule from './Pages/Components/Schedule/TodaysCommuteSchedule';
 
 function App() {
   return (
