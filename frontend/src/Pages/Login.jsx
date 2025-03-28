@@ -15,7 +15,7 @@ const Login = () => {
     };
 
   return (
-    <body>
+    <div className='login'>
         <div className='leftContainer'>
 
             <img id="trainImage" src={train}/>
@@ -55,7 +55,7 @@ const Login = () => {
 
         </div>
 
-    </body>
+    </div>
   )
 }
 

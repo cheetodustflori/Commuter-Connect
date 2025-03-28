@@ -13,7 +13,7 @@ const SignUp = () => {
 
 
   return (
-    <body>
+    <div className='signup'>
         <div className='leftContainer'>
 
             <img id="trainImage" src={train}/>
@@ -54,7 +54,7 @@ const SignUp = () => {
 
         </div>
 
-    </body>
+    </div>
   )
 }
 
