@@ -22,8 +22,9 @@ const Schedule = () => {
             </div>
                 
             <div>
-                {/* Loop through the commute routes using a map here (look at CommuteRoute.jsx under the commuteBuddies div for an example) */}
-                
+                {/* [Backend incorperation] Loop through the commute routes using a map here (look at CommuteRoute.jsx under the commuteBuddies div for an example).
+                    And when you are adding the time make sure you change the totalTime value in the Commute Route */}
+
                 <CommuteRoute 
                     isActive={true}
                     totalTime={100}
