@@ -6,14 +6,15 @@ import Map from "./Map.jsx";
 import Nearby from "./Nearby.jsx";
 import Friends from "./Friends.jsx";
 
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Schedule />} />
-        <Route path="/Map" element={<Map />} />
-        <Route path="/Nearby" element={<Nearby />} />
-        <Route path="/Friends" element={<Friends />} />
+        <Route path="/map" element={<Map />} />
+        <Route path="/nearby" element={<Nearby />} />
+        <Route path="/friends" element={<Friends />} />
       </Routes>
     </BrowserRouter>
   );
