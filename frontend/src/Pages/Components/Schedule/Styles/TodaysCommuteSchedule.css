@@ -44,6 +44,14 @@
 
 }
 
+#editScheduleId:hover {
+    transform: translateY(-2px);
+}
+
+#editScheduleId:active {
+    transform: translateY(2px);
+}
+
 #newRouteButton{
     width: 30%;
     padding: 5px;

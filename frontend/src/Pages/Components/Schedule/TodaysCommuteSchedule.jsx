@@ -2,6 +2,7 @@ import React, { useState }  from 'react'
 import './Styles/TodaysCommuteSchedule.css'
 import CommuteScheduleRoute from '../../../Components/Schedule/CommuteScheduleRoute'
 import CommuteRoutes from './CommuteRoutes'
+import AddNewRoute from './AddNewRoute'
 
 const Schedule = () => {
     const usersArray = [
@@ -10,9 +11,15 @@ const Schedule = () => {
       ];
 
     const [editMode, setEditMode] = useState(false);
+    const [addNewRoute, setAddNewRoute] = useState(false);
 
     const handleEditSchedule = () => {
         setEditMode(!editMode);
+        setAddNewRoute(false);
+    };
+
+    const handleAddNewRoute = () => {
+        setAddNewRoute(!addNewRoute);
     };
     
   return (
@@ -77,7 +84,7 @@ const Schedule = () => {
 
         {editMode && (
             <>
-                <button id='newRouteButton'>Add New Route</button>
+                <button id='newRouteButton' onClick={handleAddNewRoute}>Add New Route</button>
             </>
         )}
 
@@ -86,6 +93,14 @@ const Schedule = () => {
                 <CommuteRoutes/>
             </>
         )}
+
+        {addNewRoute && (
+            <>
+                <AddNewRoute/>
+            </>
+        )}
+
+
 
         
 

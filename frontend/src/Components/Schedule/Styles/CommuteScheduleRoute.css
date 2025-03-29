@@ -121,3 +121,56 @@
     width: 20px;
     height: 20px;
 }
+
+#Icons:hover {
+    transform: translateY(-2px);
+}
+
+#Icons:active {
+    transform: translateY(2px);
+}
+
+.deleteBox{
+    position: absolute;
+    z-index: 2;
+    transform: translateX(-100%);
+    
+}
+
+.notification{
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    
+    border-color: rgba(0, 0, 0, 0.065);
+    border-style: solid;
+    border-radius: 10px;
+
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
+    padding: 10px 10px 20px 10px;
+    background-color: white;
+
+}
+
+#buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#but{
+    font-size: 18px;
+    background-color: rgba(240, 248, 255, 0);
+    border: none;
+}
+
+#but:hover {
+    font-weight: bold;
+}
+
+#but:active {
+    transform: translateY(2px);
+}

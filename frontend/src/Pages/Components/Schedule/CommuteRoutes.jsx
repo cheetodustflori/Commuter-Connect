@@ -1,9 +1,17 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './Styles/CommuteRoutes.css'
 import SavedRoute from '../../../Components/Schedule/SavedRoute'
 import mapsLogo from '../../../Images/mapImage.png'
+import ScrollableRoutes from '../../../Components/Schedule/ScrollableRoutes'
+import AddNewRoute from './AddNewRoute'
 
 const CommuteRoutes = () => {
+  const [createNewRoute, setCreateNewRoute] = useState(false);
+
+  const handleCreateNewRoute = () => {
+    setCreateNewRoute(!createNewRoute);
+};
+
   return (
     <div className='mainCommuteRoutes'>
         <div className='CommuteRoutes'>
@@ -13,40 +21,21 @@ const CommuteRoutes = () => {
                     show details and get started on your journey!</p>
 
             <div className='routes'>
-
-                <div className='savedRoutes'>
-
-                    <div>
-                        <SavedRoute
-                        isFavorite={true}
-                        isBus={true}
-                        isWalking={true}/>
-                        <hr id='horizontalLine'></hr>
-                    </div>
-                    <div>
-                        <SavedRoute
-                        isFavorite={true}
-                        isBus={true}
-                        isWalking={true}/>
-                        <hr id='horizontalLine'></hr>
-                    </div>
-                    <div>
-                        <SavedRoute
-                        isFavorite={true}
-                        isBus={true}
-                        isWalking={true}/>
-                        <hr id='horizontalLine'></hr>
-                    </div>
-                </div>
-                
+                <ScrollableRoutes/>
             </div>
              
         </div>
 
         <div id='mapAndButton'>
             <img id="mapsLogo" src={mapsLogo}/>
-            <button id='newRouteButton'>Create New Route</button>
+            <button id='newRouteButton' onClick={handleCreateNewRoute}>Create New Route</button>
         </div>
+
+        {/* {createNewRoute && (
+            <>
+                <AddNewRoute/>
+            </>
+        )} */}
         
     </div>
   )
