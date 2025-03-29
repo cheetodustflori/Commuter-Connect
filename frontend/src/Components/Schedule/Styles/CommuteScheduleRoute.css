@@ -1,15 +1,22 @@
 .commuteRouteComp{
     display: flex;
     flex-direction: row;
-    /* gap: 50%; */
+    gap: 50px;
     justify-content: flex-start;
     align-items: center;
 }
 
-.commuteBuddies{
+.comp{
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.iconTrash{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 #user{
@@ -102,4 +109,15 @@
 
 #infoText p{
     margin: 0;
+}
+
+.iconRow{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#Icons{
+    width: 20px;
+    height: 20px;
 }

@@ -1,10 +1,13 @@
 import React from 'react'
 import './Styles/CommuteScheduleRoute.css'
 import trainLogo from '../../Images/trainLogo.png'
+import editIcon from '../../Images/editIcon.png'
+import trashIcon from '../../Images/trashIcon.png'
+
 import { useState, useEffect } from "react";
 
 
-const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatus, startLocation, endLocation, departTime, arrivalTime, buddies }) => {
+const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatus, startLocation, endLocation, departTime, arrivalTime, buddies, editMode }) => {
 
     const [timeLeft, setTimeLeft] = useState(totalTime);
 
@@ -23,7 +26,9 @@ const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatu
   return (
     <div className='commuteRouteComp'>
 
-        <div className='routes'>
+        <div className='comp'>
+
+            <div className='routes'>
 
             <h3 style={{marginTop: !isActive ? '-30px' : '-80px',}} id='mainTime'>{overallTime}</h3>
 
@@ -68,6 +73,17 @@ const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatu
                     )}
                 </div>
             </div>
+            </div>
+
+            <div className='iconRow'>
+                {editMode && (
+                    <>
+                        <img id="Icons" src={editIcon}/>
+                        <img id="Icons" src={trashIcon}/>
+                    </>
+                )}
+            </div>
+
         </div>
 
         <div className='commuteBuddies'>
@@ -83,6 +99,14 @@ const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatu
                         }}>
                     </div>
                     <p style={{fontWeight: 'bold'}}>{person.name}</p>
+
+                    <div className='iconTrash'>
+                        {editMode && (
+                            <>
+                                <img id="Icons" src={trashIcon}/>
+                            </>
+                        )}
+                    </div>
 
                 </div>
             ))}
