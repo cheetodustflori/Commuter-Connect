@@ -27,6 +27,28 @@ const ScrollableRoutes = () => {
                 isWalking={true}/>
             <hr id='horizontalLine'></hr>
         </div>
+
+        <div>
+            <SavedRoute
+                isFavorite={true}
+                isBus={true}
+                isWalking={true}/>
+            <hr id='horizontalLine'></hr>
+        </div>
+        <div>
+            <SavedRoute
+                isFavorite={true}
+                isBus={true}
+                isWalking={true}/>
+            <hr id='horizontalLine'></hr>
+        </div>
+        <div>
+            <SavedRoute
+                isFavorite={true}
+                isBus={true}
+                isWalking={true}/>
+            <hr id='horizontalLine'></hr>
+        </div>
     </div>
   )
 }
