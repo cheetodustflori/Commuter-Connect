@@ -1,8 +1,8 @@
 import React from 'react'
 import './Styles/CommuteScheduleRoute.css'
-import trainLogo from '../../Images/trainLogo.png'
-import editIcon from '../../Images/editIcon.png'
-import trashIcon from '../../Images/trashIcon.png'
+import trainLogo from '../../../assets/trainLogo.png'
+import editIcon from '../../../assets/editIcon.png'
+import trashIcon from '../../../assets/trashIcon.png'
 
 import { useState, useEffect } from "react";
 

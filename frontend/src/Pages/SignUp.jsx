@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Styles/SignUp.css'
-import train from '../Images/Train.png'
+import train from '../../assets/Train.png'
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
