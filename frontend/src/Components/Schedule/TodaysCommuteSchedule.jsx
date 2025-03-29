@@ -1,6 +1,6 @@
 import React, { useState }  from 'react'
 import './Styles/TodaysCommuteSchedule.css'
-import CommuteScheduleRoute from '../../../Components/Schedule/CommuteScheduleRoute'
+import CommuteScheduleRoute from './CommuteScheduleRoute'
 import CommuteRoutes from './CommuteRoutes'
 import AddNewRoute from './AddNewRoute'
 

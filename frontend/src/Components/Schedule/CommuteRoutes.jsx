@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import './Styles/CommuteRoutes.css'
-import SavedRoute from '../../../Components/Schedule/SavedRoute'
-import mapsLogo from '../../../Images/mapImage.png'
-import ScrollableRoutes from '../../../Components/Schedule/ScrollableRoutes'
+import SavedRoute from './SavedRoute'
+import mapsLogo from '../../Images/mapImage.png'
+import ScrollableRoutes from './ScrollableRoutes'
 import AddNewRoute from './AddNewRoute'
 
 const CommuteRoutes = () => {

@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import './Styles/AddNewRoute.css'
-import ScrollableRoutes from '../../../Components/Schedule/ScrollableRoutes'
+import ScrollableRoutes from './ScrollableRoutes'
 
 const AddNewRoute = () => {
     const [isCheckedTrain, setIsCheckedTrain] = useState(false);

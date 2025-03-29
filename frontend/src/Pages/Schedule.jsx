@@ -1,7 +1,6 @@
 import React from 'react'
 import './Styles/Schedule.css'
-import TodaysCommuteSchedule from './Components/Schedule/TodaysCommuteSchedule'
-
+import TodaysCommuteSchedule from '../Components/Schedule/TodaysCommuteSchedule'
 const Schedule = () => {
   return (
     <div className='schedule'>
