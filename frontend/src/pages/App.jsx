@@ -15,7 +15,7 @@ function App() {
         <Route path="/Map" element={<Map />} />
         <Route path="/Nearby" element={<Nearby />} />
         <Route path="/Friends" element={<Friends />} />
-        <Route path="/Friends" element={<Profile />} />
+        <Route path="/Profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
