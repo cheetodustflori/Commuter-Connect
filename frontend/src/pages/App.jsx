@@ -5,6 +5,7 @@ import Schedule from './Schedule.jsx';
 import Map from "./Map.jsx";
 import Nearby from "./Nearby.jsx";
 import Friends from "./Friends.jsx";
+import Profile from "./Profile.jsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/Map" element={<Map />} />
         <Route path="/Nearby" element={<Nearby />} />
         <Route path="/Friends" element={<Friends />} />
+        <Route path="/Friends" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
