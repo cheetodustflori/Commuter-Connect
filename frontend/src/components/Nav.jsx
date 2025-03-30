@@ -1,26 +1,30 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import React from "react";
+import Header from "./Header";
+import "../../styles.css";
 
-function BasicExample() {
+export default function NavBar() {
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href="">Commute Connect</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/">Schedule</Nav.Link>
-            <Nav.Link href="/map">Map</Nav.Link>
-            <Nav.Link href="/nearby">Nearby</Nav.Link>
-            <Nav.Link href="/friends">Friends</Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <>
+    <nav className="nav">
+      <div className="nav-title">Commuter Connect</div>
+      <ul className="links">
+        <li>
+          <a href="/">Schedule</a>
+        </li>
+        <li>
+          <a href="/map">Map</a>
+        </li>
+        <li>
+          <a href="/nearby">Nearby</a>
+        </li>
+        <li>
+          <a href="/friends">Friends</a>
+        </li>
+      </ul>
+      <a href="/profile" className="profile">Your Profile</a>
+      <img className="hamburger" src="src/assets/hamburger.svg"/>
+    </nav>
+    <Header/>
+    </>
   );
 }
-
-export default BasicExample;
