@@ -24,7 +24,7 @@ const AddNewRoute = () => {
 
   const handleChange = (event) => {
     const values = Array.from(event.target.selectedOptions, (option) => option.value);
-    setSelectedOptions(values);
+    setSelectedOption(values);
   };
 
 
