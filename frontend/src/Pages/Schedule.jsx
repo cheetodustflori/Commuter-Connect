@@ -1,12 +1,10 @@
-import React from 'react'
-import './Styles/Schedule.css'
-import TodaysCommuteSchedule from '../Components/Schedule/TodaysCommuteSchedule'
-const Schedule = () => {
-  return (
-    <div className='schedule'>
-        <TodaysCommuteSchedule/>
-    </div>
-  )
-}
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import NavBar from '../components/Nav';
 
-export default Schedule
+export default function Schedule() {
+    
+  return <>
+    <h1 className="text-2xl font-bold">Schedule</h1>
+    </>
+}
