@@ -1,17 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import Schedule from './Pages/Schedule';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Schedule from './Pages/Schedule';
+import Map from "./Pages/Map";
+import Nearby from "./Pages/Nearby";
+import Friends from "./Pages/Friends";
+import Profile from "./Pages/Profile";
 
 function App() {
   return (
-    <div>
-      {/* <h1 className="text-2xl font-bold">Hello FGP 🍏</h1> */}
-      {/* <Login/> */}
-      {/* <SignUp/> */}
-      <Schedule/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Schedule />} />
+        <Route path="/Map" element={<Map />} />
+        <Route path="/Nearby" element={<Nearby />} />
+        <Route path="/Friends" element={<Friends />} />
+        <Route path="/Profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
