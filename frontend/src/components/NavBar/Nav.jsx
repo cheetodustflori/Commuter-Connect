@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import MobileNav from './MobileNavigation'
+import MobileNav from "./MobileNavigation";
 import "../../../styles.css";
 
 export default function NavBar() {
@@ -21,11 +21,14 @@ export default function NavBar() {
           <li>
             <a href="/friends">Friends</a>
           </li>
+          <li>
+            <a href="/profile" className="profile">
+              Your Profile
+            </a>
+          </li>
         </ul>
-        <a href="/profile" className="profile">
-          Your Profile
-        </a>
-        <MobileNav/>
+
+        <MobileNav />
         {/* <div className="hamburger">
           <img className="hamburger" src="src/assets/hamburger.svg" />
         </div> */}

@@ -4,6 +4,6 @@ import NavBar from '../components/NavBar/Nav';
 
 export default function Friends() {
     return <>
-    <h1 className="text-2xl font-bold">Friends</h1>
+    <h1 className="page-title">Friends</h1>
     </>
 }
