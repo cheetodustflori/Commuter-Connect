@@ -4,11 +4,13 @@
 
 from flask import Flask
 from flask_cors import CORS
-from flask import request
+from flask import request,jsonify
 import os
 from dotenv import load_dotenv
 import requests
-import osmnx
+import firebase_admin
+from firebase_admin import credentials, firestore
+
 
 #pip install osmnx
 
@@ -33,10 +35,29 @@ CTA_Bus_Key = os.getenv('CTA_BUS_API_KEY')
 Firebase_Key = os.getenv('FIREBASE_API_KEY')
 Google_Maps_Key = os.getenv('GOOGLE_MAPS_API_KEY')
 
+cred = credentials.Certificate("../firebase.json")
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 @app.route('/')
 def root():
     return ''
+
+#get the user's information from log in
+@app.route('/getUserInfo', methods = ['GET'])
+def getUserInfo():
+    userID = request.args.get('userID')
+
+    if not userID:
+        return jsonify({'Error': 'User not entered'}),400
+
+    doc = db.collection('Users').document(userID).get()
+
+    if doc:
+        return jsonify(doc.to_dict())
+    else:
+        return jsonify({'Error':'User does not exist'}),400
 
 
 
