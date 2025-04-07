@@ -67,6 +67,16 @@ def getUserInfo():
     else:
         return jsonify({'Error':'User does not exist'}),400
 
+@app.route('/createUser',method=['POST'])
+def addUser():
+    data = request.json
+    #grabs the userID from the request to accuratly create the account
+    userID = data.get('userID')
+
+    #saving data in the Users collection
+    db.collection("Users").document(userID).set(data)
+
+    return jsonify({'Message':'Profile successfully sent!'})
 
 
 
