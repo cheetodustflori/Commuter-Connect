@@ -47,15 +47,23 @@ def root():
 #get the user's information from log in
 @app.route('/getUserInfo', methods = ['GET'])
 def getUserInfo():
+    #gets the userID from the request from front end
     userID = request.args.get('userID')
 
+    #just incase the request somehow doesn't have the userID, this will 
+    #return no user entered (or if the user pressed log in on an empty field)
     if not userID:
         return jsonify({'Error': 'User not entered'}),400
 
+    #accessing the databse for the user
     doc = db.collection('Users').document(userID).get()
 
+    #returns the user information as a JSON object
     if doc:
         return jsonify(doc.to_dict())
+    
+    #this will return if the user attempted to log in with a username
+    #that does not exist
     else:
         return jsonify({'Error':'User does not exist'}),400
 
