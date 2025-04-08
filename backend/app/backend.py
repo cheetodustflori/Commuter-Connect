@@ -141,6 +141,14 @@ def getLocationCoordinates():
     #Return?
     #print(f"{latitude}   {longitude}")
 
+'''This is a helper function that is called from getLocationCoordinates()
+    It is meant to replace any special characters explicitly stated by the Google API Documentation
+    to prevent errors when calling the API
+
+    Goes through the string character by character, building a new string. 
+    Everytime it encounters a special character, it instead adds a specified code in its place
+    returns the new string that will be used for the api call
+'''
 def replaceSpecialCharacters(string):
     newString=""
     for char in string:
