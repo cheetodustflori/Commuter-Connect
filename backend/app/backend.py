@@ -166,5 +166,10 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
+# @app.route('/getRoute',method=['GET'])
+# def getRoute():
+#     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
-
+@app.route('/getMap', method=['GET'])
+def getMap():
+    return ''
