@@ -6,6 +6,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask import request,jsonify
 import os
+import json
 from dotenv import load_dotenv
 import requests
 import firebase_admin
@@ -77,6 +78,90 @@ def addUser():
     db.collection("Users").document(userID).set(data)
 
     return jsonify({'Message':'Profile successfully sent!'})
+
+'''
+This one might not need a path and would be a helper function depending on 
+the implementation (this is before conversing with the rest of the team)
+'''
+@app.route('/getLocationName', method = ['GET'])
+def getLocationName():
+
+    #baseurl that we will use for the call
+    baseURL = 'https://maps.googleapis.com/maps/api/geocode/json?'
+
+    #changes the request into json so that we can access the different components
+    data = request.json
+    latitude = data.get('LAT')
+    longitude = data.get("LON")
+
+    #this builds the second half of api call
+    string = f'latlng={latitude},{longitude}&key={Google_Maps_Key}'
+
+    #takes in the response from making the call
+    response = requests.get(baseURL+string)
+
+    #TODO --> IMPLEMENT EDGE CASES OF ERROR 404 (Invalid address or coordinates)
+
+    #formats the response for accessing 
+    json_results = json.loads(response.content)
+
+    #this will return the first element of the results which will contain the 
+    #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
+    return json_results['results'][0]['formatted_address']
+
+@app.route('/getLocationCoordinates',method = ['GET'])
+def getLocationCoordinates():
+
+    #baseURL take from the website that will allow us to build call
+    baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
+
+    data = request.json
+    address = data['address']
+
+    #this will be the address with the special characters replaced with their counterparts for web encoding
+    address_string = replaceSpecialCharacters(address)
+
+    #building full call
+    string = f'address={address_string}&key={Google_Maps_Key}'
+    
+    #get call and load it in with json
+    response = request.get(baseURL+string)
+    json_results = json.loads(response.content)
+
+    #TODO---> IMPLEMENT EMPTY RESPONSE CASE
+
+    '''this parses the response fully so that we get the accurate latitude and longitude
+     there are various possible coordinates that are usable so this was to be as specific as possible
+     location_coords is a map with two elements now --> {latitude: x.x, longitude: x.x} '''
+    location_coords = json_results['results'][0]['navigation_points'][0]['location']
+
+    latitude = location_coords['latitude']
+    longitude = location_coords['longitude']
+
+    #Return?
+    #print(f"{latitude}   {longitude}")
+
+def replaceSpecialCharacters(string):
+    newString=""
+    for char in string:
+        match char:
+            case " ":
+                newString += "%20"
+            case "\"":
+                newString += "%22"
+            case "<":
+                newString += "%3C"
+            case ">":
+                newString += "%3E"
+            case "#":
+                newString += "%23"
+            case "%":
+                newString += "%25"
+            case "|":
+                newString += "%7C"
+            case _:
+                newString+=char
+    return newString
 
 
 
