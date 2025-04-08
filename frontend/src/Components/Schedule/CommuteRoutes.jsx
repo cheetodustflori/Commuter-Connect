@@ -27,7 +27,8 @@ const CommuteRoutes = () => {
         </div>
 
         <div id='mapAndButton'>
-            <img id="mapsLogo" src={mapsLogo}/>
+            {/*    */}
+            <img id="mapsLogo" src={mapsLogo}/> 
             <button id='newRouteButton' onClick={handleCreateNewRoute}>Create New Route</button>
         </div>
 
