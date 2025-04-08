@@ -27,8 +27,9 @@ const CommuteRoutes = () => {
         </div>
 
         <div id='mapAndButton'>
-            {/*    */}
-            <img id="mapsLogo" src={mapsLogo}/> 
+            {/* <img id="mapsLogo" src={mapsLogo}/>    */}
+            
+            <iframe src="{{embed_url}}"></iframe>
             <button id='newRouteButton' onClick={handleCreateNewRoute}>Create New Route</button>
         </div>
 

@@ -2,7 +2,7 @@
 #Boeing, G. (2024). Modeling and Analyzing Urban Networks and Amenities with OSMnx. Working paper. https://geoffboeing.com/publications/osmnx-paper/
 
 
-from flask import Flask
+from flask import Flask,render_template
 from flask_cors import CORS
 from flask import request,jsonify
 import os
@@ -38,7 +38,9 @@ db = firestore.client()
 
 @app.route('/')
 def root():
-    return ''
+    place= "41.6288754,-87.6837692"
+    embed_url = f"https://www.google.com/maps/embed/v1/place?key={Google_Maps_Key}&q={place}"
+    return render_template(embed_url = embed_url)
 
 #get the user's information from log in
 @app.route('/getUserInfo', methods = ['GET'])
@@ -166,10 +168,69 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
-# @app.route('/getRoute',method=['GET'])
-# def getRoute():
-#     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
+@app.route('/getRoute',method=['GET'])
+def getRoute():
+    baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
+
+    lat_origin = 41.6288754
+    lon_origin = -87.6837692
+    lat_dest = 41.6402277
+    lon_dest = -87.718246
+    travelMode = "DRIVE"
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": Google_Maps_Key,
+        "X-Goog-FieldMask": 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+    }
+
+    query_string = {
+        "origin":{
+            "location":{
+                "latLng":{
+                    "latitude": lat_origin,
+                    "longitude": lon_origin
+                }
+            }
+        },
+        "destination":{
+            "location":{
+                "latLng":{
+                    "latitude": lat_dest,
+                    "longitude": lon_dest
+                }
+            }
+        },
+        "travelMode": travelMode,
+        "routingPreference":"TRAFFIC_AWARE",
+        "computeAlternativeRoutes": False,
+        "routeModifiers": {
+            "avoidTolls": False,
+            "avoidHighways": False,
+            "avoidFerries": False
+        },
+        "languageCode": "en-US",
+        "units": "IMPERIAL"
+    }
+
+    response = request.post(baseURL,headers=headers,data=json.dumps(query_string))
+    print(response.status_code)
+    json_results = json.loads(response.content)
+
+    print(json_results)
 
 @app.route('/getMap', method=['GET'])
 def getMap():
+    baseURL = "https://www.google.com/maps/embed/v1/directions?"
+
+    data = request.json
+    lat_origin = data['oLat']
+    lon_origin = data['oLon']
+    lat_dest = data['dLat']
+    lon_dest = data['dLon']
+
+    string = f'key={Google_Maps_Key}&origin={lat_origin},{lon_origin}&destination={lat_dest},{lon_dest}'
+    response = request.get(baseURL+string)
+
+
     return ''
