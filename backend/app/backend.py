@@ -12,9 +12,6 @@ import requests
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-
-#pip install osmnx
-
 #set up the flask to recieve requests from front end
 app = Flask(__name__)
 
@@ -24,10 +21,8 @@ app = Flask(__name__)
 taken from the flask demo from earlier milestone
 we are incorporating an external api (Google maps) 
 and will need these
-
-load_dotenv()
-APIkey=os.getend('GOOGLE_API_KEY')
 '''
+
 CORS(app)
 
 load_dotenv()
