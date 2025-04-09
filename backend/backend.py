@@ -2,13 +2,15 @@
 #Boeing, G. (2024). Modeling and Analyzing Urban Networks and Amenities with OSMnx. Working paper. https://geoffboeing.com/publications/osmnx-paper/
 
 
-from flask import Flask
+from flask import Flask,jsonify
 from flask_cors import CORS
 from flask import request
 import os
 from dotenv import load_dotenv
 import requests
-import osmnx
+import firebase_admin
+from firebase_admin import credentials,firestore
+# import osmnx
 
 #pip install osmnx
 
@@ -31,5 +33,11 @@ For open street map, i was able to find this github repo
 https://github.com/gboeing/osmnx-examples/blob/main/notebooks/00-osmnx-features-demo.ipynb
 It contains documentation and examples of using the OSMNX library
 '''
+
+@app.route('/')
+def root():
+    return ''
+
+
 
 
