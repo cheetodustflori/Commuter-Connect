@@ -1,9 +1,20 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
 import NavBar from '../components/NavBar/Nav';
 import './Styles/Friends.css'
 
 export default function Friends() {
+    const [friends, setFriends] = useState([])
+
+    useEffect(() => {
+        setFriends([
+            { name: "Username1" },
+            { name: "Username2" },
+            { name: "Username3" },
+            { name: "Username4" }
+          ]);
+      }, []); // Empty dependency array
+
     return(
         <div className='friends'>
 
@@ -11,15 +22,16 @@ export default function Friends() {
 
             <div className='listOfFriends'>
                 <h2>Your Friends (3)</h2>
-                <div className='user'>
-                    <p>Username1</p>
+
+                <div>
+
+                    {friends.map((friend, index) => (
+                        <div key={index} className='user'>
+                            <p>{friend.name}</p>
+                        </div>
+                        ))}
                 </div>
-                <div className='user'>
-                    <p>Username1</p>
-                </div>
-                <div className='user'>
-                    <p>Username1</p>
-                </div>
+                
             </div>
 
             <div className='addFriend'>
