@@ -3,17 +3,27 @@ import ReactDOM from 'react-dom/client';
 import './Styles/Login.css'
 import train from '../assets/train.svg'
 
+import {useNavigate} from "react-router-dom";
+
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSignIn = () => {
+    const handleLogIn = () => {
         console.log("Sign In Button Clicked")
+        let path = `/schedule`; 
+        navigate(path);
     };
 
     const handleSignUp = () => {
         console.log("Sign Up Button Clicked")
+        let path = `/signup`; 
+        navigate(path);
+        
     };
+
+    let navigate = useNavigate();
+    
 
   return (
     <div className='login'>
@@ -45,7 +55,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button className="log-in-button" onClick={handleSignIn}>Log In</button>
+            <button className="log-in-button" onClick={handleLogIn}>Log In</button>
 
             <div id="sign-up-link">
                 <p>New to Commuter Connect?</p>

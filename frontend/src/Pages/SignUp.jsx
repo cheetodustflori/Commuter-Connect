@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import './Styles/SignUp.css'
 import train from '../assets/train.svg'
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    let navigate = useNavigate();
+
     const handleCreateAccount = () => {
-        console.log("Create Account Button Clicked")
+        console.log("Create Account Button Clicked");
+        let path = `/`;
+        navigate(path);
     };
 
 

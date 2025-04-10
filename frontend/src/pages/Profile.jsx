@@ -4,8 +4,12 @@ import ReactDOM from 'react-dom/client';
 import LeftProfileBar from '../Components/Profile/LeftProfileBar.jsx'
 import ProfileUserInfo from '../Components/Profile/ProfileUserInfo';
 import ProfileEdit from '../Components/Profile/ProfileEdit';
+import NavBar from '../components/NavBar/Nav';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
+
+  let navigate = useNavigate();
 
   const [editMode, setEditMode] = useState(false);
 
@@ -13,7 +17,14 @@ export default function Profile() {
     setEditMode(!editMode);
 };
 
+const handleSignOut = () => {
+  let path = `/`;
+  navigate(path);
+};
+
   return (
+    <>
+    <NavBar/>
     <div className="profilePage">
       <h1>My Profile</h1>
       <div className="leftProfileBar">
@@ -35,7 +46,7 @@ export default function Profile() {
           {!editMode && (
             <>
               <button id='editProfile' onClick={handleEditProfile}>Edit Profile</button>
-              <button id='signOutProfile'>Sign Out</button>
+              <button id='signOutProfile' onClick={handleSignOut}>Sign Out</button>
             </>
           )}
 
@@ -51,5 +62,6 @@ export default function Profile() {
       
       
     </div>
+    </>
   )
 }
