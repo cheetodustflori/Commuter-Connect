@@ -18,13 +18,15 @@ const NavLinks = () => {
           <li>
             <a href="/friends">Friends</a>
           </li>
+          <li>
+            <a href="/profile" className="profile">
+              Your Profile
+            </a>
+          </li>
         </ul>
-        <a href="/profile" className="profile">
-          Your Profile
-        </a>
       </nav>
     </>
   );
-}
+};
 
 export default NavLinks;

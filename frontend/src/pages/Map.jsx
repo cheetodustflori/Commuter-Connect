@@ -4,6 +4,6 @@ import NavBar from '../components/NavBar/Nav';
 
 export default function Map() {
     return <>
-    <h1 className="text-2xl font-bold">Map</h1>
+    <h1 className="page-title">Maps</h1>
     </>
 }

@@ -1,9 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import NavBar from '../components/NavBar/Nav';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import NavBar from "../components/NavBar/Nav";
+import NearbyHeader from "../Components/Nearby/NearbyHeader.jsx";
+import BusTracker from "../Components/Nearby/BusTracker.jsx";
+import TrainTracker from "../Components/Nearby/TrainTracker.jsx";
 
 export default function Nearby() {
-    return <>
-    <h1 className="text-2xl font-bold">Nearby</h1>
+  return (
+    <>
+      <h1 className="page-title">Nearby</h1>
+      <section className="nearby-section">
+        <div className="bus-section">
+        <NearbyHeader type="bus" title="Buses" image="src/assets/nearby/headerBus.svg" />
+        <BusTracker/>
+        </div>
+        <div className="train-section">
+        <NearbyHeader type="train" title="Trains" image="src/assets/nearby/headerTrain.svg" />
+        <TrainTracker/>
+        </div>
+       
+      </section>
     </>
+  );
 }
