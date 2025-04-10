@@ -8,6 +8,35 @@ const Login = () => {
 
     const handleSignIn = () => {
         console.log("Sign In Button Clicked")
+        loadUserSettings()
+    };
+
+    async function loadUserSettings(){
+        let response = await fetch(`http://127.0.0.1:5000/getUserInfo?userID=${email}&password=${password}`,{
+            method:'GET',
+            mode: 'cors',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json'
+            }
+        })
+
+        let data = await response.json();
+
+        console.log(data);
+
+        let responseMessage = data['Response'];
+
+        if(responseMessage == "All good!"){
+            //change front end to the schedule page 
+            // with all the information added
+        }
+        else if(responseMessage == "Wrong Password"){
+            //Display wrong password to user
+        }
+        else{
+            //Display User does not exist
+        }
     };
 
     const handleSignUp = () => {
@@ -29,7 +58,7 @@ const Login = () => {
         <div className='rightContainer'>
             
             <div id="emailpassInput">
-                <p>Email</p>
+                <p>Username</p>
                 <input
                     type="text"
                     value={email}

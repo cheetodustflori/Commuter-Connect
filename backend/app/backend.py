@@ -36,6 +36,8 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
+global UserStructure 
+
 @app.route('/')
 def root():
     place= "41.6288754,-87.6837692"
@@ -47,25 +49,43 @@ def root():
 def getUserInfo():
     #gets the userID from the request from front end
     userID = request.args.get('userID')
+    password = request.args.get('password')
 
     #just incase the request somehow doesn't have the userID, this will 
     #return no user entered (or if the user pressed log in on an empty field)
     if not userID:
-        return jsonify({'Error': 'User not entered'}),400
+        return jsonify({'Response': 'User not entered'}),400
+    if not password:
+        return jsonify({'Response': 'Password not entered'}),400
+
 
     #accessing the databse for the user
     doc = db.collection('Users').document(userID).get()
 
-    #returns the user information as a JSON object
-    if doc:
-        return jsonify(doc.to_dict())
+    #possibly incorporate a try catch
+    # print("HELLO\n\n")
+    # print(doc.status_code)
+    # print("\n\nHI\n\n\n")
+    
+    if doc.exists:
+        doc_dict = doc.to_dict()
+        userPassword = doc_dict.get('password',None)
+    
+        if userPassword == password:
+              constructDataStructure()
+              return jsonify({'Response': 'All good!'}),200
+        else:
+              return jsonify({'Response':'Wrong Password'}),400
     
     #this will return if the user attempted to log in with a username
     #that does not exist
     else:
-        return jsonify({'Error':'User does not exist'}),400
+        return jsonify({'Response':'User does not exist'}),400
 
-@app.route('/createUser',method=['POST'])
+def constructDataStructure():
+    return ''
+
+@app.route('/createUser',methods=['POST'])
 def addUser():
     data = request.json
     #grabs the userID from the request to accuratly create the account
@@ -80,7 +100,7 @@ def addUser():
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
 '''
-@app.route('/getLocationName', method = ['GET'])
+@app.route('/getLocationName', methods = ['GET'])
 def getLocationName():
 
     #baseurl that we will use for the call
@@ -106,7 +126,7 @@ def getLocationName():
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
 
-@app.route('/getLocationCoordinates',method = ['GET'])
+@app.route('/getLocationCoordinates',methods = ['GET'])
 def getLocationCoordinates():
 
     #baseURL take from the website that will allow us to build call
@@ -168,7 +188,7 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
-@app.route('/getRoute',method=['GET'])
+@app.route('/getRoute',methods=['GET'])
 def getRoute():
     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
@@ -219,7 +239,7 @@ def getRoute():
 
     print(json_results)
 
-@app.route('/getMap', method=['GET'])
+@app.route('/getMap', methods=['GET'])
 def getMap():
     baseURL = "https://www.google.com/maps/embed/v1/directions?"
 
