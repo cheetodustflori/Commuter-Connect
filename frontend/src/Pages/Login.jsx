@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './Styles/Login.css'
-import train from '../../assets/Train.png'
+import train from '../assets/train.svg'
 
 const Login = () => {
     const [email, setEmail] = useState('');
