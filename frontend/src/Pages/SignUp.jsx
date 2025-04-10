@@ -24,7 +24,7 @@ const SignUp = () => {
 
         </div>
 
-        <div className='rightContainer'>
+        <div className='sign-up-container'>
             
             <div id="emailpassInput">
                 <p>Username</p>

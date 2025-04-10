@@ -1,3 +1,5 @@
+
+
 .signup{
     background-color: #769EB8;
     height: 100vh;
@@ -40,7 +42,7 @@
     height: auto;
 }
 
-.rightContainer{
+.sign-up-container{
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -63,20 +65,9 @@
     border-style: solid;
 }
 
-#button{
-    background-color: #769EB8;
-    color: white;
-    border-color: #769EB8;
-    border-style: solid;
-    cursor: pointer;
-}
-
-#signupLink p{
+.sign-in-button {
     display: flex;
-    flex-direction: column;
-    margin: 0;
-    align-items: center;
     justify-content: center;
-    color: #769EB8;
+    background: #769eb8;
+    text-decoration: none;
 }
-

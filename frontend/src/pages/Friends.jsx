@@ -4,6 +4,7 @@ import NavBar from '../components/NavBar/Nav';
 import './Styles/Friends.css'
 
 export default function Friends() {
+<<<<<<< HEAD
     return(
         <div className='friends'>
 
@@ -47,3 +48,10 @@ async function loadUserFriends(){
 
 // let friends_array = loadUserFriends();
 
+=======
+    return <>
+    <NavBar/>
+    <h1 className="page-title">Friends</h1>
+    </>
+}
+>>>>>>> origin/flori

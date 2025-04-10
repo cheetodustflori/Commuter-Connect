@@ -6,6 +6,7 @@ import ProfileUserInfo from '../Components/Profile/ProfileUserInfo';
 import ProfileEdit from '../Components/Profile/ProfileEdit';
 
 export default function Profile() {
+<<<<<<< HEAD
 
   const [editMode, setEditMode] = useState(false);
 
@@ -52,4 +53,10 @@ export default function Profile() {
       
     </div>
   )
+=======
+  return <>
+  <NavBar/>
+  <h1 className="text-2xl font-bold">Profile</h1>;
+  </>
+>>>>>>> origin/flori
 }

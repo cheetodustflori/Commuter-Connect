@@ -4,7 +4,6 @@ import Schedule from './Pages/Schedule';
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Schedule from './Pages/Schedule';
 import Map from "./Pages/Map";
 import Nearby from "./Pages/Nearby";
 import Friends from "./Pages/Friends";
@@ -14,7 +13,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Schedule />} />
+      <Route path="/" element={<Login/>}/>
+      <Route path="/Signup" element={<SignUp/>}/>
+        <Route path="/Schedule" element={<Schedule />} />
         <Route path="/Map" element={<Map />} />
         <Route path="/Nearby" element={<Nearby />} />
         <Route path="/Friends" element={<Friends />} />
