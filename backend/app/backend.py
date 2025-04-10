@@ -36,7 +36,30 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-global UserStructure 
+'''creating a User node that will be used when the username 
+    has been read from the user
+
+    Everything is set to be empty upon initialization this is for future
+    implementation
+'''
+class User:
+    def __init__(self)->None:
+        self.friends = []
+        self.email = None
+        self.first_name = None
+        self.last_name = None
+        self.password = None
+        self.routes = {}
+    
+    def assign_values(self,dictionary)->None:
+        self.friends = dictionary["friends"]
+        self.email = dictionary["email"]
+        self.first_name = dictionary["first_name"]
+        self.last_name = dictionary["last_name"]
+        self.password = dictionary["password"]
+        self.routes = {}
+
+global UserStructure
 
 @app.route('/')
 def root():
@@ -61,18 +84,15 @@ def getUserInfo():
 
     #accessing the databse for the user
     doc = db.collection('Users').document(userID).get()
-
+    
     #possibly incorporate a try catch
-    # print("HELLO\n\n")
-    # print(doc.status_code)
-    # print("\n\nHI\n\n\n")
     
     if doc.exists:
         doc_dict = doc.to_dict()
         userPassword = doc_dict.get('password',None)
     
         if userPassword == password:
-              constructDataStructure()
+              constructDataStructure(jsonify(doc_dict))
               return jsonify({'Response': 'All good!'}),200
         else:
               return jsonify({'Response':'Wrong Password'}),400
@@ -82,8 +102,33 @@ def getUserInfo():
     else:
         return jsonify({'Response':'User does not exist'}),400
 
-def constructDataStructure():
-    return ''
+def constructDataStructure(dictionary):
+    # print(dictionary)
+    # print("\n\nHELLO\n\n")
+    UserStructure = User()
+    UserStructure.assign_values(dictionary)
+    
+@app.route('/getFriends',methods=['GET'])
+def getFriendsList():
+    return UserStructure.friends
+
+@app.route('/getSavedRoutes',methods=['GET'])
+def getSavedRoutes():
+    return UserStructure.routes
+
+@app.route('/getFirstName',methods=['GET'])
+def getFirstName():
+    return UserStructure.first_name
+
+@app.route('/getLastName',methods=['GET'])
+def getLastName():
+    return UserStructure.last_name
+
+@app.route('getEmail',methods=['GET'])
+def getEmail():
+    return UserStructure.email
+
+
 
 @app.route('/createUser',methods=['POST'])
 def addUser():
