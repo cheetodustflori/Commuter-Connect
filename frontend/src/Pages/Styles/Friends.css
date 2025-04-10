@@ -1,0 +1,58 @@
+.friends{
+    display: flex;
+    flex-direction: row;
+    order: 0;
+    margin-left: 30px;
+    justify-content: space-between;
+}
+
+.listOfFriends{
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    width: 15%;
+    gap: 10px;
+}
+.line{
+    order: 1;
+    position: absolute;
+    left: 20%;
+    /* transform: translateX(-50%); */
+    height: 100%;
+    width: 2px;
+    border-radius: 9999px; /* rounded-xl */
+    background-color: #000000; /* bg-pink-100 */
+}
+
+.user{
+    padding: 20px;
+}
+
+.addFriend{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+#addFriendButton{
+    background-color: #00000000;
+    font-weight: bold;
+    border-color: #00000000;
+    font-size: 20px;
+}
+
+#addFriendButton:hover {
+    transform: translateY(-2px);
+}
+
+#addFriendButton:active {
+    transform: translateY(2px);
+}
+
+h2{
+    text-align: center; 
+}

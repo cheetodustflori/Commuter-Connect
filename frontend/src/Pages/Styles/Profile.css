@@ -1,0 +1,91 @@
+.profilePage{
+    /* display: flex;
+    flex-direction: row; */
+    margin: 30px 0px 0px 30px;
+    padding: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.leftProfileBar{
+    display: flex;
+    flex-direction: row;
+    gap: 150px;
+}
+
+@media (max-width: 1200px){
+    .leftProfileBar{
+        display: flex;
+        flex-direction: row;
+        gap: 100px;
+    }
+    
+}
+/* 
+@media (max-width: 727px){
+    .leftProfileBar{
+        display: flex;
+        flex-direction: row;
+        gap: 80px;
+    }
+    
+} */
+
+#editProfile{
+    border-color: #769EB8;
+    color: #769EB8;
+    background-color: #769eb800;
+    border-style: solid;
+    border-radius: 10px;
+
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+#signOutProfile{
+    border-color: #D9D9D9;
+    color: #D9D9D9;
+    background-color: #769eb800;
+    border-style: solid;
+    border-radius: 10px;
+
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+#saveChanges{
+    border-color: #769EB8;
+    color: #ffffff;
+    background-color: #769EB8;
+    border-style: solid;
+    border-radius: 10px;
+
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+#saveChanges:hover,
+#signOutProfile:hover,
+#editProfile:hover {
+    transform: translateY(-2px);
+}
+
+#saveChanges:active,
+#signOutProfile:active,
+#editProfile:active {
+    transform: translateY(2px);
+}
+
+.buttons{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 20px;
+    height: 100%;
+}
