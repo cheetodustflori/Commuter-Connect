@@ -35,48 +35,44 @@
     font-size: clamp(40px, 5vw, 80px);
 }
 
-#trainImage{
-    width: clamp(200px, 40vw, 600px); /* Min: 200px, scales with viewport, Max: 600px */
-    height: auto;
-}
-
-.rightContainer{
+.log-in-container{
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: center;
     background-color: white;
-    padding: clamp(30px, 5vw, 60px);
     border-radius: 10px;
-    width: 12%;
-   
+    padding: 20px;
+    gap: 15px;
 }
 
 #emailpassInput p,
 #emailpassInput input{
     margin: 0;
-    width: 100%;
+    height: 30px;
     color: #5D576A;
 }
 
 #emailpassInput input{
-    border-color: #769EB8;
+    border-color: #c0d7e6;
     border-style: solid;
 }
 
-#button{
+.log-in-button {
+    display: flex;
+    justify-content: center;
     background-color: #769EB8;
     color: white;
-    border-color: #769EB8;
-    border-style: solid;
+    border: none;
+    padding: 5px;
+    border-radius: 2px;
     cursor: pointer;
 }
 
-#signupLink p{
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    align-items: center;
-    justify-content: center;
+#sign-up-link {
     color: #769EB8;
+    text-align: center;
 }
 
+@media (max-width: 1000px) {
+
+}

@@ -29,9 +29,6 @@ export default function NavBar() {
         </ul>
 
         <MobileNav />
-        {/* <div className="hamburger">
-          <img className="hamburger" src="src/assets/hamburger.svg" />
-        </div> */}
       </nav>
       <Header />
     </>

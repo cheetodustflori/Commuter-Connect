@@ -8,6 +8,7 @@ import TrainTracker from "../Components/Nearby/TrainTracker.jsx";
 export default function Nearby() {
   return (
     <>
+    <NavBar/>
       <h1 className="page-title">Nearby</h1>
       <section className="nearby-section">
         <div className="bus-section">

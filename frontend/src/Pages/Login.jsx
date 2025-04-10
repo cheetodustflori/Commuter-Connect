@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import './Styles/Login.css'
 import train from '../../assets/Train.png'
 
@@ -18,7 +19,7 @@ const Login = () => {
     <div className='login'>
         <div className='leftContainer'>
 
-            <img id="trainImage" src={train}/>
+            <img className="train" src={train}/>
             <div id="welcomeText">
                 <h3>Welcome to</h3>
                 <h1>Commuter Connect</h1>
@@ -26,7 +27,7 @@ const Login = () => {
 
         </div>
 
-        <div className='rightContainer'>
+        <div className='log-in-container'>
             
             <div id="emailpassInput">
                 <p>Email</p>
@@ -44,9 +45,9 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button id="button" onClick={handleSignIn}>Sign In</button>
+            <button className="log-in-button" onClick={handleSignIn}>Log In</button>
 
-            <div id="signupLink">
+            <div id="sign-up-link">
                 <p>New to Commuter Connect?</p>
                 <p onClick={handleSignUp} style={{ cursor: 'pointer', textDecoration: "underline" }}>Create an account.</p>
             </div>
