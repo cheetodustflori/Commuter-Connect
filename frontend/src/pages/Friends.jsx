@@ -29,3 +29,21 @@ export default function Friends() {
         </div>
     )
 }
+
+async function loadUserFriends(){
+    let response = await fetch(`http://127.0.0.1:5000/getFriends?`,{
+        method:'GET',
+        headers:{
+            'Content-Type':'application/json',
+            'Accept':'application/json'
+        }
+    })
+
+    let data = await response.json();
+
+    console.log(data);
+    return data;
+};
+
+// let friends_array = loadUserFriends();
+

@@ -52,11 +52,11 @@ class User:
         self.routes = {}
     
     def assign_values(self,dictionary)->None:
-        self.friends = dictionary["friends"]
-        self.email = dictionary["email"]
-        self.first_name = dictionary["first_name"]
-        self.last_name = dictionary["last_name"]
-        self.password = dictionary["password"]
+        self.friends = dictionary.get('friends')
+        self.email = dictionary.get('email')
+        self.first_name = dictionary.get('first_name')
+        self.last_name = dictionary.get('last_name')
+        self.password = dictionary.get('password')
         self.routes = {}
 
 global UserStructure
@@ -91,11 +91,12 @@ def getUserInfo():
         doc_dict = doc.to_dict()
         userPassword = doc_dict.get('password',None)
     
+        # return jsonify(doc.to_dict())
         if userPassword == password:
-              constructDataStructure(jsonify(doc_dict))
-              return jsonify({'Response': 'All good!'}),200
+            constructDataStructure(doc_dict)
+            return jsonify({'Response': 'All good!'}),200
         else:
-              return jsonify({'Response':'Wrong Password'}),400
+            return jsonify({'Response':'Wrong Password'}),400
     
     #this will return if the user attempted to log in with a username
     #that does not exist
@@ -103,10 +104,9 @@ def getUserInfo():
         return jsonify({'Response':'User does not exist'}),400
 
 def constructDataStructure(dictionary):
-    # print(dictionary)
-    # print("\n\nHELLO\n\n")
-    UserStructure = User()
-    UserStructure.assign_values(dictionary)
+     UserStructure = User()
+     UserStructure.assign_values(dictionary)
+     return
     
 @app.route('/getFriends',methods=['GET'])
 def getFriendsList():
@@ -124,7 +124,7 @@ def getFirstName():
 def getLastName():
     return UserStructure.last_name
 
-@app.route('getEmail',methods=['GET'])
+@app.route('/getEmail',methods=['GET'])
 def getEmail():
     return UserStructure.email
 
