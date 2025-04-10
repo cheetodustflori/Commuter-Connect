@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-const API_KEY = import.meta.env.VITE_CTA_API_KEY;
+const API_KEY = import.meta.env.VITE_CTA_BUS_API_KEY;
 
 export default function BusArrivals() {
   const [predictions, setPredictions] = useState([]);
-  const [selectedRoutes, setSelectedRoutes] = useState(["8", "60"]);
+  const [selectedRoutes, setSelectedRoutes] = useState(["8"]);
 
-  const stopIds = ["4618", "4639", "4640", "14487", "18184", "4638"]; // 🔁 Replace with real stop IDs
-  const routes = ["8", "60", "156", "18"];
+  const stopIds = ["4618", "4639", "4640", "14487", "18184", "4638","6701","6700","6627","17277","6347","198","206","210", "14459", "17366", "5802", "5928"]; 
+  const routes = ["8", "60", "157", "18","7"];
 
   const handleRouteChange = (rt) => {
     setSelectedRoutes((prev) =>
@@ -44,7 +44,10 @@ export default function BusArrivals() {
   const formatArrivalTime = (prdctdn) => {
     if (prdctdn == "DUE") {
       return "Due";
-    } else {
+    } 
+    else if (prdctdn == "DLY") {
+      return "Delayed";
+    }else {
       return `${prdctdn} min.`;
     }
   };

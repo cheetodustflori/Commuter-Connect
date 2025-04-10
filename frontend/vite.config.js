@@ -7,9 +7,17 @@ export default defineConfig({
         target: 'http://www.ctabustracker.com',
         changeOrigin: true,
         rewrite: (path) => {
-          console.log("Proxying:", path); // Debug line
+          console.log("Proxying:", path); 
           return path.replace(/^\/api/, '');
         }
+      },
+      '/api2': {
+        target: 'http://www.transitchicago.com',
+        changeOrigin: true,
+      rewrite: (path) => {
+        console.log("Proxying:", path); 
+        return path.replace(/^\/api/, '');
+      }
       }
     }
   }
