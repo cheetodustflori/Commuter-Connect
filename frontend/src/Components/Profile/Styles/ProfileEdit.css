@@ -1,0 +1,65 @@
+.profileUserInfo{
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+
+#profileInformation{
+    display: flex;
+    flex-direction: column;
+}
+
+#profileInformation h3,
+#profileInformation p{
+    margin-top: 0;
+    
+}
+
+#profileInformationLastName h3,
+#profileInformationLastName p{
+    margin-top: 0;
+    
+}
+
+#profileInformationLastName{
+    margin-left: auto;
+}
+
+.firstAndLastName{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap:100px;
+    width: 100%;
+}
+
+@media (max-width: 1200px){
+    .firstAndLastName{
+        display: flex;
+        flex-direction: row;
+        flex: 2 1 auto;
+        justify-content: space-between;
+        gap:50px;
+        /* width: 100px; */
+    }
+    
+    
+}
+
+@media (max-width: 727px){
+    .firstAndLastName{
+        display: flex;
+        flex-direction: row;
+        flex: 2 1 auto;
+        justify-content: space-between;
+        gap:50px;
+        /* width: 100%; */
+    }
+    
+}
+
+input{
+    border-radius: 20px;
+    padding: 5px;
+}
