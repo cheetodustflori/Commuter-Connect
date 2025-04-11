@@ -10,7 +10,7 @@ export default function NavBar() {
         <div className="nav-title">Commuter Connect</div>
         <ul className="links">
           <li>
-            <a href="/">Schedule</a>
+            <a href="/schedule">Schedule</a>
           </li>
           <li>
             <a href="/map">Map</a>

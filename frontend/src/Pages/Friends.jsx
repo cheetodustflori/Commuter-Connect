@@ -2,9 +2,12 @@ import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
 import NavBar from '../components/NavBar/Nav';
 import './Styles/Friends.css'
+import { Nav } from 'react-bootstrap';
 
 export default function Friends() {
     return(
+        <>
+        <NavBar/>
         <div className='friends'>
 
             <div className='line'></div>
@@ -28,6 +31,7 @@ export default function Friends() {
                 <button id='addFriendButton'>Add Friend</button>
             </div>
         </div>
+        </>
     )
 }
 
