@@ -31,6 +31,7 @@ CTA_Bus_Key = os.getenv('CTA_BUS_API_KEY')
 Firebase_Key = os.getenv('FIREBASE_API_KEY')
 Google_Maps_Key = os.getenv('GOOGLE_MAPS_API_KEY')
 
+
 cred = credentials.Certificate("../firebase.json")
 firebase_admin.initialize_app(cred)
 
