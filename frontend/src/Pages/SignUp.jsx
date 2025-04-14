@@ -21,7 +21,7 @@ const SignUp = () => {
     <div className='signup'>
         <div className='leftContainer'>
 
-            <img id="trainImage" src={train}/>
+            <img className="train" src={train}/>
             <div id="welcomeText">
                 <h3>Welcome to</h3>
                 <h1>Commuter Connect</h1>
@@ -55,7 +55,7 @@ const SignUp = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button id="button" onClick={handleCreateAccount}>Create Account</button>
+            <button id="createAccount" onClick={handleCreateAccount}>Create Account</button>
 
         </div>
 
