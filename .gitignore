@@ -11,22 +11,3 @@
 /frontend/.vite/
 /frontend/.env
 f.txt
-
-/node_modules/
-/frontend/node_modules/
-
-# Vite cache
-/.vite/
-/frontend/.vite/
-/frontend/node_modules/.vite/
-
-# Env and local config
-/frontend/.env
-*.local
-
-/frontend/package-lock.json
-/frontend/node_modules/.vite/
-/frontend/.vite/
-
-/dist/
-f.txt

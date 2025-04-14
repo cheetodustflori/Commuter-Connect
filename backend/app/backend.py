@@ -64,9 +64,10 @@ global UserStructure
 
 @app.route('/')
 def root():
-    place= "41.6288754,-87.6837692"
-    embed_url = f"https://www.google.com/maps/embed/v1/place?key={Google_Maps_Key}&q={place}"
-    return render_template(embed_url = embed_url)
+    # place= "41.6288754,-87.6837692"
+    # embed_url = f"https://www.google.com/maps/embed/v1/place?key={Google_Maps_Key}&q={place}"
+    # return render_template(embed_url = embed_url)
+    return ''
 
 #get the user's information from log in
 @app.route('/getUserInfo', methods = ['GET'])
