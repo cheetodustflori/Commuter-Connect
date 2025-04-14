@@ -151,7 +151,6 @@ body {
   flex-direction: row;
   padding: 15px;
   justify-content: space-between;
-  align-items: center;
 }
 
 @media (max-width: 1000px) {
@@ -180,12 +179,17 @@ body {
   margin-right: 20px;
 }
 
+.bus-section, .train-section{
+  min-height: 100vh;
+}
+
 #bus {
   background-color: #c5d4ea;
 }
 
 #train {
   background-color: #b3c5d7;
+
 }
 
 .bus-predictions {
@@ -200,4 +204,83 @@ body {
   flex-direction: row;
   justify-content: space-between;
   margin: 10px 0 0 0;
+}
+
+
+/*  FRIENDS */
+
+.friends-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.friends-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* margin-bottom: 15px; */
+  font-weight: bold;
+}
+
+.friend-count {
+  
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+/* .friends-title > h1,
+.friends-commute-section > h1 {
+
+} */
+
+
+.find-friends {
+  display: flex;
+  flex-direction: column;
+}
+
+.friends-list {
+  padding-right: 30px;
+  margin: 30px;
+  height: 100vh;
+  width: 280px;
+  border-right: 1px solid rgb(213, 213, 213);
+}
+
+#username-input {
+  border: none;
+  margin-bottom: 15px;
+  max-width: fit-content;
+  padding: 5px 15px 5px 5px;
+}
+
+#add-friend {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+}
+
+#add-friend:active {
+  position: relative;
+  top: 1px;
+}
+
+.friends {
+  display: block!important;
+  margin: 0!important;
+  padding: 0;
+}
+
+.friends > ul {
+  margin-top: 50px;
+  list-style-type: none;
+  padding: 0!important;
+}
+
+.friends > ul > li {
+  color: #c5c4c4;
+  margin-bottom: 50px;
+  margin-left: 5px;
 }
