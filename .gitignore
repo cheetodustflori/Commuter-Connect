@@ -13,3 +13,6 @@ f1.txt
 frontend/node_modules/.vite/deps/_metadata.json
 frontend/node_modules/.vite/deps/react-dom_client.js
 frontend/node_modules/.vite/deps/react-router-dom.js
+node_modules/.vite/deps/_metadata.json
+node_modules/.vite/deps/react-dom_client.js
+node_modules/.vite/deps/react-router-dom.js
