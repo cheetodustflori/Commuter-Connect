@@ -12,7 +12,7 @@ export default function Nearby() {
       <h1 className="page-title">Nearby</h1>
       <section className="nearby-section">
         <div className="bus-section">
-        <NearbyHeader type="bus" title="Buses" image="src/assets/nearby/headerBus.svg" />
+        <NearbyHeader id="bus-header" type="bus" title="Buses" image="src/assets/nearby/headerBus.svg" />
         <BusTracker/>
         </div>
         <div className="train-section">
