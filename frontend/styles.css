@@ -3,6 +3,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.active {
+  font-weight: bold;
+}
+
 .page-title {
   margin: 30px;
   margin-bottom: 15px;
@@ -40,6 +44,7 @@ body {
 
 .nav li:hover,
 .nav li:active,
+.nav li.active,
 .profile:hover,
 .profile:active {
   font-weight: bold;
@@ -206,6 +211,21 @@ body {
   margin: 10px 0 0 0;
 }
 
+.choose-bus-route {
+  display: flex;
+  justify-content: center;
+}
+
+.bus-check-label {
+  font-weight: bold;
+  color: #C5D4EA;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+
+}
+
 /*  FRIENDS */
 
 .friends-section {
@@ -244,6 +264,14 @@ body {
   border-right: 1px solid rgb(213, 213, 213);
 }
 
+.friends-list li {
+  cursor: pointer;
+}
+
+.friends-list li.active {
+  font-weight: bold;
+}
+
 #username-input {
   border: none;
   margin-bottom: 15px;
@@ -259,7 +287,7 @@ body {
   text-align: left;
 }
 
-#add-friend:active {
+#add-friend.active {
   position: relative;
   top: 1px;
 }
@@ -277,10 +305,42 @@ body {
 }
 
 .friends > ul > li {
-  color: #c5c4c4;
   margin-bottom: 50px;
   margin-left: 5px;
 }
+
+.friend-schedule-block > ul > li {
+  list-style-type: none;
+}
+
+.friends-schedule {
+  margin-top: 40px;
+}
+
+.friend-schedule-block > h3 {
+  margin-left: 35px;
+  filter: opacity(50%)
+}
+
+.route-list > li {
+  margin-bottom: 30px;
+}
+
+.no-routes {
+  margin-top: 30px;
+  margin-left: 35px;
+}
+
+@media (max-width: 1100px) {
+  .friends-section {
+    flex-direction: column;
+  }
+  .friends-list {
+    height: fit-content;
+  }
+}
+
+
 
 /* --------- MAP ---------- */
 
