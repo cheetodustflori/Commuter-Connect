@@ -8,12 +8,20 @@ import {useNavigate} from "react-router-dom";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isValid, setIsValid] = useState(true);
 
     const handleLogIn = () => {
         console.log("Sign In Button Clicked")
         let path = `/schedule`; 
-        navigate(path);
-        loadUserSettings()
+        if (email.length === 0 || password.length === 0) {
+            // Array is empty
+            setIsValid(false)
+
+        }else{
+            navigate(path);
+            loadUserSettings()
+        }
+        
     };
 
     async function loadUserSettings(){
