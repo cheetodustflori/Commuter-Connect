@@ -149,9 +149,6 @@ def addUser():
 
     return jsonify({'Message':'Profile successfully sent!'})
 
-'''
-TODO
-'''
 @app.route('/SaveUserChanges',methods=['POST'])
 def saveUserChanges():
     data = request.json
@@ -161,17 +158,6 @@ def saveUserChanges():
 
     tempRoutes = []
     tempRoutes = UserStructure.routes
-
-    
-    # if(data['username']!=OriginalUserID):
-    #     newUser = data['username']
-    # else:
-    #     newUser = OriginalUserID
-
-    # if(data['email'] != UserStructure.email):
-    #     newEmail = data['email']
-    # else:
-    #     newEmail = UserStructure.email
 
     newUser = OriginalUserID
     newEmail = UserStructure.email
