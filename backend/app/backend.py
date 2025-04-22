@@ -150,6 +150,69 @@ def addUser():
     return jsonify({'Message':'Profile successfully sent!'})
 
 '''
+TODO
+'''
+@app.route('/SaveUserChanges',methods=['POST'])
+def saveUserChanges():
+    data = request.json
+    # print(data)
+    OriginalUserID = request.args.get('userID')
+    # print(OriginalUserID)
+
+    tempRoutes = []
+    tempRoutes = UserStructure.routes
+
+    
+    # if(data['username']!=OriginalUserID):
+    #     newUser = data['username']
+    # else:
+    #     newUser = OriginalUserID
+
+    # if(data['email'] != UserStructure.email):
+    #     newEmail = data['email']
+    # else:
+    #     newEmail = UserStructure.email
+
+    newUser = OriginalUserID
+    newEmail = UserStructure.email
+    newFirst = UserStructure.first_name
+    newLast = UserStructure.last_name
+    newPass = UserStructure.password
+
+    if(data['username']!='') and (newUser!=data['username']):
+        newUser = data['username']
+
+    if(data['email']!='') and (newEmail != data['email']):
+        newEmail = data['email']
+
+    if(data['first_name']!='') and (newFirst != data['first_name']):
+        newFirst = data['first_name']
+
+    if(data['last_name']!='') and (newLast != data['last_name']):
+        newLast = data['last_name']
+    
+    if(data['password']!='') and (newPass != data['password']):
+        newPass = data['password']
+
+    newData = {
+        'username': newUser,
+        'first_name':newFirst,
+        'last_name':newLast,
+        'email':newEmail,
+        'password':newPass,
+        'routes':tempRoutes,
+        'friends':UserStructure.friends
+    }
+
+    db.collection('Users').document(OriginalUserID).delete()
+
+    db.collection('Users').document(newUser).set(newData)
+    constructDataStructure(newData)
+
+    return jsonify({'Message':'Data Saved Sucessfully'})
+
+
+'''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
 '''

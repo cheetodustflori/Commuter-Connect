@@ -41,7 +41,6 @@ const ProfileUserInfo = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
     
@@ -56,7 +55,6 @@ const ProfileUserInfo = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
     
@@ -71,7 +69,6 @@ const ProfileUserInfo = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
     async function getUser(){
@@ -85,7 +82,6 @@ const ProfileUserInfo = () => {
         });
         
         let data = await response.json();
-        console.log(data);
         return data;
       }
 
