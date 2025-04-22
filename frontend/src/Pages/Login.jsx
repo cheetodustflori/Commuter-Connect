@@ -8,12 +8,20 @@ import {useNavigate} from "react-router-dom";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isValid, setIsValid] = useState(true);
 
     const handleLogIn = () => {
         console.log("Sign In Button Clicked")
         let path = `/schedule`; 
-        navigate(path);
-        loadUserSettings()
+        if (email.length === 0 || password.length === 0) {
+            // Array is empty
+            setIsValid(false)
+
+        }else{
+            navigate(path);
+            loadUserSettings()
+        }
+        
     };
 
     async function loadUserSettings(){
@@ -71,6 +79,7 @@ const Login = () => {
             <div className="emailpassInput">
                 <p>Email</p>
                 <input
+                    style={{borderColor: isValid ? '#769EB8': 'red',}}
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}/>
@@ -79,6 +88,7 @@ const Login = () => {
             <div className="emailpassInput">
                 <p>Password</p>
                 <input
+                    style={{borderColor: isValid ? '#769EB8': 'red',}}
                     type="text"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>

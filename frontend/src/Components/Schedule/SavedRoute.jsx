@@ -13,9 +13,9 @@ const SavedRoute = ({isFavorite, isWalking, isBus}) => {
                     <img id="logo" src={star}/> 
                 </>
             )}
-            <p>School</p>
-            <p>to</p>
-            <p style={{fontWeight: 'bold'}}>Home</p>
+            <h3 style={{fontWeight: 'normal'}}>School</h3>
+            <h3>to</h3>
+            <h3 style={{fontWeight: 'bold'}}>Home</h3>
         </div>
 
         <div id='savedRoute'>
@@ -29,7 +29,7 @@ const SavedRoute = ({isFavorite, isWalking, isBus}) => {
                     <img id="logo" src={walking}/> 
                 </>
             )}
-            <p>1 Hour 23 Min</p>
+            <h3 style={{fontWeight: 'normal'}}>1 Hour 23 Min</h3>
 
         </div>
         

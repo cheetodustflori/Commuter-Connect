@@ -42,15 +42,15 @@ const CommuteRoute = ({ isActive, totalTime, routeTitle, routeStatus, startLocat
                 <div style={{color: !isActive ? 'rgba(0, 0, 0, 0.302)' : 'black',}} className='route'>
 
                     <div className='nameAndStatus'>
-                        <p>{routeTitle}</p>
-                        <p> | </p>
-                        <p style={{color: !isActive ? 'rgba(0, 0, 0, 0.302)' : '#48C738',}}>{routeStatus}</p>
-                        <img style={{opacity: !isActive ? '0.5' : '1',}}  id="trainImage" src={trainLogo}/>
+                        <h2 style={{fontWeight: "normal"}}>{routeTitle}</h2>
+                        <h2 style={{fontWeight: "normal", color:'lightgray'}}> | </h2>
+                        <h2 style={{color: !isActive ? 'rgba(0, 0, 0, 0.302)' : '#48C738', fontWeight: "normal"}}>{routeStatus}</h2>
+                        <img style={{opacity: !isActive ? '0.5' : '1', marginLeft: '10px'}}  id="trainImage" src={trainLogo}/>
                     </div>
 
                     <div className='toAndFromText'>
-                        <p>{startLocation}</p>
-                        <p style={{fontWeight: 'bold'}} >{endLocation}</p>
+                        <h3 style={{fontWeight: "normal", textAlign: "left"}}>{startLocation}</h3>
+                        <h3 style={{fontWeight: 'bold', textAlign: "right"}} >{endLocation}</h3>
                     </div>
 
                     <div className='progressBarAndInfo'>
@@ -80,6 +80,7 @@ const CommuteRoute = ({ isActive, totalTime, routeTitle, routeStatus, startLocat
                         )}
                     </div>
                 </div>
+
                 </div>
 
                 <div id='deleteAndIcons'>
@@ -114,6 +115,8 @@ const CommuteRoute = ({ isActive, totalTime, routeTitle, routeStatus, startLocat
 
             </div>
 
+
+
             <div className='commuteBuddies'>
 
                 {buddies.map((person) => (
@@ -126,12 +129,12 @@ const CommuteRoute = ({ isActive, totalTime, routeTitle, routeStatus, startLocat
                             borderRadius: "50%",
                             }}>
                         </div>
-                        <p style={{fontWeight: 'bold'}}>{person.name}</p>
+                        <h3 style={{fontWeight: 'bold'}}>{person.name}</h3>
 
                         <div className='iconTrash'>
                             {editMode && (
                                 <>
-                                    <img id="Icons" src={trashIcon}/>
+                                    <img id="Icons" src={trashIcon} onClick={handleDelete}/>
                                 </>
                             )}
                         </div>
