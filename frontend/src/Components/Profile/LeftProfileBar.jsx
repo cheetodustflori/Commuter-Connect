@@ -1,6 +1,6 @@
 import React from 'react'
 import './Styles/LeftProfileBar.css'
-import editIcon from '../../assets/editIcon.png'
+import profilePicture from '../../assets/profilePicture.png'
 
 const LeftProfileBar = () => {
   return (
@@ -9,8 +9,7 @@ const LeftProfileBar = () => {
         
         <div className='person'>
             <div id='imageEdits'>
-                <img id="profileLogo"/>
-                <img id="edit" src={editIcon}/>
+                <img id="profileLogo" src={profilePicture}/>
             </div>
             
             <div className='name'>
