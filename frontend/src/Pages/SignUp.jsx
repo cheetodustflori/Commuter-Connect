@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Styles/SignUp.css'
+import './Styles/Login.css'
 import train from '../assets/train.svg'
 import { useNavigate } from 'react-router-dom';
 
@@ -31,7 +31,7 @@ const SignUp = () => {
 
         <div className='sign-up-container'>
             
-            <div id="emailpassInput">
+            <div className="emailpassInput">
                 <p>Username</p>
                 <input
                     type="text"
@@ -39,7 +39,7 @@ const SignUp = () => {
                     onChange={(e) => setUsername(e.target.value)}/>
             </div>
             
-            <div id="emailpassInput">
+            <div className="emailpassInput">
                 <p>Email</p>
                 <input
                     type="text"
@@ -47,7 +47,7 @@ const SignUp = () => {
                     onChange={(e) => setEmail(e.target.value)}/>
             </div>
 
-            <div id="emailpassInput">
+            <div className="emailpassInput">
                 <p>Password</p>
                 <input
                     type="text"
@@ -55,7 +55,7 @@ const SignUp = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button id="createAccount" onClick={handleCreateAccount}>Create Account</button>
+            <button id="create-account" onClick={handleCreateAccount}>Create Account</button>
 
         </div>
 

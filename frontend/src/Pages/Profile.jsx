@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './Styles/Profile.css'
 import ReactDOM from 'react-dom/client';
 import LeftProfileBar from '../Components/Profile/LeftProfileBar.jsx'
@@ -13,6 +13,7 @@ export default function Profile() {
 
   const [editMode, setEditMode] = useState(false);
 
+  //This is where we parse the data depending on the status
   const handleEditProfile = () => {
     setEditMode(!editMode);
 };
@@ -22,6 +23,12 @@ const handleSignOut = () => {
   navigate(path);
 };
 
+const saveProfileChanges = () =>{
+
+};
+
+
+{/*  WORK UNDER HERE  */}
   return (
     <>
     <NavBar/>
@@ -52,7 +59,7 @@ const handleSignOut = () => {
 
           {editMode && (
             <>
-              <button id='saveChanges'>Save Changes</button>
+              <button id='saveChanges' onClick={saveProfileChanges}>Save Changes</button>
               <button id='editProfile' onClick={handleEditProfile}>Cancel</button>
             </>
           )}

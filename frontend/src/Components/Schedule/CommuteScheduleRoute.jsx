@@ -7,7 +7,7 @@ import trashIcon from '../../assets/trashIcon.png'
 import { useState, useEffect } from "react";
 
 
-const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatus, startLocation, endLocation, departTime, arrivalTime, buddies, editMode }) => {
+const CommuteRoute = ({ isActive, totalTime, routeTitle, routeStatus, startLocation, endLocation, departTime, arrivalTime, buddies, editMode }) => {
 
     const [timeLeft, setTimeLeft] = useState(totalTime);
     const [deleteEvent, setDeleteEvent] = useState(false);
@@ -37,7 +37,7 @@ const CommuteRoute = ({ isActive, totalTime, overallTime, routeTitle, routeStatu
 
                 <div className='routes'>
 
-                <h3 style={{marginTop: !isActive ? '-30px' : '-80px',}} id='mainTime'>{overallTime}</h3>
+                <h3 style={{marginTop: !isActive ? '-30px' : '-80px',}} id='mainTime'>{departTime}</h3>
 
                 <div style={{color: !isActive ? 'rgba(0, 0, 0, 0.302)' : 'black',}} className='route'>
 

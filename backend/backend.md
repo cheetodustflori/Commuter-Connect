@@ -4,7 +4,8 @@ This directory is for all backend-related files. You can either replace it entir
 cd backend
 python -m venv env
 
-.\env\Scripts\activate
+WINDOWS:   .\env\Scripts\activate
+MAC:       source env/bin/activate
 
 pip install -r requirements.txt 
 

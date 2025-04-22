@@ -68,15 +68,15 @@ const Login = () => {
 
         <div className='log-in-container'>
             
-            <div id="emailpassInput">
-                <p>Username</p>
+            <div className="emailpassInput">
+                <p>Email</p>
                 <input
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}/>
             </div>
             
-            <div id="emailpassInput">
+            <div className="emailpassInput">
                 <p>Password</p>
                 <input
                     type="text"
@@ -84,7 +84,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}/>
             </div>
             
-            <button className="log-in-button" onClick={handleLogIn}>Log In</button>
+            <button id="login-button" onClick={handleLogIn}>Log In</button>
 
             <div id="sign-up-link">
                 <p>New to Commuter Connect?</p>

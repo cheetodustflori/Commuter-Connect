@@ -7,7 +7,7 @@ export default function BusArrivals() {
   const [selectedRoutes, setSelectedRoutes] = useState(["8"]);
 
   const stopIds = ["4618", "4639", "4640", "14487", "18184", "4638","6701","6700","6627","17277","6347","198","206","210", "14459", "17366", "5802", "5928"]; 
-  const routes = ["8", "60", "157", "18","7"];
+  const routes = ["8", "60", "157", "7"];
 
   const handleRouteChange = (rt) => {
     setSelectedRoutes((prev) =>
@@ -41,6 +41,8 @@ export default function BusArrivals() {
     fetchPredictions();
   }, [selectedRoutes]);
 
+  const sortedItems = [...predictions].sort((a, b) => a.prdctdn - b.prdctdn);
+
   const formatArrivalTime = (prdctdn) => {
     if (prdctdn == "DUE") {
       return "Due";
@@ -63,20 +65,21 @@ export default function BusArrivals() {
     <div>
       <div>
         <h2>Choose Bus Routes</h2>
-        <div>
+        <div className="choose-bus-route">
           {routes.map((rt) => (
-            <label key={rt} style={{ marginRight: "1rem" }}>
+            <label key={rt} style={{ marginRight: "1rem" }} className="bus-check-label">
               <input
                 type="checkbox"
                 checked={selectedRoutes.includes(rt)}
                 onChange={() => handleRouteChange(rt)}
-              />
+                className="bus-check"
+              / >
               Route {rt}
             </label>
           ))}
         </div>
         <ul className="bus-predictions">
-          {predictions.map((p, i) => (
+          {sortedItems.slice(0,10).map((p, i) => (
             <li key={i}>
               <div>
                 <strong>

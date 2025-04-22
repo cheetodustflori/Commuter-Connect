@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./Header";
 import MobileNav from "./MobileNavigation";
 import "../../../styles.css";
+import { NavLink } from "react-router-dom";
 
 export default function NavBar() {
   return (
@@ -10,21 +11,19 @@ export default function NavBar() {
         <div className="nav-title">Commuter Connect</div>
         <ul className="links">
           <li>
-            <a href="/schedule">Schedule</a>
+            <NavLink to="/schedule" className={({ isActive }) => (isActive ? "active" : "")}>Schedule</NavLink>
           </li>
           <li>
-            <a href="/map">Map</a>
+            <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")}>Map</NavLink>
           </li>
           <li>
-            <a href="/nearby">Nearby</a>
+          <NavLink to="/nearby" className={({ isActive }) => (isActive ? "active" : "")}>Nearby</NavLink>
           </li>
           <li>
-            <a href="/friends">Friends</a>
+          <NavLink to="/friends" className={({ isActive }) => (isActive ? "active" : "")}>Friends</NavLink>
           </li>
           <li>
-            <a href="/profile" className="profile">
-              Your Profile
-            </a>
+          <NavLink to="/profile" className={({ isActive }) => (isActive ? "active" : "")}>Your Profile</NavLink>
           </li>
         </ul>
 
