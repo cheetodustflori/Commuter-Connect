@@ -5,7 +5,7 @@ const API_KEY = import.meta.env.VITE_CTA_TRAIN_API_KEY;
 // curl "http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=950451d483a24ec0b37abdfa974bdf82&mapid=40380&max=5&outputType=JSON"
 export default function TrainArrivals() {
   useEffect(() => {
-    fetch(`/api2/api/1.0/ttarrivals.aspx?key=${API_KEY}&mapid=40380&outputType=JSON`)
+    fetch(`/api2/ttarrivals.aspx?key=${API_KEY}&mapid=40380&outputType=JSON`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
@@ -18,15 +18,5 @@ export default function TrainArrivals() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const result = await fetch(URL);
-  //     result.json().then((json) => {
-  //       console.log(json);
-  //     });
-  //   };
-  //   fetchData();
-  // }, []);
-
-  return <div>Train Arrivals (check the console)</div>;
+  return <div>Train Arrivals</div>;
 }

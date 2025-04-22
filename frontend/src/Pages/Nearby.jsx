@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar/Nav";
 import NearbyHeader from "../Components/Nearby/NearbyHeader.jsx";
 import BusTracker from "../Components/Nearby/BusTracker.jsx";
 import TrainTracker from "../Components/Nearby/TrainTracker.jsx";
+import TestTracker from "../Components/Nearby/TestTracker.jsx";
 
 export default function Nearby() {
   return (
@@ -24,3 +25,15 @@ export default function Nearby() {
     </>
   );
 }
+
+
+// export default function Nearby() {
+//   return (
+//     <>
+//     <NavBar/>
+//       <h1 className="page-title">Nearby</h1>
+//       <TestTracker/>
+       
+//     </>
+//   );
+// }
