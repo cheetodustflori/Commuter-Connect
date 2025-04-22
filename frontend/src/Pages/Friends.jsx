@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import "./Styles/Friends.css";
 import { Nav } from "react-bootstrap";
-import FriendsData from "../components/Friends/friends.json";
+// import FriendsData from "../components/Friends/friends.json";
 
 export default function Friends() {
   return (
@@ -50,9 +50,9 @@ export default function Friends() {
               <button id="add-friend">Add Friend +</button>
             </div>
             <div className="friends">
-              {FriendsData.map((FriendsData, i) => (
+              {FriendsData.map((FriendsDataUsername, i) => (
                 <ul key={i}>
-                  <li>{FriendsData.username}</li>
+                  <li>{FriendsDataUsername}</li>
                 </ul>
               ))}
             </div>
@@ -70,6 +70,7 @@ export default function Friends() {
 async function loadUserFriends() {
   let response = await fetch(`http://127.0.0.1:5000/getFriends?`, {
     method: "GET",
+    mode:'cors',
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -81,5 +82,4 @@ async function loadUserFriends() {
   console.log(data);
   return data;
 }
-
-// let friends_array = loadUserFriends();
+let FriendsData = loadUserFriends();
