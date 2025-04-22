@@ -18,5 +18,5 @@ export default function TrainArrivals() {
       });
   }, []);
 
-  return <div>Train Arrivals</div>;
+  return <div> <h2>Choose Train Routes</h2></div>;
 }

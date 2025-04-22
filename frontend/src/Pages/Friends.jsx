@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import "./Styles/Friends.css";
 import { Nav } from "react-bootstrap";
-// import FriendsData from "../components/Friends/friends.json";
+import FriendsData from "../components/Friends/friends.json";
 import CommuteScheduleRoute from "../Components/Schedule/CommuteScheduleRoute";
 
 export default function Friends() {
