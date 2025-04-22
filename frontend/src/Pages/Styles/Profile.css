@@ -32,39 +32,39 @@
 } */
 
 #editProfile{
+    cursor: pointer;
     border-color: #769EB8;
     color: #769EB8;
     background-color: #769eb800;
     border-style: solid;
     border-radius: 10px;
 
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
     padding: 10px 20px 10px 20px;
     align-items: center;
     justify-content: center;
 }
 
 #signOutProfile{
+    cursor: pointer;
     border-color: #D9D9D9;
     color: #D9D9D9;
     background-color: #769eb800;
     border-style: solid;
     border-radius: 10px;
 
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
     padding: 10px 20px 10px 20px;
     align-items: center;
     justify-content: center;
 }
 
 #saveChanges{
+    cursor: pointer;
     border-color: #769EB8;
     color: #ffffff;
     background-color: #769EB8;
     border-style: solid;
     border-radius: 10px;
 
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.526);
     padding: 10px 20px 10px 20px;
     align-items: center;
     justify-content: center;

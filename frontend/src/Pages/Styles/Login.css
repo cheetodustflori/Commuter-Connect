@@ -1,4 +1,4 @@
-.login{
+.login, .signup{
     background-color: #769EB8;
     height: 100vh;
     width: 100vw;
@@ -18,13 +18,14 @@
     gap: 50px;
 }
 
+#welcomeText{
+    margin-left: 50px;
+}
+
+
 #welcomeText h3, 
 #welcomeText h1 {
     margin: 0;
-}
-
-#welcomeText{
-    margin-left: 50px;
 }
 
 #welcomeText h3{
@@ -35,29 +36,34 @@
     font-size: clamp(40px, 5vw, 80px);
 }
 
-.log-in-container{
+.log-in-container,
+.sign-up-container{
     display: flex;
     flex-direction: column;
     justify-content: center;
     background-color: white;
     border-radius: 10px;
-    padding: 80px;
+    padding: 30px;
     gap: 15px;
 }
 
-#emailpassInput p,
-#emailpassInput input{
+.emailpassInput p,
+.emailpassInput input{
     margin: 0;
     height: 30px;
     color: #5D576A;
+    border-radius: 0px;
+    width: 200px;
 }
 
-#emailpassInput input{
-    border-color: #c0d7e6;
+.emailpassInput input{
+    border-color: #B3C5D7;
+    filter: opacity(50%);
     border-style: solid;
 }
 
-.log-in-button {
+#login-button,
+#create-account {
     display: flex;
     justify-content: center;
     background-color: #769EB8;
@@ -66,46 +72,57 @@
     padding: 5px;
     border-radius: 2px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
 }
 
-#sign-up-link {
+#sign-up-link > p{
     color: #769EB8;
     text-align: center;
+    margin: 0px;
 }
 
 @media (max-width: 1250px) {
-    .login{
+    .login, .signup{
         gap: clamp(10vh, 5%, 20vh);
     }
 }
 
 @media (max-width: 1155px) {
-    .login{
+    .login, .signup{
         gap: clamp(5vh, 5%, 10vh);
     }
-    .log-in-container{
+    .log-in-container, .sign-up-container{
     
         padding: 40px;
     }
 }
 
 @media (max-width: 1155px) {
-    .login{
+    .login, .signup{
         gap: 50px;
+        
     }
-    .log-in-container{
-    
+    .log-in-container, .sign-up-container{
         padding: 40px;
         /* margin-left: -20px; */
     }
 }
 
 @media (max-width: 1000px) {
-    .login{
+    .login, .signup{
         gap: 10px;
+        flex-direction: column;
+        justify-content: center;
     }
-    .log-in-container{
-    
+    .train {
+        display: none;
+    }
+    #welcomeText {
+        text-align: center;
+        margin-left: 0px!important;
+    }
+    .log-in-container, .sign-up-container{
         padding: 40px;
         /* margin-left: -20px; */
     }

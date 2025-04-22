@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar/Nav";
 import "./Styles/Friends.css";
 import { Nav } from "react-bootstrap";
 import FriendsData from "../components/Friends/friends.json";
+import CommuteScheduleRoute from "../Components/Schedule/CommuteScheduleRoute";
 
 export default function Friends() {
   return (
@@ -61,6 +62,37 @@ export default function Friends() {
 
         <div className="friends-commute-section">
           <h1 className="page-title">Your Friends' Commute Schedules</h1>
+          <div className="friends-schedule">
+            {FriendsData.map((friend, i) => (
+              <div className="friend-schedule-block" key={i}>
+                <h3>{friend.username}</h3>
+
+                {friend.routes && friend.routes.length > 0 ? (
+                  <ul className="route-list">
+                    {friend.routes.map((route, j) => (
+                      <li key={j}>
+                        <CommuteScheduleRoute
+                          isActive={route.isActive === "true"}
+                          totalTime={route.totalTime}
+                          overallTime={route.overallTime}
+                          routeTitle={route.routeTitle}
+                          routeStatus={route.routeStatus}
+                          startLocation={route.startLocation}
+                          endLocation={route.endLocation}
+                          departTime={route.departTime}
+                          arrivalTime={route.arrivalTime}
+                          buddies={[]} 
+                          editMode={false} 
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-routes">No routes available.</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </>
