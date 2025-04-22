@@ -136,7 +136,12 @@ def getEmail():
 def addUser():
     data = request.json
     #grabs the userID from the request to accuratly create the account
-    userID = data.get('userID')
+    userID = data.get('username')
+
+    # Check if the user already exists
+    user_ref = db.collection("Users").document(userID)
+    if user_ref.get().exists:
+        return jsonify({'Message': 'Username already exists!'}), 409  # 409 = Conflic
 
     #saving data in the Users collection
     db.collection("Users").document(userID).set(data)
