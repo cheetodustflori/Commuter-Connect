@@ -56,10 +56,36 @@
 
 #newRouteButton{
     width: 30%;
-    padding: 5px;
+    padding: 10px;
     border-radius: 20px;
     background-color: #769EB8;
     color: white;
     border-color: #769EB8;
     font-size: 15px;
+}
+
+.savedRoutesNew{
+    display: flex;
+    flex-direction: column;
+  
+    width: 400px;
+    height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  #horizontalLineNew{
+    width: 100%;
+    float: left;
+    height: 1px;
+    background-color: #5D576A;
+    border: none;  
+    margin-top: 20px;
+  }
+
+  #thisRoute{
+    background-color:#769eb800;
+    border-color: #769eb800;
 }

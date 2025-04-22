@@ -6,22 +6,63 @@ import ScrollableRoutes from './ScrollableRoutes'
 import AddNewRoute from './AddNewRoute'
 
 const CommuteRoutes = () => {
-  const [createNewRoute, setCreateNewRoute] = useState(false);
+    const [createNewRoute, setCreateNewRoute] = useState(false);
 
-  const handleCreateNewRoute = () => {
-    setCreateNewRoute(!createNewRoute);
-};
+    const handleCreateNewRoute = () => {
+        setCreateNewRoute(!createNewRoute);
+    };
+
+    const handleShowSavedRoute = () => {
+        
+    };
+
+    const savedRoutes = [
+        <SavedRoute
+            isFavorite={true}
+            isBus={true}
+            isWalking={true}/>,
+        <SavedRoute
+            isFavorite={true}
+            isBus={true}
+            isWalking={true}/>,
+        <SavedRoute
+            isFavorite={true}
+            isBus={true}
+            isWalking={true}/>,
+        <SavedRoute
+            isFavorite={true}
+            isBus={true}
+            isWalking={true}/>,
+        <SavedRoute
+            isFavorite={true}
+            isBus={true}
+            isWalking={true}/>
+    ]
 
   return (
     <div className='mainCommuteRoutes'>
         <div className='CommuteRoutes'>
             <h2>Commute Routes</h2>
 
-            <p id='text' >Create or click on an existing route to 
-                    show details and get started on your journey!</p>
+            <h3 style={{fontWeight: "normal"}} id='text' >Create or click on an existing route to 
+                    show details and get started on your journey!</h3>
+
+            {/* <div className='routes'>
+                <ScrollableRoutes/>
+            </div> */}
 
             <div className='routes'>
-                <ScrollableRoutes/>
+                <div className='savedRoutesNew'>
+                    {savedRoutes.map((route, index) => (
+
+                        <button key={index} id='thisRoute'  >
+                            {route}
+                            <hr id='horizontalLine'></hr>
+                        </button>
+
+                    ))}
+                </div>
+                
             </div>
              
         </div>
@@ -32,6 +73,8 @@ const CommuteRoutes = () => {
             <iframe src="{{embed_url}}"></iframe>
             <button id='newRouteButton' onClick={handleCreateNewRoute}>Create New Route</button>
         </div>
+
+        
 
         {/* {createNewRoute && (
             <>

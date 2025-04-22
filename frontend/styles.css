@@ -412,3 +412,26 @@ body {
   background-color: #E39898;
   color: white;
 }
+
+/* SCHEDULE */
+
+.savedRoutes{
+  display: flex;
+  flex-direction: column;
+
+  width: 400px;
+  height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#horizontalLine{
+  width: 100%;
+  float: left;
+  height: 1px;
+  background-color: #5D576A;
+  border: none;  
+  margin-top: 20px;
+}
