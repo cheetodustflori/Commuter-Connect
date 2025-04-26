@@ -24,6 +24,8 @@ and will need these
 '''
 
 CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
 
 load_dotenv()
 CTA_Train_Key = os.getenv('CTA_TRAIN_API_KEY')
@@ -147,6 +149,26 @@ def addUser():
     db.collection("Users").document(userID).set(data)
 
     return jsonify({'Message':'Profile successfully sent!'})
+
+@app.route('/createRoute', methods=['POST'])
+def addRoute():
+    data = request.json
+    userID = data.get('username')
+    routeData = data.get('route')  # Expecting 'route' to be a dict with route details
+
+    if not userID or not routeData:
+        return jsonify({'Message': 'username and route are required'}), 400
+
+    user_ref = db.collection("Users").document(userID)
+
+    if not user_ref.get().exists:
+        return jsonify({'Message': 'User does not exist!'}), 404
+
+    # Add the route to the user's Routes subcollection
+    user_ref.collection("Routes").add(routeData)
+
+    return jsonify({'Message': 'Route successfully added!'}), 200
+
 
 '''
 This one might not need a path and would be a helper function depending on 

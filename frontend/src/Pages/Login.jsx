@@ -25,7 +25,7 @@ const Login = () => {
     };
 
     async function loadUserSettings(){
-        let path = `/schedule`; 
+        let path = `/schedule?prop=${email}`; 
 
         let response = await fetch(`http://127.0.0.1:5000/getUserInfo?userID=${email}&password=${password}`,{
             method:'GET',

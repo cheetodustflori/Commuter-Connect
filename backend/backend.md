@@ -16,3 +16,11 @@ set FLASK_APP=backend.py
 
 flask --app backend.py --debug run
 
+cd backend
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt 
+cd app 
+set FLASK_APP=backend.py
+flask --app backend.py --debug run
+

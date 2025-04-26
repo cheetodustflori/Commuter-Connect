@@ -150,4 +150,74 @@
     gap: 10px;
 }
 
+
+.routeOptions{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.writtenInputs div{
+    margin: 0;
+}
+
+.commuteTimes{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#text{
+    margin-bottom: -10px;
+}
+
+#options{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+
+#addCommuteBuddies,
+#individualCheckBox{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#dropdown{
+    width: 150px;
+    height: 40px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+#buttonOptions{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    gap: 10px;
+}
+
+#button{
+    width: 30%;
+    padding: 10px;
+    border-radius: 20px;
+    color: white;
+    border-color: #769EB8;
+    font-size: 15px;
+}
+
+#button:hover {
+    transform: translateY(-2px);
+}
+
+#button:active {
+    transform: translateY(2px);
+}
 /* saved routes */
