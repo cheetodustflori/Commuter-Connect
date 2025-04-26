@@ -77,3 +77,4 @@ const GoogleMapComponent = () => (
 );
 
 export default GoogleMapComponent;
+  
