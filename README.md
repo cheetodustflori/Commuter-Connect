@@ -29,38 +29,40 @@ User Authentication:
 * 
 * and why to use this project.
 -->
-**1. Click on Fork to create your own repo and then click Create Fork.**
-**2. Backend Installation : Python3, pip**
-For Windows Users, Download Python from the official website. Ensure to select "Add Python to PATH" during installation.
-For Mac Users, install using Homebrew : brew install python
-Confirm installation by typing python --version and pip --version on Command Prompt
-**3. Frontend Installation : Nodejs and npm**
-For Windows users, install Node.js and npm LTS version
-For Mac users, using Homebrew brew install node
-Confirm installation by running node -v and npm -v
-**4. Set up Flask+React Demo locally**
-Go to your Forked Repository on Github, Click on green Code button and copy the URL (using HTTPS or SSH)
-Open up VS Code and in the home page or under Source Control, click on Clone a Repository. Choose a directory to store your project on your local computer. You can also do the same from the command line using git clone REPO_URL
-You will now see a local version of all the files/source code from GitHub.
-**a. Set up Backend**
-Move into the backend directory - cd backend
-Create a new virtual environment - python -m venv env
-Activate the virtual environment
-For Windows : .\env\Scripts\activate
-For Mac : source env/bin/activate
-You will now see a (venv) infront of your command line
-To install all dependencies and packages, run pip install -r requirements.txt
-Note: To deactivate, run env\Scripts\deactivate.bat or deactivate 
-Run cd app 
-Run set FLASK_APP=server.py to set the flask app
-Run the flask backend in debug mode for automatic reloading : flask --app server.py --debug run
-Your flask server will now be running on localhost:PORT! You can look at the terminal for the port number
-Note for Mac users- if your getting an error no module named flask_cors, reactivate your environment while in env by running source env/bin/activate
-**b. Set up Frontend**
-Open up a new terminal + button on top right of the terminal and run cd frontend
-Install all packages by running npm install
-To run the react frontend, npm run dev
-Your react app is now running on localhost:PORT! You can follow the link from the terminal for the port number.
+## 1. Creating your own Project Repository
+- Click on **Fork** to create your own repo and then click **Create Fork**.
+
+## 2. Backend Installation : Python3, pip
+- For Windows Users, Download Python from the [official website](https://www.python.org/downloads/). Ensure to select "Add Python to PATH" during installation.
+- For Mac Users, install using Homebrew : `brew install python`
+- Confirm installation by typing `python --version` and `pip --version` on Command Prompt
+
+## 3. Frontend Installation : Nodejs and npm
+- For Windows users, install [Node.js and npm LTS version](https://nodejs.org/en/download)
+- For Mac users, using Homebrew `brew install node`
+- Confirm installation by running `node -v` and `npm -v`
+
+## 4. Set up Flask+React Demo locally
+- Go to your Forked Repository on Github, Click on green **Code** button and copy the URL (using HTTPS or SSH)
+- Open up VS Code and in the home page or under Source Control, click on **Clone a Repository**. Choose a directory to store your project on your local computer. You can also do the same from the *command line* using `git clone REPO_URL`
+- You will now see a local version of all the files/source code from GitHub. 
+### a. Set up Backend
+- Move into the backend directory - `cd backend` 
+- Create a new virtual environment - `python -m venv env`
+- Activate the virtual environment
+    - For Windows : `.\env\Scripts\activate`
+    - For Mac : `source env/bin/activate`
+- You will now see a (venv) infront of your command line
+- To install all dependencies and packages, run `pip install -r requirements.txt`
+- **Note:** To deactivate, run `env\Scripts\deactivate.bat` or `deactivate`
+- Run `cd app` 
+- Run `set FLASK_APP=server.py` to set the flask app
+- Run the flask backend in debug mode for automatic reloading : `flask --app server.py --debug run`
+
+### b. Set up Frontend
+- Open up a new terminal + button on top right of the terminal and run `cd frontend`
+- Install all packages by running `npm install`
+- To run the react frontend, `npm run dev`
 
 
 ## Demo<!-- Required -->
