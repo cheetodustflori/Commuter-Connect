@@ -1,16 +1,26 @@
-# Full Stack Group Project Template
-This repository is a template for your Full Stack Group Project. It includes a basic project structure, along with Markdown examples for weekly meeting notes and the project README.  
+# Commuter Connect: Where Every Journey Meets Community.
+Commuter Connect is a web application built with React, Flask, Firebase, using data from Google Routes + Places API, designed to assist and connect commuter students at UIC (University of Illinois Chicago).
 
-Use this repository to store your code and collaborate throughout all FGP stages, starting from FGP3.  
+We aim to make commuting life easier and more social for UIC students by offering features that help plan daily routes, connect with commute buddies, and build friendships — all while making the daily journey faster and more convenient.
 
 **Note:** This layout is an example. The official requirements for your project README will be provided later in the course.  
 
 ## About<!-- Required -->
-<!-- 
-* information about the project 
-* 
-* keep it short and sweet
--->
+# Key Features
+**Create Route System:**
+Students can create and save their fastest commute routes using Google Maps' Routes and Places API, optimized with a priority queue for fastest paths.
+
+**Commute Buddy System:**
+Add friends to your commute routes to make traveling easier and more enjoyable.
+
+**Friend Lookup:**
+Easily find and add friends using a Trie-based friend search system for fast and efficient lookups.
+
+**Daily Commute Management:**
+View, edit, and manage your saved commute routes anytime.
+
+User Authentication:
+**Secure login and regis**tration system powered by Firebase Authentication to keep user data safe.
 
 
 ## How to use this project<!-- Required -->
@@ -19,9 +29,38 @@ Use this repository to store your code and collaborate throughout all FGP stages
 * 
 * and why to use this project.
 -->
--
--
--
+**1. Click on Fork to create your own repo and then click Create Fork.**
+**2. Backend Installation : Python3, pip**
+For Windows Users, Download Python from the official website. Ensure to select "Add Python to PATH" during installation.
+For Mac Users, install using Homebrew : brew install python
+Confirm installation by typing python --version and pip --version on Command Prompt
+**3. Frontend Installation : Nodejs and npm**
+For Windows users, install Node.js and npm LTS version
+For Mac users, using Homebrew brew install node
+Confirm installation by running node -v and npm -v
+**4. Set up Flask+React Demo locally**
+Go to your Forked Repository on Github, Click on green Code button and copy the URL (using HTTPS or SSH)
+Open up VS Code and in the home page or under Source Control, click on Clone a Repository. Choose a directory to store your project on your local computer. You can also do the same from the command line using git clone REPO_URL
+You will now see a local version of all the files/source code from GitHub.
+**a. Set up Backend**
+Move into the backend directory - cd backend
+Create a new virtual environment - python -m venv env
+Activate the virtual environment
+For Windows : .\env\Scripts\activate
+For Mac : source env/bin/activate
+You will now see a (venv) infront of your command line
+To install all dependencies and packages, run pip install -r requirements.txt
+Note: To deactivate, run env\Scripts\deactivate.bat or deactivate 
+Run cd app 
+Run set FLASK_APP=server.py to set the flask app
+Run the flask backend in debug mode for automatic reloading : flask --app server.py --debug run
+Your flask server will now be running on localhost:PORT! You can look at the terminal for the port number
+Note for Mac users- if your getting an error no module named flask_cors, reactivate your environment while in env by running source env/bin/activate
+**b. Set up Frontend**
+Open up a new terminal + button on top right of the terminal and run cd frontend
+Install all packages by running npm install
+To run the react frontend, npm run dev
+Your react app is now running on localhost:PORT! You can follow the link from the terminal for the port number.
 
 
 ## Demo<!-- Required -->
@@ -93,7 +132,9 @@ Use this repository to store your code and collaborate throughout all FGP stages
 * 
 * Generate github contributors Image here https://contrib.rocks/preview?repo=angular%2Fangular-ja
 -->
-
+Eddie Murillo
+Florianne Che
+Zeel Patel
 
 ## Acknowledgments<!-- Optional -->
 <!-- 
@@ -114,13 +155,16 @@ Use this repository to store your code and collaborate throughout all FGP stages
 * Also it's common to add some PR guidance.
 -->
 
+
 ## Contact<!-- Required -->
 <!-- 
 * add your email and contact info here
 * 
 * 
 -->
-
+Eddie Murillo: emuri@uic.edu
+Florianne Che: fche2@uic.edu
+Zeel Patel: zpate6@uic.edu
 
 ## License<!-- Optional -->
 <!-- 
