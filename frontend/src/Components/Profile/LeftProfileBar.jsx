@@ -41,7 +41,6 @@ const LeftProfileBar = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
     
@@ -56,7 +55,6 @@ const LeftProfileBar = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
     
@@ -71,7 +69,6 @@ const LeftProfileBar = () => {
       });
       
       let data = await response.json();
-      console.log(data);
       return data;
     }
 
@@ -86,7 +83,6 @@ const LeftProfileBar = () => {
         });
         
         let data = await response.json();
-        console.log(data);
         return data;
       }
 
