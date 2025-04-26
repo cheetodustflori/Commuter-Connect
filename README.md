@@ -1,12 +1,25 @@
 # Commuter Connect: Where Every Journey Meets Community.
 Commuter Connect is a web application built with React, Flask, Firebase, using data from Google Routes + Places API, designed to assist and connect commuter students at UIC (University of Illinois Chicago).
 
-We aim to make commuting life easier and more social for UIC students by offering features that help plan daily routes, connect with commute buddies, and build friendships — all while making the daily journey faster and more convenient.
+At UIC, a large percentage of students are commuters who face long, sometimes lonely journeys to and from campus.
+Many lack a reliable network to coordinate rides, share routes, or connect with other commuters. Commuter Connect solves this problem by offering a platform that helps commuters organize and optimize their daily routes, connects students with "commute buddies" for a more convenient and social travel experience, and builds community among students who might otherwise feel isolated due to commuting.
+
+Our mission is to turn commuting into an opportunity for connection, convenience, and community.
 
 **Note:** This layout is an example. The official requirements for your project README will be provided later in the course.  
 
 ## About<!-- Required -->
-** Key Features **
+
+### Tools
+React, Flask, Firebase, Google Routes + Places APIs
+
+We used React Router for navigation between pages. 
+
+We chose Flask over Django because Flask is lightweight and flexible, making it perfect for our project where we needed a simple REST API backend. Flask allowed us to easily connect with Firebase services and handle API requests without the additional complexity of Django’s full-stack structure. Since our app focuses more on frontend-user interactions  and lightweight data transactions (routes, friends, authentication), Flask provided exactly the right balance of simplicity and power for our project scope. Finally, Flask provided a faster setup time and easier team collaboration for a mid-sized project.
+
+
+### Key Features
+
 *Create Route System:*
 Students can create and save their fastest commute routes using Google Maps' Routes and Places API, optimized with a priority queue for fastest paths.
 
@@ -135,7 +148,9 @@ Secure login and registration system powered by Firebase Authentication to keep 
 * Generate github contributors Image here https://contrib.rocks/preview?repo=angular%2Fangular-ja
 -->
 Eddie Murillo
+
 Florianne Che
+
 Zeel Patel
 
 ## Acknowledgments<!-- Optional -->
