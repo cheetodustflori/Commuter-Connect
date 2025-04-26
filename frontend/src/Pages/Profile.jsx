@@ -16,16 +16,58 @@ export default function Profile() {
   //This is where we parse the data depending on the status
   const handleEditProfile = () => {
     setEditMode(!editMode);
-};
+  };
 
 const handleSignOut = () => {
   let path = `/`;
   navigate(path);
 };
+const [profileChange, setProfileData] = useState({});
 
-const saveProfileChanges = () =>{
-
+const handleDataChange = (data) => {
+  setProfileData(data);
 };
+
+const saveProfileChanges = async () =>{
+  let userID = await getUserID()
+  sendDataChanges(userID);
+  setEditMode(!editMode);
+  window.location.reload();
+};
+
+async function sendDataChanges(currUser){
+  //console.log(JSON.stringify(profileChange));
+  console.log(profileChange);
+  let response = await fetch(`http://127.0.0.1:5000/SaveUserChanges?userID=${currUser}`,
+                {
+                  method:'POST',
+                  mode:'cors',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify(profileChange)
+                });
+}
+
+async function getUserID(){
+    let response = await fetch(`http://127.0.0.1:5000/getUsername`, {
+      method: "GET",
+      mode: 'cors',
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    
+    let data = await response.json();
+    console.log(data);
+    return data['user'];
+  }
+
+
+
+
+  // //end
+  // setEditMode(!editMode);
+//};
 
 
 {/*  WORK UNDER HERE  */}
@@ -45,7 +87,7 @@ const saveProfileChanges = () =>{
 
         {editMode && (
           <>
-            <ProfileEdit/>
+            <ProfileEdit onDataChange={handleDataChange}/>
           </>
         )}
         
