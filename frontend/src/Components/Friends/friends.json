@@ -1,0 +1,66 @@
+[
+    {
+        "username": "MaryAnn30",
+        "routes": [
+            {
+                "isActive" :  "true",
+                "totalTime" :  "100",
+                
+                "routeTitle" : "Home to School",
+                "routeStatus" : "En Route",
+                "startLocation" : "335 Green St. Kenosha, WI 53140",
+                "endLocation" : "1200 W Harrison St, Chicago, IL 60607",
+                "departTime" : "8:00 AM",
+                "arrivalTime" : "8:15 AM",
+                "buddies" : "usersArray",
+                "editMode" : "editMode"
+            },
+            {
+                "isActive" :  "true",
+                "totalTime" :  "50",
+                
+                "routeTitle" : "School to Work",
+                "routeStatus" : "Upcoming",
+                "startLocation" : "1200 W Harrison St, Chicago, IL 60607",
+                "endLocation" : "335 Green St. Kenosha, WI 53140",
+                "departTime" : "9:00 AM",
+                "arrivalTime" : "9:35 AM",
+                "buddies" : "usersArray",
+                "editMode" : "editMode"
+            }
+        ]
+    },
+    {
+        "username": "Jeanz4Free",
+        "routes": [
+            {
+                "isActive" :  "true",
+                "totalTime" :  "90",
+                "routeTitle" : "Naperville Station to School",
+                "routeStatus" : "En Route",
+                "startLocation" : "52 Hill Field Dr. Fitchburg, MA 01420",
+                "endLocation" : "34 Illinois Court Xenia, OH 45385",
+                "departTime" : "10:00 AM",
+                "arrivalTime" : "12:15 PM",
+                "buddies" : "usersArray",
+                "editMode" : "editMode"
+            },
+            {
+                "isActive" :  "true",
+                "totalTime" :  "30",
+                
+                "routeTitle" : "School to Naperville",
+                "routeStatus" : "En Route",
+                "startLocation" : "34 Illinois Court Xenia, OH 45385",
+                "endLocation" : "52 Hill Field Dr. Fitchburg, MA 01420",
+                "departTime" : "5:00 PM",
+                "arrivalTime" : "7:25 PM",
+                "buddies" : "usersArray",
+                "editMode" : "editMode"
+            }
+        ]
+    },
+    {
+        "username": "LettuceLeaf"
+    }
+]

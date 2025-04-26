@@ -3,6 +3,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.active {
+  font-weight: bold;
+}
+
 .page-title {
   margin: 30px;
   margin-bottom: 15px;
@@ -40,6 +44,7 @@ body {
 
 .nav li:hover,
 .nav li:active,
+.nav li.active,
 .profile:hover,
 .profile:active {
   font-weight: bold;
@@ -151,7 +156,6 @@ body {
   flex-direction: row;
   padding: 15px;
   justify-content: space-between;
-  align-items: center;
 }
 
 @media (max-width: 1000px) {
@@ -180,6 +184,11 @@ body {
   margin-right: 20px;
 }
 
+.bus-section,
+.train-section {
+  min-height: 100vh;
+}
+
 #bus {
   background-color: #c5d4ea;
 }
@@ -189,8 +198,8 @@ body {
 }
 
 .bus-predictions {
-    padding: 0;
-    margin: 15px;
+  padding: 0;
+  margin: 15px;
   display: flex;
   flex-direction: column;
 }
@@ -200,4 +209,295 @@ body {
   flex-direction: row;
   justify-content: space-between;
   margin: 10px 0 0 0;
+}
+
+.choose-bus-route {
+  display: flex;
+  justify-content: center;
+}
+
+.bus-check-label {
+  font-weight: bold;
+  color: #C5D4EA;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+
+}
+
+/*  FRIENDS */
+
+.friends-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.friends-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* margin-bottom: 15px; */
+  font-weight: bold;
+}
+
+.friend-count {
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+/* .friends-title > h1,
+.friends-commute-section > h1 {
+
+} */
+
+.find-friends {
+  display: flex;
+  flex-direction: column;
+}
+
+.friends-list {
+  padding-right: 30px;
+  margin: 30px;
+  height: 100vh;
+  width: 280px;
+  border-right: 1px solid rgb(213, 213, 213);
+}
+
+.friends-list li {
+  cursor: pointer;
+}
+
+.friends-list li.active {
+  font-weight: bold;
+}
+
+#username-input {
+  border: none;
+  margin-bottom: 15px;
+  max-width: fit-content;
+  padding: 5px 15px 5px 5px;
+}
+
+#add-friend {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+}
+
+#add-friend.active {
+  position: relative;
+  top: 1px;
+}
+
+.friends {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0;
+}
+
+.friends > ul {
+  margin-top: 50px;
+  list-style-type: none;
+  padding: 0 !important;
+}
+
+.friends > ul > li {
+  margin-bottom: 50px;
+  margin-left: 5px;
+}
+
+.friend-schedule-block > ul > li {
+  list-style-type: none;
+}
+
+.friends-schedule {
+  margin-top: 40px;
+}
+
+.friend-schedule-block > h3 {
+  margin-left: 35px;
+  filter: opacity(50%)
+}
+
+.route-list > li {
+  margin-bottom: 30px;
+}
+
+.no-routes {
+  margin-top: 30px;
+  margin-left: 35px;
+}
+
+@media (max-width: 1100px) {
+  .friends-section {
+    flex-direction: column;
+  }
+  .friends-list {
+    height: fit-content;
+  }
+}
+
+
+
+/* --------- MAP ---------- */
+
+#map-header {
+  display: flex;
+  flex-direction: row;
+  margin: 30px;
+}
+
+#map-title {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  margin-right: 15px;
+}
+
+#vl {
+  border-left: 1px solid rgb(217, 217, 217);
+  height: 150px;
+  margin-top: 30px;
+  margin-right: 15px;
+}
+
+#map-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-column-gap: 020px;
+  grid-row-gap: 0px;
+  margin-left: 30px;
+}
+
+.grid-item {
+  display: grid;
+  padding: 0;
+  min-width: 250px;
+  max-width: 375px;
+}
+
+.grid-item > ul {
+  margin: 0;
+  padding: 0!important;
+}
+
+.grid-item > ul > li {
+  list-style-type: none;
+  border: 1px solid black;
+  border-radius: 30px;
+  width: fit-content;
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.grid-item > ul > li:active {
+  position: relative;
+  top: 1px;
+}
+
+#bus-stations {
+  border: 1px solid #C5D4EA;
+  color: #C5D4EA;
+}
+
+#bus-stations.active {
+  background-color: #C5D4EA;
+  color: white;
+}
+
+#train-stations {
+  border: 1px solid #769EB8;
+  color: #769EB8;
+  filter: opacity(50%)
+}
+
+#train-stations.active {
+  background-color: #769EB8;
+  color: white;
+}
+
+#fast-food {
+  border: 1px solid #BFDCC0;
+  color: #BFDCC0;
+}
+
+#fast-food.active {
+  background-color: #BFDCC0;
+  color: white;
+}
+
+#cafe {
+  border: 1px solid #C3B4E0;
+  color: #C3B4E0;
+  filter: opacity(50%);
+}
+
+#cafe.active {
+  background-color: #C3B4E0;
+  color: white;
+}
+
+#groceries {
+  border: 1px solid #7D91B8;
+  color: #7D91B8;
+}
+
+#groceries.active {
+  background-color: #7D91B8;
+  color: white;
+}
+
+#library {
+  border: 1px solid #E3C698;
+  color: #E3C698;
+}
+
+#library.active {
+  background-color: #E3C698;
+  color: white;
+}
+
+#campus-space {
+  border: 1px solid #E39898;
+  color: #E39898;
+}
+
+#campus-space.active {
+  background-color: #E39898;
+  color: white;
+}
+
+#map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+/* SCHEDULE */
+
+.savedRoutes{
+  display: flex;
+  flex-direction: column;
+
+  width: 400px;
+  height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#horizontalLine{
+  width: 100%;
+  float: left;
+  height: 1px;
+  background-color: #5D576A;
+  border: none;  
+  margin-top: 20px;
 }

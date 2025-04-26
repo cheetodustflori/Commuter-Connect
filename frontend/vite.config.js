@@ -3,21 +3,15 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   server: {
     proxy: {
-      '/api': {
-        target: 'http://www.ctabustracker.com',
-        changeOrigin: true,
-        rewrite: (path) => {
-          console.log("Proxying:", path); 
-          return path.replace(/^\/api/, '');
-        }
-      },
+      // '/api': {
+      //   target: 'http://www.ctabustracker.com', // 🚌 BUS
+      //   changeOrigin: true,
+      //   rewrite: (path) => path.replace(/^\/api/, ''),
+      // },
       '/api2': {
-        target: 'http://www.transitchicago.com',
+        target: 'http://lapi.transitchicago.com', // 🚇 TRAIN
         changeOrigin: true,
-      rewrite: (path) => {
-        console.log("Proxying:", path); 
-        return path.replace(/^\/api/, '');
-      }
+        rewrite: (path) => path.replace(/^\/api2/, ''),
       }
     }
   }

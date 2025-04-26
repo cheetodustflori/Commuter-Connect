@@ -7,6 +7,7 @@ Please note that this is the required layout for the weekly notes.
 **Where**:  Online
 
 ## Attendance
+Flori
 Eddie
 Zeel
 **Late**: N/A
