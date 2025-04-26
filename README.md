@@ -1,22 +1,13 @@
 # Commuter Connect: Where Every Journey Meets Community.
+
+## About<!-- Required -->
+
 Commuter Connect is a web application built with React, Flask, Firebase, using data from Google Routes + Places API, designed to assist and connect commuter students at UIC (University of Illinois Chicago).
 
 At UIC, a large percentage of students are commuters who face long, sometimes lonely journeys to and from campus.
 Many lack a reliable network to coordinate rides, share routes, or connect with other commuters. Commuter Connect solves this problem by offering a platform that helps commuters organize and optimize their daily routes, connects students with "commute buddies" for a more convenient and social travel experience, and builds community among students who might otherwise feel isolated due to commuting.
 
 Our mission is to turn commuting into an opportunity for connection, convenience, and community.
-
-**Note:** This layout is an example. The official requirements for your project README will be provided later in the course.  
-
-## About<!-- Required -->
-
-### Tools
-React, Flask, Firebase, Google Routes + Places APIs
-
-We used React Router for navigation between pages. 
-
-We chose Flask over Django because Flask is lightweight and flexible, making it perfect for our project where we needed a simple REST API backend. Flask allowed us to easily connect with Firebase services and handle API requests without the additional complexity of Django’s full-stack structure. Since our app focuses more on frontend-user interactions  and lightweight data transactions (routes, friends, authentication), Flask provided exactly the right balance of simplicity and power for our project scope. Finally, Flask provided a faster setup time and easier team collaboration for a mid-sized project.
-
 
 ### Key Features
 
@@ -34,6 +25,14 @@ View, edit, and manage your saved commute routes anytime.
 
 *User Authentication:*
 Secure login and registration system powered by Firebase Authentication to keep user data safe.
+
+
+### Tools
+React, Flask, Firebase, Google Routes + Places APIs
+
+We used React Router for navigation between pages. 
+
+We chose Flask over Django because Flask is lightweight and flexible, making it perfect for our project where we needed a simple REST API backend. Flask allowed us to easily connect with Firebase services and handle API requests without the additional complexity of Django’s full-stack structure. Since our app focuses more on frontend-user interactions  and lightweight data transactions (routes, friends, authentication), Flask provided exactly the right balance of simplicity and power for our project scope. Finally, Flask provided a faster setup time and easier team collaboration for a mid-sized project.
 
 
 ## How to use this project<!-- Required -->
@@ -86,7 +85,8 @@ Secure login and registration system powered by Firebase Authentication to keep 
 -->
 
 
-## Table of Contents<!-- Optional -->
+<!-- ## Table of Contents -->
+<!-- Optional -->
 <!-- 
 * This section is optional, yet having a contents table 
 * helps keeping your README readable and more professional.
@@ -120,7 +120,7 @@ Secure login and registration system powered by Firebase Authentication to keep 
 <p align="right"><a href="#how-to-use-this-project">back to top ⬆️</a></p>
 
 
-## Project Roadmap <!-- Optional --> <!-- add learning_Rs-->
+<!-- ## Project Roadmap Optional --> <!-- add learning_Rs-->
 <!-- 
 * Add this section in case the project has different phases
 * 
@@ -133,7 +133,7 @@ Secure login and registration system powered by Firebase Authentication to keep 
 
 
 
-## Documentation<!-- Optional -->
+<!-- ## Documentation Optional -->
 <!-- 
 * You may add any documentation or Wikis here
 * 
@@ -153,7 +153,7 @@ Florianne Che
 
 Zeel Patel
 
-## Acknowledgments<!-- Optional -->
+<!-- ## Acknowledgments Optional -->
 <!-- 
 * Credit where it's do 
 * 
@@ -183,7 +183,7 @@ Eddie Murillo: emuri@uic.edu
 Florianne Che: fche2@uic.edu
 Zeel Patel: zpate6@uic.edu
 
-## License<!-- Optional -->
+<!--  ## License Optional -->
 <!-- 
 * Here you can add project license for copyrights and distribution 
 * 
