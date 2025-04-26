@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
+import GoogleMap from "../components/Map/GoogleMap";
 import { useState } from "react";
 
 export default function Map() {
@@ -108,6 +109,10 @@ export default function Map() {
           </div>
         </div>
       </div>
+      <div id="map-container">
+      <GoogleMap/>
+      </div>
+      
     </>
   );
 }

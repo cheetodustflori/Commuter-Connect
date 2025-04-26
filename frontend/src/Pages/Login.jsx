@@ -12,14 +12,14 @@ const Login = () => {
 
     const handleLogIn = () => {
         console.log("Sign In Button Clicked")
-        // let path = `/schedule`; 
+        let path = `/schedule`; 
         if (email.length === 0 || password.length === 0) {
             // Array is empty
             setIsValid(false)
 
         }else{
-            // navigate(path);
-            loadUserSettings()
+            navigate(path);
+            // loadUserSettings()
         }
         
     };

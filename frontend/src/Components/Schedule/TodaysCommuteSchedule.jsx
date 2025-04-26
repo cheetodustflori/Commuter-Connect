@@ -1,5 +1,5 @@
 import React, { useState }  from 'react'
-import './Styles/TodaysCommuteSchedule.css'
+import './Styles/Schedule.css'
 import CommuteScheduleRoute from './CommuteScheduleRoute'
 import CommuteRoutes from './CommuteRoutes'
 import ScrollableRoutes from './ScrollableRoutes'
@@ -126,7 +126,7 @@ const Schedule = ({user}) => {
 
             <div className='fullTitle' style={{gap: editMode ? '140px' : '200px',}}>
                 <div id='titleBar'>
-                    <h1>Today’s Commute Schedule</h1>
+                    <h2>Today’s Commute Schedule</h2>
 
                     {!editMode && (
                             <>
@@ -141,7 +141,7 @@ const Schedule = ({user}) => {
                     )}
 
                 </div>
-                <h2>Commute Buddies</h2>
+                <h2 id="commute-buddies-title">Commute Buddies</h2>
 
             </div>
 
