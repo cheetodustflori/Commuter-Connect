@@ -6,21 +6,21 @@ We aim to make commuting life easier and more social for UIC students by offerin
 **Note:** This layout is an example. The official requirements for your project README will be provided later in the course.  
 
 ## About<!-- Required -->
-# Key Features
-**Create Route System:**
+** Key Features **
+*Create Route System:*
 Students can create and save their fastest commute routes using Google Maps' Routes and Places API, optimized with a priority queue for fastest paths.
 
-**Commute Buddy System:**
+*Commute Buddy System:*
 Add friends to your commute routes to make traveling easier and more enjoyable.
 
-**Friend Lookup:**
+*Friend Lookup:*
 Easily find and add friends using a Trie-based friend search system for fast and efficient lookups.
 
-**Daily Commute Management:**
+*Daily Commute Management:*
 View, edit, and manage your saved commute routes anytime.
 
-User Authentication:
-**Secure login and regis**tration system powered by Firebase Authentication to keep user data safe.
+*User Authentication:*
+Secure login and registration system powered by Firebase Authentication to keep user data safe.
 
 
 ## How to use this project<!-- Required -->
@@ -29,20 +29,20 @@ User Authentication:
 * 
 * and why to use this project.
 -->
-## 1. Creating your own Project Repository
+### 1. Creating your own Project Repository
 - Click on **Fork** to create your own repo and then click **Create Fork**.
 
-## 2. Backend Installation : Python3, pip
+### 2. Backend Installation : Python3, pip
 - For Windows Users, Download Python from the [official website](https://www.python.org/downloads/). Ensure to select "Add Python to PATH" during installation.
 - For Mac Users, install using Homebrew : `brew install python`
 - Confirm installation by typing `python --version` and `pip --version` on Command Prompt
 
-## 3. Frontend Installation : Nodejs and npm
+### 3. Frontend Installation : Nodejs and npm
 - For Windows users, install [Node.js and npm LTS version](https://nodejs.org/en/download)
 - For Mac users, using Homebrew `brew install node`
 - Confirm installation by running `node -v` and `npm -v`
 
-## 4. Set up Flask+React Demo locally
+### 4. Set up Flask+React Demo locally
 - Go to your Forked Repository on Github, Click on green **Code** button and copy the URL (using HTTPS or SSH)
 - Open up VS Code and in the home page or under Source Control, click on **Clone a Repository**. Choose a directory to store your project on your local computer. You can also do the same from the *command line* using `git clone REPO_URL`
 - You will now see a local version of all the files/source code from GitHub. 
