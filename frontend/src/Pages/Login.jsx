@@ -18,13 +18,15 @@ const Login = () => {
             setIsValid(false)
 
         }else{
-            navigate(path);
+            // navigate(path);
             loadUserSettings()
         }
         
     };
 
     async function loadUserSettings(){
+        let path = `/schedule?prop=${email}`; 
+
         let response = await fetch(`http://127.0.0.1:5000/getUserInfo?userID=${email}&password=${password}`,{
             method:'GET',
             mode: 'cors',
@@ -41,6 +43,8 @@ const Login = () => {
         let responseMessage = data['Response'];
 
         if(responseMessage == "All good!"){
+            navigate(path);
+            setIsValid(false);
             //change front end to the schedule page 
             // with all the information added
         }

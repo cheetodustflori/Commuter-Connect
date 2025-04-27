@@ -1,10 +1,10 @@
 import React, { useState }  from 'react'
-import './Styles/TodaysCommuteSchedule.css'
+import './Styles/Schedule.css'
 import CommuteScheduleRoute from './CommuteScheduleRoute'
 import CommuteRoutes from './CommuteRoutes'
 import ScrollableRoutes from './ScrollableRoutes'
 
-const Schedule = () => {
+const Schedule = ({user}) => {
     const usersArray = [
         { id: 1, name: "Ted", color: "#769EB8" },
         { id: 2, name: "Robin", color: "#EC7D0E" },
@@ -12,6 +12,8 @@ const Schedule = () => {
 
     const [editMode, setEditMode] = useState(false);
     const [addNewRoute, setAddNewRoute] = useState(false);
+    const [responseMessage, setResponseMessage] = useState('');
+
 
     const handleEditSchedule = () => {
         setEditMode(!editMode);
@@ -22,11 +24,76 @@ const Schedule = () => {
         setAddNewRoute(!addNewRoute);
     };
 
-    const [isCheckedTrain, setIsCheckedTrain] = useState(false);
-    const [isCheckedBus, setIsCheckedBus] = useState(false);
-    const [isCheckedWalk, setIsCheckedWalk] = useState(false);
+    // const handleAddRouteToDB = () => {
+    //     console.log(user);
+    //     console.log(selectedOptions);
+    //     console.log(departTime);
+    //     console.log(arrivalTime);
+    //     console.log(departLocation);
+    //     console.log(arrivalLocation);
+    //     console.log(commuteTitle);
+    // };
 
-    const [selectedOption, setSelectedOption] = useState("");
+    const handleAddRouteToDB = async (e) => {
+        console.log("Add Route Button Clicked");
+        e.preventDefault();
+    
+        const sendRouteReq = {
+            username:user,
+            route:{
+                friends:selectedOptions,
+                departTime:departTime,
+                arrivalTime:arrivalTime, // Add any additional fields here
+                departLocation:departLocation,
+                arrivalLocation:arrivalLocation,
+                commuteTitle:commuteTitle
+            }
+        };
+    
+        try {
+          const response = await fetch('http://127.0.0.1:5000/createRoute', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sendRouteReq),
+          });
+
+          const result = await response.json();
+
+            if (response.status === 409) {
+                // setFail(true);
+                console.log(result.Message); // "Username already exists!"
+            } else if (response.ok) {
+                console.log(result.Message); // "Profile successfully sent!"
+                console.log(user);
+                console.log(selectedOptions);
+                console.log(departTime);
+                console.log(arrivalTime);
+                console.log(departLocation);
+                console.log(arrivalLocation);
+                console.log(commuteTitle);
+                
+            }
+
+        } catch (error) {
+          console.error('Error creating user:', error);
+        //   setResponseMessage('Something went wrong!');
+        }
+      };
+
+    // const [isCheckedTrain, setIsCheckedTrain] = useState(false);
+    // const [isCheckedBus, setIsCheckedBus] = useState(false);
+    // const [isCheckedWalk, setIsCheckedWalk] = useState(false);
+
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [departTime, setDepartTime] = useState("");
+    const [arrivalTime, setArrivalTime] = useState("");
+
+    const [departLocation, setDepartLocation] = useState("");
+    const [arrivalLocation, setArrivalLocation] = useState("");
+
+    const [commuteTitle, setCommuteTitle] = useState("");
 
 
   const handleChangeTrain = (event) => {
@@ -43,8 +110,13 @@ const Schedule = () => {
 
   const handleChange = (event) => {
     const values = Array.from(event.target.selectedOptions, (option) => option.value);
-    setSelectedOption(values);
+    setSelectedOptions(prevItems => [...prevItems, values]);
   };
+
+  const handleExit = () => {
+    setAddNewRoute(!addNewRoute);
+    setSelectedOptions([]); // Empties the array
+};
 
     
   return (
@@ -54,7 +126,7 @@ const Schedule = () => {
 
             <div className='fullTitle' style={{gap: editMode ? '140px' : '200px',}}>
                 <div id='titleBar'>
-                    <h1>Today’s Commute Schedule</h1>
+                    <h2>Today’s Commute Schedule</h2>
 
                     {!editMode && (
                             <>
@@ -69,7 +141,7 @@ const Schedule = () => {
                     )}
 
                 </div>
-                <h2>Commute Buddies</h2>
+                <h2 id="commute-buddies-title">Commute Buddies</h2>
 
             </div>
 
@@ -134,9 +206,23 @@ const Schedule = () => {
 
                         <div className='routeOptions'>
 
-                            <h3 style={{fontWeight: 'bold'}}>Depart Time: <input name="myInput" /> </h3>
+                            <div className='writtenInputs'>
 
-                            <div>
+                                <div className='commuteTimes'> 
+                                    <h3 style={{fontWeight: 'bold'}}>Depart Time: <input name="myInput" onChange={(e) => setDepartTime(e.target.value)}/> </h3>
+                                    <h3 style={{fontWeight: 'bold'}}>Arrival Time: <input name="myInput" onChange={(e) => setArrivalTime(e.target.value)}/> </h3>
+                                </div>
+                                <div className='commuteTimes'> 
+                                    <h3 style={{fontWeight: 'bold'}}>Depart Location: <input name="myInput" onChange={(e) => setDepartLocation(e.target.value)}/> </h3>
+                                    <h3 style={{fontWeight: 'bold'}}>Arrival Location: <input name="myInput" onChange={(e) => setArrivalLocation(e.target.value)}/> </h3>
+                                </div>
+
+                                <h3 style={{fontWeight: 'bold'}}>Commute Title: <input name="myInput" onChange={(e) => setCommuteTitle(e.target.value)}/> </h3>
+
+                            </div>
+                            
+
+                            {/* <div>
                                 <h3 id='text' style={{fontWeight: 'bold'}}>Transportation Modes:</h3>
 
                                 <div id='options'>
@@ -158,25 +244,27 @@ const Schedule = () => {
 
                                 </div>
 
-                            </div>
+                            </div> */}
 
                             <div id='addCommuteBuddies'>
 
                                 <h3 style={{fontWeight: 'bold'}}>Add Commute Buddies: </h3>
-                                <select id="dropdown" value={selectedOption} onChange={handleChange}>
-                                    <option value="">None Selected</option>
-                                    <option value="option1">Ted</option>
-                                    <option value="option2">Robin</option>
-                                    <option value="option3">Lily</option>
-                                </select>
+                                <select id="dropdown" value={selectedOptions} onChange={handleChange}>
+                                        <option value="">None Selected</option>
+                                        <option value="Ted">Ted</option>
+                                        <option value="Robin">Robin</option>
+                                        <option value="Lily">Lily</option>
+                                    </select>
+                                    <p>{selectedOptions.join(' , ')}</p>
+                                
 
                             </div>
 
                             <div id='buttonOptions'>
-                                <button id='button' onClick={handleAddNewRoute} style={{backgroundColor: "#EAEAEA", color: "black", borderColor:  "#EAEAEA"}}>Cancel</button>
-                                <button id='button' style={{backgroundColor: "#769EB8"}}>Add Route</button>
+                                <button id='button' onClick={handleExit} style={{backgroundColor: "#EAEAEA", color: "black", borderColor:  "#EAEAEA"}}>Cancel</button>
+                                <button id='button' onClick={handleAddRouteToDB} style={{backgroundColor: "#769EB8"}}>Add Route</button>
                             </div>
-                            
+
 
                         </div>
                     </div>
