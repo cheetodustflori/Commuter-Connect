@@ -9,6 +9,7 @@ import os
 import json
 from dotenv import load_dotenv
 import requests
+from requests import get, post, put
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -61,7 +62,7 @@ class User:
         self.first_name = dictionary.get('first_name')
         self.last_name = dictionary.get('last_name')
         self.password = dictionary.get('password')
-        self.routes = {}
+        self.routes = dictionary.get('routes')
         return
 
 UserStructure = User()
@@ -120,6 +121,10 @@ def getFriendsList():
 
 @app.route('/getSavedRoutes',methods=['GET'])
 def getSavedRoutes():
+    '''
+    This returns a map of different routes
+        'Commuter
+    '''
     return UserStructure.routes
 
 @app.route('/getFirstName',methods=['GET'])
@@ -154,6 +159,103 @@ def addUser():
 
     return jsonify({'Message':'Profile successfully sent!'})
 
+@app.route('/addRoute', methods=['POST'])
+def addRoute():
+    userID = UserStructure.userName
+    data = request.json
+    print(data)
+    lat_origin,lon_origin = getLocationCoordinates(data['departLocation'])
+    lat_dest,lon_dest = getLocationCoordinates(data['arrivalLocation'])
+
+    commuterBuddies = []
+    for user in data['selectedOptions']:
+        commuterBuddies.append(user[0])
+    geoLocations = {
+        'origin':{'addess': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
+        'dest':{'address':data['arrivalLocation'],'lat':str(lat_origin), 'lon':str(lon_origin)}
+    }
+
+    print(commuterBuddies)
+    postString = {
+        'Commuter_Buddies': commuterBuddies,
+        'Method':'WALK',
+        'geoLocations': geoLocations,
+        'Title': data['commuteTitle']
+        
+    }
+    routes = UserStructure.routes
+    numOfEntries = len(routes)
+    name = 'route'+str(numOfEntries)
+    routes[name] = postString
+    reference = db.collection('Users').document(userID)
+
+    try:
+        reference.update({'routes':routes})
+    except Exception as e:
+        print(f"Error! : {e}")
+    return jsonify({'Message':'Route successfully sent!'})
+
+@app.route('/SaveUserChanges',methods=['POST'])
+def saveUserChanges():
+    data = request.json
+    # print(data)
+    OriginalUserID = request.args.get('userID')
+    # print(OriginalUserID)
+
+    tempRoutes = []
+    tempRoutes = UserStructure.routes
+
+    
+    # if(data['username']!=OriginalUserID):
+    #     newUser = data['username']
+    # else:
+    #     newUser = OriginalUserID
+
+    # if(data['email'] != UserStructure.email):
+    #     newEmail = data['email']
+    # else:
+    #     newEmail = UserStructure.email
+
+    newUser = OriginalUserID
+    newEmail = UserStructure.email
+    newFirst = UserStructure.first_name
+    newLast = UserStructure.last_name
+    newPass = UserStructure.password
+
+    if(data['username']!='') and (newUser!=data['username']):
+        newUser = data['username']
+
+    if(data['email']!='') and (newEmail != data['email']):
+        newEmail = data['email']
+
+    if(data['first_name']!='') and (newFirst != data['first_name']):
+        newFirst = data['first_name']
+
+    if(data['last_name']!='') and (newLast != data['last_name']):
+        newLast = data['last_name']
+    
+    if(data['password']!='') and (newPass != data['password']):
+        newPass = data['password']
+
+    newData = {
+        'username': newUser,
+        'first_name':newFirst,
+        'last_name':newLast,
+        'email':newEmail,
+        'password':newPass,
+        'routes':tempRoutes,
+        'friends':UserStructure.friends
+    }
+
+    db.collection('Users').document(OriginalUserID).delete()
+
+    db.collection('Users').document(newUser).set(newData)
+    constructDataStructure(newData)
+
+    
+
+    return jsonify({'Message':'Data Saved Sucessfully'})
+
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
@@ -184,24 +286,25 @@ def getLocationName():
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
 
-@app.route('/getLocationCoordinates',methods = ['GET'])
-def getLocationCoordinates():
+#@app.route('/getLocationCoordinates',methods = ['GET'])
+def getLocationCoordinates(locationName):
 
     #baseURL take from the website that will allow us to build call
     baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 
     data = request.json
-    address = data['address']
+    address = locationName
 
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
     #building full call
     string = f'address={address_string}&key={Google_Maps_Key}'
-    
+    # print(baseURL+string)
     #get call and load it in with json
-    response = request.get(baseURL+string)
+    response = get(baseURL+string)
     json_results = json.loads(response.content)
+    #print(json_results)
 
     #TODO---> IMPLEMENT EMPTY RESPONSE CASE
 
@@ -213,7 +316,7 @@ def getLocationCoordinates():
     latitude = location_coords['latitude']
     longitude = location_coords['longitude']
 
-    #Return?
+    return (latitude,longitude)
     #print(f"{latitude}   {longitude}")
 
 '''This is a helper function that is called from getLocationCoordinates()
@@ -250,11 +353,12 @@ def replaceSpecialCharacters(string):
 def getRoute():
     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
-    lat_origin = 41.6288754
-    lon_origin = -87.6837692
-    lat_dest = 41.6402277
-    lon_dest = -87.718246
-    travelMode = "DRIVE"
+    lat_origin = request.args.get('lat_origin')
+    lon_origin = request.args.get('lon_origin')
+    lat_dest = request.args.get('lat_dest')
+    lon_dest = request.args.get('lat_dest')
+    
+    travelMode = "WALK"
 
     headers = {
         "Content-Type": "application/json",

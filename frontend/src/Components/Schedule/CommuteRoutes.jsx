@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./Styles/Schedule.css";
 import SavedRoute from "./SavedRoute";
 import mapsLogo from "../../assets/mapImage.png";
@@ -20,6 +20,39 @@ const CommuteRoutes = () => {
   const [arrivalLocation, setArrivalLocation] = useState("");
 
   const [commuteTitle, setCommuteTitle] = useState("");
+
+    const [friendsData, setFriendsData] = useState([]);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      async function fetchFriends() {
+        try {
+          const data = await loadUserFriends();
+          setFriendsData(data);
+        } catch (error) {
+          console.error("Error loading friends:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchFriends();
+    }, []);
+  
+    async function loadUserFriends() {
+      let response = await fetch(`http://127.0.0.1:5000/getFriends`, {
+        method: "GET",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      
+      let data = await response.json();
+      console.log(data);
+      return data;
+    }
 
   const handleChangeTrain = (event) => {
     setIsCheckedTrain(event.target.checked);
@@ -54,13 +87,48 @@ const CommuteRoutes = () => {
     console.log("clicked");
   };
 
-  const handleAddNewRoute = () => {
+  //Send to backend
+  const handleAddNewRoute = async () => {
     console.log(selectedOptions);
     console.log(departTime);
     console.log(arrivalTime);
     console.log(departLocation);
     console.log(arrivalLocation);
     console.log(commuteTitle);
+
+    const routeData = {
+      departLocation:departLocation,
+      arrivalLocation:arrivalLocation,
+      commuteTitle:commuteTitle,
+      selectedOptions:selectedOptions,
+      departTime:departTime
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/addRoute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(routeData),
+      });
+
+      const result = await response.json();
+
+        // if (response.status === 409) {
+        //     setFail(true);
+        //     console.log(result.Message); // "Username already exists!"
+        // } else if (response.ok) {
+        //     console.log(result.Message); // "Profile successfully sent!"
+        //     let path = `/`;
+        //     navigate(path);
+        // }
+
+    } catch (error) {
+      console.error('Error creating route:', error);
+      // setResponseMessage('Something went wrong!');
+    }
+
   };
 
   const savedRoutes = [
@@ -200,10 +268,16 @@ const CommuteRoutes = () => {
                 value={selectedOptions}
                 onChange={handleChange}
               >
-                <option value="">None Selected</option>
+
+              {friendsData.map((friend,i) => (
+                  <option key={i}>
+                    {friend}
+                  </option>
+                ))}
+                {/* <option value="">None Selected</option>
                 <option value="Ted">Ted</option>
                 <option value="Robin">Robin</option>
-                <option value="Lily">Lily</option>
+                <option value="Lily">Lily</option> */}
               </select>
               <p>{selectedOptions.join(" , ")}</p>
             </div>
