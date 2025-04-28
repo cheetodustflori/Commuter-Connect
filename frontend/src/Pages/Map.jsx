@@ -34,6 +34,7 @@ export default function Map() {
         try {
           await buildPQ();
           const data = await loadPlaces();
+          console.log(data);
           setPlacesData(data);
         } catch (error) {
           console.error("Error loading places:", error);
@@ -42,17 +43,17 @@ export default function Map() {
         }
       }
   
-      fetchFriends();
+      fetchPlaces();
     }, []);
 
     async function buildPQ(){
       let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-        method: "GET",
+        method: "POST",
         mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          body: JSON.stringify(locations)
+          // body: JSON.stringify(locations)
         },
       });
     }
