@@ -136,29 +136,29 @@ def constructDataStructure(dictionary):
 
 def populateRoutesMap():
     global Routes
+    if(UserStructure.routes != None):
+        for route_name, route_map in UserStructure.routes.items():
 
-    for route_name, route_map in UserStructure.routes.items():
+            duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+                                        route_map['geoLocations']['origin']['lon'],
+                                        route_map['geoLocations']['dest']['lat'],
+                                        route_map['geoLocations']['dest']['lon'])
+            
+            arrivalTime = calculateArrival(route_map['Depart'], duration)
+            distance = convertToMiles(distance)
 
-        duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
-                                    route_map['geoLocations']['origin']['lon'],
-                                    route_map['geoLocations']['dest']['lat'],
-                                    route_map['geoLocations']['dest']['lon'])
-        
-        arrivalTime = calculateArrival(route_map['Depart'], duration)
-        distance = convertToMiles(distance)
+            route = {
+                'Title': route_map['Title'],
+                'Origin': route_map['geoLocations']['origin']['address'],
+                'Dest': route_map['geoLocations']['dest']['address'],
+                'Depart': route_map['Depart'],
+                'Buddies': route_map['Commuter_Buddies'],
+                'Arrive':arrivalTime,
+                'Dist':distance,
+                'Durr':duration
+            }
 
-        route = {
-            'Title': route_map['Title'],
-            'Origin': route_map['geoLocations']['origin']['address'],
-            'Dest': route_map['geoLocations']['dest']['address'],
-            'Depart': route_map['Depart'],
-            'Buddies': route_map['Commuter_Buddies'],
-            'Arrive':arrivalTime,
-            'Dist':distance,
-            'Durr':duration
-        }
-
-        Routes[route_map['Title']] = route
+            Routes[route_map['Title']] = route
     return
     
 @app.route('/getFriends',methods=['GET'])
