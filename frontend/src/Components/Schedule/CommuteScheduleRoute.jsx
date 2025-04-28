@@ -21,7 +21,10 @@ const CommuteRoute = ({
   const [timeLeft, setTimeLeft] = useState(totalTime);
   const [deleteEvent, setDeleteEvent] = useState(false);
 
+  const colors = ["#769EB8", "#EC7D0E", "#48C738"];
+
   useEffect(() => {
+    console.log(buddies);
     if (timeLeft <= 0) return;
 
     const timer = setTimeout(() => {
@@ -165,27 +168,29 @@ const CommuteRoute = ({
         <span className="commute-buddy-spacing"></span>
 
         <div className="commuteBuddies">
-          {buddies.map((person) => (
-            <div id="user" key={person.id}>
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  backgroundColor: `${person.color}`,
-                  borderRadius: "50%",
-                }}
-              ></div>
-              <h3 style={{ fontWeight: "bold" }}>{person.name}</h3>
 
-              <div className="iconTrash">
-                {editMode && (
-                  <>
-                    <img id="Icons" src={trashIcon} onClick={handleDelete} />
-                  </>
-                )}
-              </div>
+        {buddies.map((person, index) => (
+            <div id="user" key={index}>
+                <div
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: `${colors[index%3]}`,
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <h3 style={{ fontWeight: "bold" }}>{person}</h3>
+  
+                <div className="iconTrash">
+                  {editMode && (
+                    <>
+                      <img id="Icons" src={trashIcon} onClick={handleDelete} />
+                    </>
+                  )}
+                </div>
             </div>
           ))}
+  
         </div>
       </div>
     </div>
