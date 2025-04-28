@@ -473,7 +473,7 @@ def convertToMiles(distance):
 @app.route('/buildPQ',methods=['GET'])
 def getPlacesPQ():
     # locations = request.args.get('locations')
-
+    #getPlaces(locationTypes)
 
 
     return
