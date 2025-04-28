@@ -12,6 +12,7 @@ import requests
 from requests import get, post, put
 import firebase_admin
 from firebase_admin import credentials, firestore
+import heapq
 
 #set up the flask to recieve requests from front end
 app = Flask(__name__)
@@ -56,7 +57,7 @@ class User:
         self.routes = {}
         return  
     def assign_values(self,dictionary)->None:
-        print( "HELLO")
+        # print( "HELLO")
         self.userName = dictionary.get('username')
         self.friends = dictionary.get('friends')
         self.email = dictionary.get('email')
@@ -66,7 +67,22 @@ class User:
         self.routes = dictionary.get('routes')
         return
 
+class PlaceNode:
+    def __init__(self,dist,dict)->None:
+        self.left = None
+        self.right = None
+        self.dist = dist
+        self.map = dict
+        return
+    def __lt__(self,other):
+        return self.dist<other.dist
+
+
+
 UserStructure = User()
+Routes = {}
+Trie={}
+PlacesQueue = []
 
 @app.route('/')
 def root():
@@ -102,6 +118,8 @@ def getUserInfo():
         # return jsonify(doc.to_dict())
         if userPassword == password:
             constructDataStructure(doc_dict)
+            populateRoutesMap()
+            buildTrie()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -115,6 +133,33 @@ def constructDataStructure(dictionary):
      global UserStructure
      UserStructure.assign_values(dictionary)
      return
+
+def populateRoutesMap():
+    global Routes
+
+    for route_name, route_map in UserStructure.routes.items():
+
+        duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+                                    route_map['geoLocations']['origin']['lon'],
+                                    route_map['geoLocations']['dest']['lat'],
+                                    route_map['geoLocations']['dest']['lon'])
+        
+        arrivalTime = calculateArrival(route_map['Depart'], duration)
+        distance = convertToMiles(distance)
+
+        route = {
+            'Title': route_map['Title'],
+            'Origin': route_map['geoLocations']['origin']['address'],
+            'Dest': route_map['geoLocations']['dest']['address'],
+            'Depart': route_map['Depart'],
+            'Buddies': route_map['Commuter_Buddies'],
+            'Arrive':arrivalTime,
+            'Dist':distance,
+            'Durr':duration
+        }
+
+        Routes[route_map['Title']] = route
+    return
     
 @app.route('/getFriends',methods=['GET'])
 def getFriendsList():
@@ -126,7 +171,7 @@ def getSavedRoutes():
     This returns a map of different routes
         'Commuter
     '''
-    return UserStructure.routes
+    return Routes
 
 @app.route('/getFirstName',methods=['GET'])
 def getFirstName():
@@ -176,17 +221,17 @@ def addRouteE():
     for user in data['selectedOptions']:
         commuterBuddies.append(user[0])
     geoLocations = {
-        'origin':{'addess': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
-        'dest':{'address':data['arrivalLocation'],'lat':str(lat_origin), 'lon':str(lon_origin)}
+        'origin':{'address': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
+        'dest':{'address':data['arrivalLocation'],'lat':str(lat_dest), 'lon':str(lon_dest)}
     }
 
-    print(commuterBuddies)
+    # print(commuterBuddies)
     postString = {
         'Commuter_Buddies': commuterBuddies,
         'Method':'WALK',
         'geoLocations': geoLocations,
-        'Title': data['commuteTitle']
-        
+        'Title': data['commuteTitle'],
+        'Depart':data['departTime']
     }
     routes = UserStructure.routes
     numOfEntries = len(routes)
@@ -196,6 +241,8 @@ def addRouteE():
 
     try:
         reference.update({'routes':routes})
+        constructDataStructure(db.collection('Users').document(userID).get().to_dict())
+        populateRoutesMap()
     except Exception as e:
         print(f"Error! : {e}")
     return jsonify({'Message':'Route successfully sent!'})
@@ -451,14 +498,9 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
-@app.route('/getRoute',methods=['GET'])
-def getRoute():
+# @app.route('/getRoute',methods=['GET'])
+def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
-
-    lat_origin = request.args.get('lat_origin')
-    lon_origin = request.args.get('lon_origin')
-    lat_dest = request.args.get('lat_dest')
-    lon_dest = request.args.get('lat_dest')
     
     travelMode = "WALK"
 
@@ -486,7 +528,7 @@ def getRoute():
             }
         },
         "travelMode": travelMode,
-        "routingPreference":"TRAFFIC_AWARE",
+        "routingPreference":None,
         "computeAlternativeRoutes": False,
         "routeModifiers": {
             "avoidTolls": False,
@@ -497,11 +539,134 @@ def getRoute():
         "units": "IMPERIAL"
     }
 
-    response = request.post(baseURL,headers=headers,data=json.dumps(query_string))
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
     print(response.status_code)
     json_results = json.loads(response.content)
 
-    print(json_results)
+    duration = json_results['routes'][0]['duration']
+    distance = json_results['routes'][0]['distanceMeters']
+    return (duration,distance)
+
+def calculateArrival(depart,duration):
+
+    index = depart.find(':')
+
+    hour = int(depart[:index])
+    minutes = int(depart[index+1:])
+
+    duration_seconds = int(duration.replace("s", ""))
+    duration_minutes = duration_seconds // 60  # integer division
+
+    minutes += duration_minutes
+
+    hour += minutes // 60
+    minutes = minutes % 60
+
+    hour = hour % 24
+
+    arrival_time = f"{hour:02}:{minutes:02}"
+
+    return arrival_time
+
+def convertToMiles(distance):
+    miles = distance / 1609.344
+    return miles
+
+@app.route('/buildPQ',methods=['GET'])
+def getPlacesPQ():
+    # locations = request.args.get('locations')
+    #getPlaces(locationTypes)
+
+
+    return
+
+def getPlaces(locationTypes):
+    global PlacesQueue
+    baseURL = "https://places.googleapis.com/v1/places:searchNearby"
+
+    #fast food  ---> fast_food_restaurant
+    #cafe        --> cafe
+    #groceries   --> grocery_store
+    #library     --> library
+    #bus station  -> bus_station
+    #train station > train_station
+
+    origin_lat = 41.8719456
+    origin_lng = -87.6474381
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": Google_Maps_Key,
+        "X-Goog-FieldMask": 'places.displayName,places.formattedAddress,places.location'
+    }
+
+    query_string={
+        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "maxResultCount": 20, #range from 1-20
+        # "rankPreference": "DISTANCE",
+        "locationRestriction": {
+            "circle": {
+                "center": {
+                    "latitude": origin_lat,
+                    "longitude": origin_lng},
+                    "radius": 1600.0
+                }
+  }
+    }
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
+    print(response.status_code)
+    json_results = json.loads(response.content)
+
+    places = json_results['places']
+
+    count=0
+    for place in places:
+        displayName = place['displayName']['text']
+        lat = place['location']['latitude']
+        lng = place['location']['longitude']
+
+        location = {
+            'lat':lat,
+            'lng':lng
+        }
+
+        duration,distance = getRoute(origin_lat,origin_lng,lat,lng)
+
+        address = place['formattedAddress']
+        key = displayName.replace(" ", "")
+
+        placeInfo = {  
+            'key':key,
+            'name':displayName,
+            'address':address,
+            'location':location
+        }
+
+        heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
+        #print(f"{placeInfo}\n")
+
+        heapq.heapify(PlacesQueue)
+
+        while(len(PlacesQueue)!=1):
+            leftNode = heapq.heappop(PlacesQueue)
+            rightNode = heapq.heappop(PlacesQueue)
+
+            parentNode = heapq.heappop(PlacesQueue)
+            parentNode.left = leftNode
+            parentNode.right = rightNode
+
+            heapq.heappush(PlacesQueue,parentNode)
+    return
+
+def accessUsers():
+    docs = db.collection('Users').stream()
+
+    for doc in docs:
+        print(doc.id)
+    return
+
+def buildTrie():
+    return
 
 @app.route('/getMap', methods=['GET'])
 def getMap():
