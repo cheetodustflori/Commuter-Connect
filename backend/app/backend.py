@@ -66,27 +66,22 @@ class User:
         self.routes = dictionary.get('routes')
         return
 
-class Route:
-    def __init__(self,dict)->None:
-        self.title = dict.get('Title')
-        self.origin = dict['geoLocations']['origin']['address']
-        self.dest = dict['geoLocations']['dest']['address']
-
-        self.duration,self.distance = getRoute(dict['geoLocations']['origin']['lat'],
-                                    dict['geoLocations']['origin']['lon'],
-                                    dict['geoLocations']['dest']['lat'],
-                                    dict['geoLocations']['dest']['lon'])
-        
-        self.departTime = dict['Depart']
-        self.arrivalTime = calculateArrival(self.departTime, self.duration)
-        self.commuteBuddies = dict['Commuter_Buddies']
-        self.distance = convertToMiles(self.distance)
+class PlaceNode:
+    def __init__(self,dist,dict)->None:
+        self.left = None
+        self.right = None
+        self.dist = dist
+        self.map = dict
         return
+    def __lt__(self,other):
+        return self.dist<other.dist
 
 
 
 UserStructure = User()
 Routes = {}
+Trie={}
+PlacesQueue = []
 
 @app.route('/')
 def root():
@@ -123,6 +118,7 @@ def getUserInfo():
         if userPassword == password:
             constructDataStructure(doc_dict)
             populateRoutesMap()
+            buildTrie()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -474,9 +470,102 @@ def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
-@app.route('/getPlaces',method=['GET'])
+@app.route('/buildPQ',methods=['GET'])
 def getPlacesPQ():
+    # locations = request.args.get('locations')
+
+
+
     return
+
+def getPlaces(locationTypes):
+    global PlacesQueue
+    baseURL = "https://places.googleapis.com/v1/places:searchNearby"
+
+    #fast food  ---> fast_food_restaurant
+    #cafe        --> cafe
+    #groceries   --> grocery_store
+    #library     --> library
+    #bus station  -> bus_station
+    #train station > train_station
+
+    origin_lat = 41.8719456
+    origin_lng = -87.6474381
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": Google_Maps_Key,
+        "X-Goog-FieldMask": 'places.displayName,places.formattedAddress,places.location'
+    }
+
+    query_string={
+        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "maxResultCount": 20, #range from 1-20
+        # "rankPreference": "DISTANCE",
+        "locationRestriction": {
+            "circle": {
+                "center": {
+                    "latitude": origin_lat,
+                    "longitude": origin_lng},
+                    "radius": 1600.0
+                }
+  }
+    }
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
+    print(response.status_code)
+    json_results = json.loads(response.content)
+
+    places = json_results['places']
+
+    count=0
+    for place in places:
+        displayName = place['displayName']['text']
+        lat = place['location']['latitude']
+        lng = place['location']['longitude']
+
+        location = {
+            'lat':lat,
+            'lng':lng
+        }
+
+        duration,distance = getRoute(origin_lat,origin_lng,lat,lng)
+
+        address = place['formattedAddress']
+        key = displayName.replace(" ", "")
+
+        placeInfo = {  
+            'key':key,
+            'name':displayName,
+            'address':address,
+            'location':location
+        }
+
+        heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
+        #print(f"{placeInfo}\n")
+
+        heapq.heapify(PlacesQueue)
+
+        while(len(PlacesQueue)!=1):
+            leftNode = heapq.heappop(PlacesQueue)
+            rightNode = heapq.heappop(PlacesQueue)
+
+            parentNode = heapq.heappop(PlacesQueue)
+            parentNode.left = leftNode
+            parentNode.right = rightNode
+
+            heapq.heappush(PlacesQueue,parentNode)
+    return
+
+def accessUsers():
+    docs = db.collection('Users').stream()
+
+    for doc in docs:
+        print(doc.id)
+    return
+
+def buildTrie():
+    return
+
 @app.route('/getMap', methods=['GET'])
 def getMap():
     baseURL = "https://www.google.com/maps/embed/v1/directions?"
