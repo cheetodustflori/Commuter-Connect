@@ -164,8 +164,8 @@ def addUser():
 
     return jsonify({'Message':'Profile successfully sent!'})
 
-@app.route('/addRoute', methods=['POST'])
-def addRoute():
+@app.route('/addRouteE', methods=['POST'])
+def addRouteE():
     userID = UserStructure.userName
     data = request.json
     print(data)

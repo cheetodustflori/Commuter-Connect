@@ -14,12 +14,12 @@ export default function Nearby() {
       <section className="nearby-section">
         <div className="bus-section">
         <NearbyHeader id="bus-header" type="bus" title="Buses" image="src/assets/nearby/headerBus.svg" />
-        {/* <BusTracker/> */}
+        <BusTracker/>
         </div>
-        <div className="train-section">
-        <NearbyHeader type="train" title="Trains" image="src/assets/nearby/headerTrain.svg" />
+        {/* <div className="train-section"> */}
+        {/* <NearbyHeader type="train" title="Trains" image="src/assets/nearby/headerTrain.svg" /> */}
         {/* <TrainTracker/> */}
-        </div>
+        {/* </div> */}
        
       </section>
     </>

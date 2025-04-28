@@ -20,14 +20,20 @@ export default function Map() {
   return (
     <>
       <NavBar />
+      <div id="map-section">
       <div id="map-header">
+      <div id="map-title-container">
         <div id="map-title">
           <h1>Maps</h1>
           <p>
             View nearby stations and food and study spots for your convenience!
           </p>
+          
         </div>
         <div id="vl"></div>
+        
+        </div>
+        
         <div id="map-options">
           <div id="stations" className="grid-item">
             <h3>Stations</h3>
@@ -112,6 +118,8 @@ export default function Map() {
       <div id="map-container">
       <GoogleMap/>
       </div>
+      </div>
+      
       
     </>
   );
