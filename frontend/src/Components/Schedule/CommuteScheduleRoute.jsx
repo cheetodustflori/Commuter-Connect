@@ -45,6 +45,7 @@ const CommuteRoute = ({
         try {
           const data = await loadRoutes();
           setRoutesData(data);
+          console.log(RoutesData);
         } catch (error) {
           console.error("Error loading friends:", error);
         } finally {
