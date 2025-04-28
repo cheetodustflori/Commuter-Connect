@@ -474,6 +474,9 @@ def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
+@app.route('/getPlaces',method=['GET'])
+def getPlacesPQ():
+    return
 @app.route('/getMap', methods=['GET'])
 def getMap():
     baseURL = "https://www.google.com/maps/embed/v1/directions?"
