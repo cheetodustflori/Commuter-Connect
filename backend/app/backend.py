@@ -12,6 +12,7 @@ import requests
 from requests import get, post, put
 import firebase_admin
 from firebase_admin import credentials, firestore
+import heapq
 
 #set up the flask to recieve requests from front end
 app = Flask(__name__)
@@ -55,7 +56,7 @@ class User:
         self.routes = {}
         return  
     def assign_values(self,dictionary)->None:
-        print( "HELLO")
+        # print( "HELLO")
         self.userName = dictionary.get('username')
         self.friends = dictionary.get('friends')
         self.email = dictionary.get('email')
@@ -65,7 +66,27 @@ class User:
         self.routes = dictionary.get('routes')
         return
 
+class Route:
+    def __init__(self,dict)->None:
+        self.title = dict.get('Title')
+        self.origin = dict['geoLocations']['origin']['address']
+        self.dest = dict['geoLocations']['dest']['address']
+
+        self.duration,self.distance = getRoute(dict['geoLocations']['origin']['lat'],
+                                    dict['geoLocations']['origin']['lon'],
+                                    dict['geoLocations']['dest']['lat'],
+                                    dict['geoLocations']['dest']['lon'])
+        
+        self.departTime = dict['Depart']
+        self.arrivalTime = calculateArrival(self.departTime, self.duration)
+        self.commuteBuddies = dict['Commuter_Buddies']
+        self.distance = convertToMiles(self.distance)
+        return
+
+
+
 UserStructure = User()
+Routes = {}
 
 @app.route('/')
 def root():
@@ -101,6 +122,7 @@ def getUserInfo():
         # return jsonify(doc.to_dict())
         if userPassword == password:
             constructDataStructure(doc_dict)
+            populateRoutesMap()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -114,6 +136,33 @@ def constructDataStructure(dictionary):
      global UserStructure
      UserStructure.assign_values(dictionary)
      return
+
+def populateRoutesMap():
+    global Routes
+
+    for route_name, route_map in UserStructure.routes.items():
+
+        duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+                                    route_map['geoLocations']['origin']['lon'],
+                                    route_map['geoLocations']['dest']['lat'],
+                                    route_map['geoLocations']['dest']['lon'])
+        
+        arrivalTime = calculateArrival(route_map['Depart'], duration)
+        distance = convertToMiles(distance)
+
+        route = {
+            'Title': route_map['Title'],
+            'Origin': route_map['geoLocations']['origin']['address'],
+            'Dest': route_map['geoLocations']['dest']['address'],
+            'Depart': route_map['Depart'],
+            'Buddies': route_map['Commuter_Buddies'],
+            'Arrive':arrivalTime,
+            'Dist':distance,
+            'Durr':duration
+        }
+
+        Routes[route_map['Title']] = route
+    return
     
 @app.route('/getFriends',methods=['GET'])
 def getFriendsList():
@@ -125,7 +174,7 @@ def getSavedRoutes():
     This returns a map of different routes
         'Commuter
     '''
-    return UserStructure.routes
+    return Routes
 
 @app.route('/getFirstName',methods=['GET'])
 def getFirstName():
@@ -171,17 +220,17 @@ def addRoute():
     for user in data['selectedOptions']:
         commuterBuddies.append(user[0])
     geoLocations = {
-        'origin':{'addess': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
-        'dest':{'address':data['arrivalLocation'],'lat':str(lat_origin), 'lon':str(lon_origin)}
+        'origin':{'address': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
+        'dest':{'address':data['arrivalLocation'],'lat':str(lat_dest), 'lon':str(lon_dest)}
     }
 
-    print(commuterBuddies)
+    # print(commuterBuddies)
     postString = {
         'Commuter_Buddies': commuterBuddies,
         'Method':'WALK',
         'geoLocations': geoLocations,
-        'Title': data['commuteTitle']
-        
+        'Title': data['commuteTitle'],
+        'Depart':data['departTime']
     }
     routes = UserStructure.routes
     numOfEntries = len(routes)
@@ -191,6 +240,8 @@ def addRoute():
 
     try:
         reference.update({'routes':routes})
+        constructDataStructure(db.collection('Users').document(userID).get().to_dict())
+        populateRoutesMap()
     except Exception as e:
         print(f"Error! : {e}")
     return jsonify({'Message':'Route successfully sent!'})
@@ -349,14 +400,9 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
-@app.route('/getRoute',methods=['GET'])
-def getRoute():
+# @app.route('/getRoute',methods=['GET'])
+def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
-
-    lat_origin = request.args.get('lat_origin')
-    lon_origin = request.args.get('lon_origin')
-    lat_dest = request.args.get('lat_dest')
-    lon_dest = request.args.get('lat_dest')
     
     travelMode = "WALK"
 
@@ -384,7 +430,7 @@ def getRoute():
             }
         },
         "travelMode": travelMode,
-        "routingPreference":"TRAFFIC_AWARE",
+        "routingPreference":None,
         "computeAlternativeRoutes": False,
         "routeModifiers": {
             "avoidTolls": False,
@@ -395,11 +441,38 @@ def getRoute():
         "units": "IMPERIAL"
     }
 
-    response = request.post(baseURL,headers=headers,data=json.dumps(query_string))
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
     print(response.status_code)
     json_results = json.loads(response.content)
 
-    print(json_results)
+    duration = json_results['routes'][0]['duration']
+    distance = json_results['routes'][0]['distanceMeters']
+    return (duration,distance)
+
+def calculateArrival(depart,duration):
+
+    index = depart.find(':')
+
+    hour = int(depart[:index])
+    minutes = int(depart[index+1:])
+
+    duration_seconds = int(duration.replace("s", ""))
+    duration_minutes = duration_seconds // 60  # integer division
+
+    minutes += duration_minutes
+
+    hour += minutes // 60
+    minutes = minutes % 60
+
+    hour = hour % 24
+
+    arrival_time = f"{hour:02}:{minutes:02}"
+
+    return arrival_time
+
+def convertToMiles(distance):
+    miles = distance / 1609.344
+    return miles
 
 @app.route('/getMap', methods=['GET'])
 def getMap():

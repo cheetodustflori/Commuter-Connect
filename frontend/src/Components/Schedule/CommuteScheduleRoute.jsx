@@ -37,6 +37,39 @@ const CommuteRoute = ({
     setDeleteEvent(!deleteEvent);
   };
 
+    const [RoutesData, setRoutesData] = useState([]);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      async function fetchRoutes() {
+        try {
+          const data = await loadRoutes();
+          setRoutesData(data);
+        } catch (error) {
+          console.error("Error loading friends:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchRoutes();
+    }, []);
+  
+    async function loadRoutes() {
+      let response = await fetch(`http://127.0.0.1:5000/getSavedRoutes`, {
+        method: "GET",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      
+      let data = await response.json();
+      console.log(data);
+      return data;
+    }
+
   return (
     <div className="mainCommuteComp">
       <div className="commuteRouteComp">
