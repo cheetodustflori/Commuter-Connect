@@ -24,7 +24,7 @@ const CommuteRoute = ({
   const colors = ["#769EB8", "#EC7D0E", "#48C738"];
 
   useEffect(() => {
-    console.log(buddies);
+    // console.log(buddies);
     if (timeLeft <= 0) return;
 
     const timer = setTimeout(() => {

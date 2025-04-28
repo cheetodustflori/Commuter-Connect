@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import GoogleMap from "../Components/Map/GoogleMap";
-import { useState } from "react";
+// import { useState } from "react";
 
 export default function Map() {
   const [activeStations, setActiveStations] = useState([]);
@@ -21,7 +21,7 @@ export default function Map() {
     const [loading, setLoading] = useState(true);
 
 
-    
+
     const [locations, setLocations] = React.useState([]);
 
     // Function to add a new location string to the array
