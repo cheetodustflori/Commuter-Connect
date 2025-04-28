@@ -574,11 +574,20 @@ def convertToMiles(distance):
 
 @app.route('/buildPQ',methods=['GET'])
 def getPlacesPQ():
-    # locations = request.args.get('locations')
+    locations = request.json
+    print(locations)
     #getPlaces(locationTypes)
 
 
     return
+
+@app.route('/getPlaces',methods=['GET'])
+def getPlacesArray():
+    PlacesArray = []
+    while(len(PlacesQueue)>0):
+        node = heapq.heappop(PlacesQueue)
+        PlacesArray.append(node)
+    return jsonify({'Places':PlacesArray})
 
 def getPlaces(locationTypes):
     global PlacesQueue
