@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
-import GoogleMap from "../components/Map/GoogleMap";
+import GoogleMap from "../Components/Map/GoogleMap";
 import { useState } from "react";
 
 export default function Map() {
@@ -11,9 +11,9 @@ export default function Map() {
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
-      setList(list.filter((i) => i !== item)); // remove it
+      setList(list.filter((i) => i !== item)); 
     } else {
-      setList([...list, item]); // add it
+      setList([...list, item]); 
     }
   };
 
