@@ -8,15 +8,25 @@ import {useNavigate} from "react-router-dom";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isValid, setIsValid] = useState(true);
 
     const handleLogIn = () => {
         console.log("Sign In Button Clicked")
         let path = `/schedule`; 
-        navigate(path);
-        loadUserSettings()
+        if (email.length === 0 || password.length === 0) {
+            // Array is empty
+            setIsValid(false)
+
+        }else{
+            // navigate(path);
+            loadUserSettings()
+        }
+        
     };
 
     async function loadUserSettings(){
+        let path = `/schedule?prop=${email}`; 
+
         let response = await fetch(`http://127.0.0.1:5000/getUserInfo?userID=${email}&password=${password}`,{
             method:'GET',
             mode: 'cors',
@@ -33,6 +43,8 @@ const Login = () => {
         let responseMessage = data['Response'];
 
         if(responseMessage == "All good!"){
+            navigate(path);
+            setIsValid(false);
             //change front end to the schedule page 
             // with all the information added
         }
@@ -71,6 +83,7 @@ const Login = () => {
             <div className="emailpassInput">
                 <p>Email</p>
                 <input
+                    style={{borderColor: isValid ? '#769EB8': 'red',}}
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}/>
@@ -79,6 +92,7 @@ const Login = () => {
             <div className="emailpassInput">
                 <p>Password</p>
                 <input
+                    style={{borderColor: isValid ? '#769EB8': 'red',}}
                     type="text"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>

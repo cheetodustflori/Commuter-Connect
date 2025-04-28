@@ -367,7 +367,6 @@ input[type="checkbox"] {
 #map-options {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
   grid-column-gap: 020px;
   grid-row-gap: 0px;
   margin-left: 30px;
@@ -471,4 +470,34 @@ input[type="checkbox"] {
 #campus-space.active {
   background-color: #E39898;
   color: white;
+}
+
+#map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+/* SCHEDULE */
+
+.savedRoutes{
+  display: flex;
+  flex-direction: column;
+
+  width: 400px;
+  height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#horizontalLine{
+  width: 100%;
+  float: left;
+  height: 1px;
+  background-color: #5D576A;
+  border: none;  
+  margin-top: 20px;
 }

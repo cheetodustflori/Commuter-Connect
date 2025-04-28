@@ -1,5 +1,5 @@
 import React from 'react'
-import './Styles/ScrollableRoutes.css'
+import './Styles/Schedule.css'
 import SavedRoute from './SavedRoute'
 
 const ScrollableRoutes = () => {

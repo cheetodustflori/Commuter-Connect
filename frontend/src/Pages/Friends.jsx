@@ -1,44 +1,62 @@
+
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import "./Styles/Friends.css";
-import { Nav } from "react-bootstrap";
 import FriendsData from "../components/Friends/friends.json";
 import CommuteScheduleRoute from "../Components/Schedule/CommuteScheduleRoute";
 
 export default function Friends() {
-  return (
+  const [friendsData, setFriendsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFriends() {
+      try {
+        const data = await loadUserFriends();
+        setFriendsData(data);
+      } catch (error) {
+        console.error("Error loading friends:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFriends();
+  }, []);
+
+  async function loadUserFriends() {
+    let response = await fetch(`http://127.0.0.1:5000/getFriends`, {
+      method: "GET",
+      mode: 'cors',
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    
+    let data = await response.json();
+    console.log(data);
+    return data;
+  }
+
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <NavBar />
+  //       <div>Loading friends data...</div>
+  //     </>
+  //   );
+  // }
+
+return (
     <>
       <NavBar />
-      {/* <div className='friends'>
-
-            <div className='line'></div>
-
-            <div className='listOfFriends'>
-                <h2>Your Friends (3)</h2>
-
-                <div>
-
-                    {friends.map((friend, index) => (
-                        <div key={index} className='user'>
-                            <p>{friend.name}</p>
-                        </div>
-                        ))}
-                </div>
-                
-            </div>
-
-            <div className='addFriend'>
-                <input name="Username" />
-                <button id='addFriendButton'>Add Friend</button>
-            </div>
-        </div> */}
-
       <section className="friends-section">
         <div className="friends-column">
           <div className="friends-title">
             <h1 className="page-title">Your Friends</h1>
-            <p className="friend-count">({FriendsData.length})</p>
+            <p className="friend-count">({friendsData.length})</p>
           </div>
 
           <div className="friends-list">
@@ -51,9 +69,9 @@ export default function Friends() {
               <button id="add-friend">Add Friend +</button>
             </div>
             <div className="friends">
-              {FriendsData.map((FriendsData, i) => (
+              {friendsData.map((FriendsDataUsername, i) => (
                 <ul key={i}>
-                  <li>{FriendsData.username}</li>
+                  <li>{FriendsDataUsername}</li>
                 </ul>
               ))}
             </div>
@@ -63,7 +81,7 @@ export default function Friends() {
         <div className="friends-commute-section">
           <h1 className="page-title">Your Friends' Commute Schedules</h1>
           <div className="friends-schedule">
-            {FriendsData.map((friend, i) => (
+            {friendsData.map((friend, i) => (
               <div className="friend-schedule-block" key={i}>
                 <h3>{friend.username}</h3>
 
@@ -98,20 +116,3 @@ export default function Friends() {
     </>
   );
 }
-
-async function loadUserFriends() {
-  let response = await fetch(`http://127.0.0.1:5000/getFriends?`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  });
-
-  let data = await response.json();
-
-  console.log(data);
-  return data;
-}
-
-// let friends_array = loadUserFriends();

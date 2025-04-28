@@ -9,8 +9,10 @@ import os
 import json
 from dotenv import load_dotenv
 import requests
+from requests import get, post, put
 import firebase_admin
 from firebase_admin import credentials, firestore
+import heapq
 
 #set up the flask to recieve requests from front end
 app = Flask(__name__)
@@ -24,6 +26,7 @@ and will need these
 '''
 
 CORS(app)
+
 
 load_dotenv()
 CTA_Train_Key = os.getenv('CTA_TRAIN_API_KEY')
@@ -45,22 +48,41 @@ db = firestore.client()
 '''
 class User:
     def __init__(self)->None:
+        self.userName = None
         self.friends = []
         self.email = None
         self.first_name = None
         self.last_name = None
         self.password = None
         self.routes = {}
-    
+        return  
     def assign_values(self,dictionary)->None:
+        # print( "HELLO")
+        self.userName = dictionary.get('username')
         self.friends = dictionary.get('friends')
         self.email = dictionary.get('email')
         self.first_name = dictionary.get('first_name')
         self.last_name = dictionary.get('last_name')
         self.password = dictionary.get('password')
-        self.routes = {}
+        self.routes = dictionary.get('routes')
+        return
 
-global UserStructure
+class PlaceNode:
+    def __init__(self,dist,dict)->None:
+        self.left = None
+        self.right = None
+        self.dist = dist
+        self.map = dict
+        return
+    def __lt__(self,other):
+        return self.dist<other.dist
+
+
+
+UserStructure = User()
+Routes = {}
+Trie={}
+PlacesQueue = []
 
 @app.route('/')
 def root():
@@ -96,6 +118,8 @@ def getUserInfo():
         # return jsonify(doc.to_dict())
         if userPassword == password:
             constructDataStructure(doc_dict)
+            populateRoutesMap()
+            buildTrie()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -106,9 +130,37 @@ def getUserInfo():
         return jsonify({'Response':'User does not exist'}),400
 
 def constructDataStructure(dictionary):
-     UserStructure = User()
+     global UserStructure
      UserStructure.assign_values(dictionary)
      return
+
+def populateRoutesMap():
+    global Routes
+
+    if(UserStructure.routes != None):
+        for route_name, route_map in UserStructure.routes.items():
+
+            duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+                                        route_map['geoLocations']['origin']['lon'],
+                                        route_map['geoLocations']['dest']['lat'],
+                                        route_map['geoLocations']['dest']['lon'])
+            
+            arrivalTime = calculateArrival(route_map['Depart'], duration)
+            distance = convertToMiles(distance)
+
+            route = {
+                'Title': route_map['Title'],
+                'Origin': route_map['geoLocations']['origin']['address'],
+                'Dest': route_map['geoLocations']['dest']['address'],
+                'Depart': route_map['Depart'],
+                'Buddies': route_map['Commuter_Buddies'],
+                'Arrive':arrivalTime,
+                'Dist':distance,
+                'Durr':duration
+            }
+
+            Routes[route_map['Title']] = route
+    return
     
 @app.route('/getFriends',methods=['GET'])
 def getFriendsList():
@@ -116,33 +168,244 @@ def getFriendsList():
 
 @app.route('/getSavedRoutes',methods=['GET'])
 def getSavedRoutes():
-    return UserStructure.routes
+    '''
+    This returns a map of different routes
+        'Commuter
+    '''
+    return Routes
 
 @app.route('/getFirstName',methods=['GET'])
 def getFirstName():
-    return UserStructure.first_name
+    return {"name":UserStructure.first_name}
 
 @app.route('/getLastName',methods=['GET'])
 def getLastName():
-    return UserStructure.last_name
+    return {"name":UserStructure.last_name}
 
 @app.route('/getEmail',methods=['GET'])
 def getEmail():
-    return UserStructure.email
+    return {"email":UserStructure.email}
 
-
+@app.route('/getUsername',methods=['GET'])
+def getUsername():
+    return {"user":UserStructure.userName}
 
 @app.route('/createUser',methods=['POST'])
 def addUser():
     data = request.json
     #grabs the userID from the request to accuratly create the account
-    userID = data.get('userID')
+    userID = data.get('username')
+
+    # Check if the user already exists
+    user_ref = db.collection("Users").document(userID)
+    if user_ref.get().exists:
+        return jsonify({'Message': 'Username already exists!'}), 409  # 409 = Conflic
 
     #saving data in the Users collection
     db.collection("Users").document(userID).set(data)
 
+    # Create an empty 'routes' subcollection by adding a placeholder document
+    routes_ref = user_ref.collection('routes')
+    routes_ref.document('placeholder').set({'placeholder': True})
+
     return jsonify({'Message':'Profile successfully sent!'})
 
+@app.route('/addRouteE', methods=['POST'])
+def addRouteE():
+    userID = UserStructure.userName
+    data = request.json
+    print(data)
+    lat_origin,lon_origin = getLocationCoordinates(data['departLocation'])
+    lat_dest,lon_dest = getLocationCoordinates(data['arrivalLocation'])
+
+    commuterBuddies = []
+    for user in data['selectedOptions']:
+        commuterBuddies.append(user[0])
+    geoLocations = {
+        'origin':{'address': data['departLocation'],'lat': str(lat_origin), 'lon':str(lon_origin)},
+        'dest':{'address':data['arrivalLocation'],'lat':str(lat_dest), 'lon':str(lon_dest)}
+    }
+
+    # print(commuterBuddies)
+    postString = {
+        'Commuter_Buddies': commuterBuddies,
+        'Method':'WALK',
+        'geoLocations': geoLocations,
+        'Title': data['commuteTitle'],
+        'Depart':data['departTime']
+    }
+    routes = UserStructure.routes
+    numOfEntries = len(routes)
+    name = 'route'+str(numOfEntries)
+    routes[name] = postString
+    reference = db.collection('Users').document(userID)
+
+    try:
+        reference.update({'routes':routes})
+        constructDataStructure(db.collection('Users').document(userID).get().to_dict())
+        populateRoutesMap()
+    except Exception as e:
+        print(f"Error! : {e}")
+    return jsonify({'Message':'Route successfully sent!'})
+
+@app.route('/SaveUserChanges',methods=['POST'])
+def saveUserChanges():
+    data = request.json
+    # print(data)
+    OriginalUserID = request.args.get('userID')
+    # print(OriginalUserID)
+
+    tempRoutes = []
+    tempRoutes = UserStructure.routes
+
+    
+    # if(data['username']!=OriginalUserID):
+    #     newUser = data['username']
+    # else:
+    #     newUser = OriginalUserID
+
+    # if(data['email'] != UserStructure.email):
+    #     newEmail = data['email']
+    # else:
+    #     newEmail = UserStructure.email
+
+    newUser = OriginalUserID
+    newEmail = UserStructure.email
+    newFirst = UserStructure.first_name
+    newLast = UserStructure.last_name
+    newPass = UserStructure.password
+
+    if(data['username']!='') and (newUser!=data['username']):
+        newUser = data['username']
+
+    if(data['email']!='') and (newEmail != data['email']):
+        newEmail = data['email']
+
+    if(data['first_name']!='') and (newFirst != data['first_name']):
+        newFirst = data['first_name']
+
+    if(data['last_name']!='') and (newLast != data['last_name']):
+        newLast = data['last_name']
+    
+    if(data['password']!='') and (newPass != data['password']):
+        newPass = data['password']
+
+    newData = {
+        'username': newUser,
+        'first_name':newFirst,
+        'last_name':newLast,
+        'email':newEmail,
+        'password':newPass,
+        'routes':tempRoutes,
+        'friends':UserStructure.friends
+    }
+
+    db.collection('Users').document(OriginalUserID).delete()
+
+    db.collection('Users').document(newUser).set(newData)
+    constructDataStructure(newData)
+
+    
+
+    return jsonify({'Message':'Data Saved Sucessfully'})
+
+@app.route('/createRoute', methods=['POST'])
+def addRoute():
+    try:
+        data = request.json
+        print(f"Received data: {data}")
+        
+        userID = data.get('username')
+        route = data.get('route')
+        
+        if not userID:
+            return jsonify({'Message': 'Username not provided'}), 400
+        
+        if not route:
+            return jsonify({'Message': 'Route data not provided'}), 400
+        
+        if 'day' not in route:
+            return jsonify({'Message': 'Day not specified in route'}), 400
+            
+        # Ensure route contains all required fields
+        route_data = {
+            'friends': route.get('friends', []),
+            'departTime': route.get('departTime', ''),
+            'departLocation': route.get('departLocation', ''),
+            'arrivalLocation': route.get('arrivalLocation', ''),
+            'commuteTitle': route.get('commuteTitle', '')
+        }
+        
+        # Flatten the array if the 'friends' field is a nested list
+        if isinstance(route_data['friends'], list):
+            flattened_friends = []
+            for friend in route_data['friends']:
+                if isinstance(friend, list) and len(friend) > 0:
+                    flattened_friends.append(friend[0])
+                else:
+                    flattened_friends.append(friend)
+            route_data['friends'] = flattened_friends
+        
+        # Reference the user's routes collection and the day of the week
+        routes_ref = db.collection("Users").document(userID).collection('routes')
+        day_ref = routes_ref.document(route['day'])  # Reference the specific day of the week
+        
+        # Get the current data for the day (if exists)
+        day_doc = day_ref.get()
+        
+        if day_doc.exists:
+            # If the day document exists, we add the new route to the existing routes array
+            existing_routes = day_doc.to_dict().get('routes', [])
+            existing_routes.append(route_data)
+            day_ref.update({'routes': existing_routes})  # Update the day document with the new route
+        else:
+            # If the day document doesn't exist, create it with the new route
+            day_ref.set({
+                'day': route['day'],
+                'routes': [route_data]
+            })
+
+        return jsonify({'Message': 'Route successfully added to the day!'})
+    
+    except Exception as e:
+        print(f"Error in addRoute: {str(e)}")
+        return jsonify({'Message': f'Server error: {str(e)}'}), 500
+
+
+
+@app.route('/getUsersRoutes', methods = ['GET'])
+def getUsersRoutes():
+    try:
+        # Get the userID from the request
+        userID = request.args.get('userID')
+
+        # Check if userID was provided
+        if not userID:
+            return jsonify({'Response': 'User not entered'}), 400
+   
+        # Get today's day of the week
+        from datetime import datetime
+        today = datetime.now().strftime('%A')  # This returns the full day name like 'Monday', 'Tuesday', etc.
+        
+        # Get the specific route document for today
+        route_ref = db.collection('Users').document(userID).collection('routes').document(today)
+        route_doc = route_ref.get()
+        
+        if route_doc.exists:
+            # Return just today's route
+            return jsonify({'routes': route_doc.to_dict()})
+        else:
+            # No route exists for today
+            return jsonify({'Response': f'No route found for {today}'}), 404
+            
+    except Exception as e:
+        print(f"Error in getUsersRoutes: {str(e)}")
+        return jsonify({'Message': f'Server error: {str(e)}'}), 500
+    
+    #this will return if the user attempted to log in with a username
+    #that does not exist
+    else:
+        return jsonify({'Response':'User does not exist'}),400
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
@@ -173,24 +436,25 @@ def getLocationName():
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
 
-@app.route('/getLocationCoordinates',methods = ['GET'])
-def getLocationCoordinates():
+#@app.route('/getLocationCoordinates',methods = ['GET'])
+def getLocationCoordinates(locationName):
 
     #baseURL take from the website that will allow us to build call
     baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 
     data = request.json
-    address = data['address']
+    address = locationName
 
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
     #building full call
     string = f'address={address_string}&key={Google_Maps_Key}'
-    
+    # print(baseURL+string)
     #get call and load it in with json
-    response = request.get(baseURL+string)
+    response = get(baseURL+string)
     json_results = json.loads(response.content)
+    #print(json_results)
 
     #TODO---> IMPLEMENT EMPTY RESPONSE CASE
 
@@ -202,7 +466,7 @@ def getLocationCoordinates():
     latitude = location_coords['latitude']
     longitude = location_coords['longitude']
 
-    #Return?
+    return (latitude,longitude)
     #print(f"{latitude}   {longitude}")
 
 '''This is a helper function that is called from getLocationCoordinates()
@@ -235,15 +499,11 @@ def replaceSpecialCharacters(string):
                 newString+=char
     return newString
 
-@app.route('/getRoute',methods=['GET'])
-def getRoute():
+# @app.route('/getRoute',methods=['GET'])
+def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     baseURL = "https://routes.googleapis.com/directions/v2:computeRoutes"
-
-    lat_origin = 41.6288754
-    lon_origin = -87.6837692
-    lat_dest = 41.6402277
-    lon_dest = -87.718246
-    travelMode = "DRIVE"
+    
+    travelMode = "WALK"
 
     headers = {
         "Content-Type": "application/json",
@@ -269,7 +529,7 @@ def getRoute():
             }
         },
         "travelMode": travelMode,
-        "routingPreference":"TRAFFIC_AWARE",
+        "routingPreference":None,
         "computeAlternativeRoutes": False,
         "routeModifiers": {
             "avoidTolls": False,
@@ -280,11 +540,143 @@ def getRoute():
         "units": "IMPERIAL"
     }
 
-    response = request.post(baseURL,headers=headers,data=json.dumps(query_string))
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
     print(response.status_code)
     json_results = json.loads(response.content)
 
-    print(json_results)
+    duration = json_results['routes'][0]['duration']
+    distance = json_results['routes'][0]['distanceMeters']
+    return (duration,distance)
+
+def calculateArrival(depart,duration):
+
+    index = depart.find(':')
+
+    hour = int(depart[:index])
+    minutes = int(depart[index+1:])
+
+    duration_seconds = int(duration.replace("s", ""))
+    duration_minutes = duration_seconds // 60  # integer division
+
+    minutes += duration_minutes
+
+    hour += minutes // 60
+    minutes = minutes % 60
+
+    hour = hour % 24
+
+    arrival_time = f"{hour:02}:{minutes:02}"
+
+    return arrival_time
+
+def convertToMiles(distance):
+    miles = distance / 1609.344
+    return miles
+
+@app.route('/buildPQ',methods=['GET'])
+def getPlacesPQ():
+    locations = request.json
+    print(locations)
+    #getPlaces(locationTypes)
+
+
+    return
+
+@app.route('/getPlaces',methods=['GET'])
+def getPlacesArray():
+    PlacesArray = []
+    while(len(PlacesQueue)>0):
+        node = heapq.heappop(PlacesQueue)
+        PlacesArray.append(node)
+    return jsonify({'Places':PlacesArray})
+
+def getPlaces(locationTypes):
+    global PlacesQueue
+    baseURL = "https://places.googleapis.com/v1/places:searchNearby"
+
+    #fast food  ---> fast_food_restaurant
+    #cafe        --> cafe
+    #groceries   --> grocery_store
+    #library     --> library
+    #bus station  -> bus_station
+    #train station > train_station
+
+    origin_lat = 41.8719456
+    origin_lng = -87.6474381
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": Google_Maps_Key,
+        "X-Goog-FieldMask": 'places.displayName,places.formattedAddress,places.location'
+    }
+
+    query_string={
+        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "maxResultCount": 20, #range from 1-20
+        # "rankPreference": "DISTANCE",
+        "locationRestriction": {
+            "circle": {
+                "center": {
+                    "latitude": origin_lat,
+                    "longitude": origin_lng},
+                    "radius": 1600.0
+                }
+  }
+    }
+    response = post(baseURL,headers=headers,data=json.dumps(query_string))
+    print(response.status_code)
+    json_results = json.loads(response.content)
+
+    places = json_results['places']
+
+    count=0
+    for place in places:
+        displayName = place['displayName']['text']
+        lat = place['location']['latitude']
+        lng = place['location']['longitude']
+
+        location = {
+            'lat':lat,
+            'lng':lng
+        }
+
+        duration,distance = getRoute(origin_lat,origin_lng,lat,lng)
+
+        address = place['formattedAddress']
+        key = displayName.replace(" ", "")
+
+        placeInfo = {  
+            'key':key,
+            'name':displayName,
+            'address':address,
+            'location':location
+        }
+
+        heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
+        #print(f"{placeInfo}\n")
+
+        heapq.heapify(PlacesQueue)
+
+        while(len(PlacesQueue)!=1):
+            leftNode = heapq.heappop(PlacesQueue)
+            rightNode = heapq.heappop(PlacesQueue)
+
+            parentNode = heapq.heappop(PlacesQueue)
+            parentNode.left = leftNode
+            parentNode.right = rightNode
+
+            heapq.heappush(PlacesQueue,parentNode)
+    return
+
+def accessUsers():
+    docs = db.collection('Users').stream()
+
+    for doc in docs:
+        print(doc.id)
+    return
+
+def buildTrie():
+    return
 
 @app.route('/getMap', methods=['GET'])
 def getMap():
