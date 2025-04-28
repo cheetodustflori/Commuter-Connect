@@ -4,14 +4,14 @@ import MobileNav from "./MobileNavigation";
 import "../../../styles.css";
 import { NavLink } from "react-router-dom";
 
-export default function NavBar() {
+export default function NavBar({user}) {
   return (
     <>
       <nav className="nav">
         <div className="nav-title">Commuter Connect</div>
         <ul className="links">
           <li>
-            <NavLink to="/schedule" className={({ isActive }) => (isActive ? "active" : "")}>Schedule</NavLink>
+            <NavLink to={`/schedule?prop=${user}`} className={({ isActive }) => (isActive ? "active" : "")}>Schedule</NavLink>
           </li>
           <li>
             <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")}>Map</NavLink>

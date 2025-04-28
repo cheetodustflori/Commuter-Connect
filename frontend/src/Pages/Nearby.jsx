@@ -18,7 +18,7 @@ export default function Nearby() {
         </div>
         <div className="train-section">
         <NearbyHeader type="train" title="Trains" image="src/assets/nearby/headerTrain.svg" />
-        <TrainTracker/>
+        {/* <TrainTracker/> */}
         </div>
        
       </section>

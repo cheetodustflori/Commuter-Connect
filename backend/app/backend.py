@@ -26,6 +26,7 @@ and will need these
 
 CORS(app)
 
+
 load_dotenv()
 CTA_Train_Key = os.getenv('CTA_TRAIN_API_KEY')
 CTA_Bus_Key = os.getenv('CTA_BUS_API_KEY')
@@ -157,6 +158,10 @@ def addUser():
     #saving data in the Users collection
     db.collection("Users").document(userID).set(data)
 
+    # Create an empty 'routes' subcollection by adding a placeholder document
+    routes_ref = user_ref.collection('routes')
+    routes_ref.document('placeholder').set({'placeholder': True})
+
     return jsonify({'Message':'Profile successfully sent!'})
 
 @app.route('/addRoute', methods=['POST'])
@@ -256,6 +261,103 @@ def saveUserChanges():
 
     return jsonify({'Message':'Data Saved Sucessfully'})
 
+@app.route('/createRoute', methods=['POST'])
+def addRoute():
+    try:
+        data = request.json
+        print(f"Received data: {data}")
+        
+        userID = data.get('username')
+        route = data.get('route')
+        
+        if not userID:
+            return jsonify({'Message': 'Username not provided'}), 400
+        
+        if not route:
+            return jsonify({'Message': 'Route data not provided'}), 400
+        
+        if 'day' not in route:
+            return jsonify({'Message': 'Day not specified in route'}), 400
+            
+        # Ensure route contains all required fields
+        route_data = {
+            'friends': route.get('friends', []),
+            'departTime': route.get('departTime', ''),
+            'departLocation': route.get('departLocation', ''),
+            'arrivalLocation': route.get('arrivalLocation', ''),
+            'commuteTitle': route.get('commuteTitle', '')
+        }
+        
+        # Flatten the array if the 'friends' field is a nested list
+        if isinstance(route_data['friends'], list):
+            flattened_friends = []
+            for friend in route_data['friends']:
+                if isinstance(friend, list) and len(friend) > 0:
+                    flattened_friends.append(friend[0])
+                else:
+                    flattened_friends.append(friend)
+            route_data['friends'] = flattened_friends
+        
+        # Reference the user's routes collection and the day of the week
+        routes_ref = db.collection("Users").document(userID).collection('routes')
+        day_ref = routes_ref.document(route['day'])  # Reference the specific day of the week
+        
+        # Get the current data for the day (if exists)
+        day_doc = day_ref.get()
+        
+        if day_doc.exists:
+            # If the day document exists, we add the new route to the existing routes array
+            existing_routes = day_doc.to_dict().get('routes', [])
+            existing_routes.append(route_data)
+            day_ref.update({'routes': existing_routes})  # Update the day document with the new route
+        else:
+            # If the day document doesn't exist, create it with the new route
+            day_ref.set({
+                'day': route['day'],
+                'routes': [route_data]
+            })
+
+        return jsonify({'Message': 'Route successfully added to the day!'})
+    
+    except Exception as e:
+        print(f"Error in addRoute: {str(e)}")
+        return jsonify({'Message': f'Server error: {str(e)}'}), 500
+
+
+
+@app.route('/getUsersRoutes', methods = ['GET'])
+def getUsersRoutes():
+    try:
+        # Get the userID from the request
+        userID = request.args.get('userID')
+
+        # Check if userID was provided
+        if not userID:
+            return jsonify({'Response': 'User not entered'}), 400
+   
+        # Get today's day of the week
+        from datetime import datetime
+        today = datetime.now().strftime('%A')  # This returns the full day name like 'Monday', 'Tuesday', etc.
+        
+        # Get the specific route document for today
+        route_ref = db.collection('Users').document(userID).collection('routes').document(today)
+        route_doc = route_ref.get()
+        
+        if route_doc.exists:
+            # Return just today's route
+            return jsonify({'routes': route_doc.to_dict()})
+        else:
+            # No route exists for today
+            return jsonify({'Response': f'No route found for {today}'}), 404
+            
+    except Exception as e:
+        print(f"Error in getUsersRoutes: {str(e)}")
+        return jsonify({'Message': f'Server error: {str(e)}'}), 500
+    
+    #this will return if the user attempted to log in with a username
+    #that does not exist
+    else:
+        return jsonify({'Response':'User does not exist'}),400
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
