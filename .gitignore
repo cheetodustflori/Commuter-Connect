@@ -12,7 +12,10 @@
 /frontend/node_modules/.vite/
 /frontend/.vite/
 /frontend/.env
+**/.vite/
+**/dist/
 f.txt
+node_modules/
 f1.txt
 frontend/node_modules/.vite/deps/_metadata.json
 frontend/node_modules/.vite/deps/react-dom_client.js
