@@ -10,7 +10,7 @@ const Schedule = () => {
 
   return (
     <>
-    <NavBar/>
+    <NavBar user = {user}/>
     <div className='schedule'>
         <TodaysCommuteSchedule
         user = {user}/>

@@ -19,7 +19,12 @@ const SignUp = () => {
         const userData = {
             username:username,
           email:email,
-          password:password // Add any additional fields here
+          password:password,
+          first_name:"",
+          last_name:"",
+          friends:{},
+          
+          // Add any additional fields here
         };
     
         try {
