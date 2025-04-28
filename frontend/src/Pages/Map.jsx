@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
-import GoogleMap from "../components/Map/GoogleMap";
+import GoogleMap from "../Components/Map/GoogleMap";
 import { useState } from "react";
 
 export default function Map() {
