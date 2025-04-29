@@ -433,12 +433,58 @@ def getLocationName():
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
 
-@app.route('/getLocationCoordinatesFromAddress',methods = ['GET'])
+# API Call to get the coordinates from an address
+@app.route('/getLocationCoordinatesFromAddress', methods=['GET'])
 def getLocationCoordinatesFromAddress():
-    data = request.json
-    locationName = data.get('locationName')
-    lat,lon = getLocationCoordinates(locationName)
-
+    # For GET requests, use request.args instead of request.json
+    locationName = request.args.get('locationName')
+    
+    if not locationName:
+        return jsonify({'error': 'No location name provided'}), 400
+    
+    try:
+        lat, lon = getNewLocationCoordinates(locationName)
+        return jsonify({'lat': lat, 'lon': lon})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+# Function to extract the lat and lon values from the location name from the api call above
+def getNewLocationCoordinates(locationName):
+    # baseURL take from the website that will allow us to build call
+    baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
+    
+    # No need to access request.json here as locationName is passed as parameter
+    address = locationName
+    
+    # this will be the address with the special characters replaced with their counterparts for web encoding
+    address_string = replaceSpecialCharacters(address)
+    
+    # building full call
+    string = f'address={address_string}&key={Google_Maps_Key}'
+    # print(baseURL+string)
+    
+    # get call and load it in with json
+    response = get(baseURL+string)
+    json_results = json.loads(response.content)
+    # print(json_results)
+    
+    # Add error handling for empty results
+    if not json_results.get('results'):
+        raise Exception("No results found for this location")
+    
+    try:
+        # Check if this is the correct path for your API response
+        # You might need to adjust this based on the actual Google Maps API response structure
+        location_coords = json_results['results'][0]['geometry']['location']
+        
+        # Google Maps API typically returns lat/lng not latitude/longitude
+        latitude = location_coords['lat']
+        longitude = location_coords['lng']
+        
+        return (latitude, longitude)
+    except KeyError as e:
+        # Better error handling with detailed message
+        raise Exception(f"Could not parse location coordinates: {str(e)}, Response: {json_results}")
 
 
 #@app.route('/getLocationCoordinates',methods = ['GET'])
