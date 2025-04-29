@@ -183,6 +183,7 @@ def getUserInfo():
             count = 0
             for day in routes:
                 indDay = day.to_dict()
+                print(indDay)
                 for route in indDay['routes']:
                     # print("INSIDE EMBEDDED")
                     ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
@@ -194,6 +195,7 @@ def getUserInfo():
 
                     hours, minutes = convert_seconds_to_hours_minutes(duration)
                     route['duration'] = {'hours':hours,'minutes':minutes}
+                    route['day'] = indDay['day']
                     addRouteToUser(route)
             # print("STILL OKAY")
             populateRoutesMap()
@@ -672,11 +674,22 @@ def convertToMiles(distance):
 
 @app.route('/buildPQ',methods=['POST'])
 def getPlacesPQ():
-    # locations = request.json
-    # print(locations)
-    getPlaces('cafe')
+    # da = request.json()
+    PlacesQueue.clear()
+    data =  request.get_json()
+    locs = data.get('locs')
+    print(locs)
+    locationsArray = compressArray(locs)
+    print(locationsArray)
+    getPlaces(locationsArray)
 
     return jsonify({'Message':'allGood'})
+
+def compressArray(array):
+    tmp = []
+    for index in array:
+        tmp.append(index)
+    return tmp
 
 def collectPlaces(node, places):
     if node is None:
@@ -719,6 +732,29 @@ def getPlaces(locationTypes):
     #bus station  -> bus_station
     #train station > train_station
 
+    # : bus, train, groceries, cafe, fast, library
+    locations = []
+
+    if locationTypes == None:
+        locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    else:
+        for types in locationTypes:
+            if types == 'bus':
+                locations.append('bus_station')
+            elif types == 'cafe':
+                locations.append('cafe')
+            elif types == 'groceries':
+                locations.append('grocery_store')
+            elif types == 'fast':
+                locations.append('fast_food_restaurant')
+            elif types == 'train':
+                locations.append('train_station')
+            elif types == 'library':
+                locations.append('library')
+
+    # if len(locationTypes) == 0:
+    #     locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    print(locations)
     origin_lat = 41.8719456
     origin_lng = -87.6474381
 
@@ -729,7 +765,7 @@ def getPlaces(locationTypes):
     }
 
     query_string={
-        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "includedTypes": locations,
         "maxResultCount": 20, #range from 1-20
         # "rankPreference": "DISTANCE",
         "locationRestriction": {

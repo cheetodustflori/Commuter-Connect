@@ -12,9 +12,12 @@ export default function Map() {
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item)); // remove it
+      setLocations(locations.filter((i) => i !== item));
     } else {
       setList([...list, item]); // add it
+      setLocations([...locations,item]);
     }
+    fetchPlaces();
   };
 
   const [placesData, setPlacesData] = useState([]);
@@ -30,31 +33,34 @@ export default function Map() {
     };
   
     useEffect(() => {
-      async function fetchPlaces() {
-        try {
-          await buildPQ();
-          const data = await loadPlaces();
-          console.log(data);
-          setPlacesData(data);
-        } catch (error) {
-          console.error("Error loading places:", error);
-        } finally {
-          setLoading(false);
-        }
-      }
-  
       fetchPlaces();
     }, []);
 
+    async function fetchPlaces() {
+      try {
+        await buildPQ();
+        const data = await loadPlaces();
+        console.log(data);
+        setPlacesData(data);
+      } catch (error) {
+        console.error("Error loading places:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
     async function buildPQ(){
+
+      console.log(locations);
+
       let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
         method: "POST",
         mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          // body: JSON.stringify(locations)
         },
+          body: JSON.stringify({'locs':locations}),
       });
     }
   
