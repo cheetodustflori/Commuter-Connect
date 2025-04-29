@@ -24,10 +24,11 @@ const CommuteRoutes = () => {
 
   const [user, setUser] = useState("");
 
-  const [latArrival, setLatArrival] = useState("");
-  const [lonArrival, setLonArrival] = useState("");
-  const [latDeparture, setLatDeparture] = useState("");
-  const [lonDeparture, setLonDeparture] = useState("");
+  const [arrivalCords, setArrialCords] = useState();
+  const [departCords, setDepartCords] = useState();
+
+  
+
 
 
   useEffect(() => {
@@ -122,35 +123,73 @@ const CommuteRoutes = () => {
     }
   }
 
-  const handleClickSavedRoute = (route) => {
-    // get destination and origin from clicked component 
-    // get the depart,arrival
-    // edit maps component with new Pois markers 
-    console.log("Here ");
-    console.log(route.arrivalLocation);
-    console.log(route.departLocation);
+  const [departureCoords, setDepartureCoords] = useState(null);
+  const [arrivalCoords, setArrivalCoords] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  //   const [latArrival, setLatArrival] = useState("");
-  // const [lonArrival, setLonArrival] = useState("");
-  // const [latDeparture, setLatDeparture] = useState("");
-  // const [lonDeparture, setLonDeparture] = useState("");
+  const handleClickSavedRoute = async (route) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      console.log("Loading route details for:", route);
+      console.log("Arrival Location:", route.arrivalLocation);
+      console.log("Departure Location:", route.departLocation);
+      
+      // Get coordinates for arrival location
+      const arrivalCoordsData = await loadLatAndLonFromLocationName(route.arrivalLocation);
+      console.log("Arrival coordinates:", arrivalCoordsData);
+      setArrivalCoords(arrivalCoordsData);
+      
+      // Get coordinates for departure location
+      const departureCoordsData = await loadLatAndLonFromLocationName(route.departLocation);
+      console.log("Departure coordinates:", departureCoordsData);
+      setDepartureCoords(departureCoordsData);
 
-    // lat_arrival,lon_arrival = getLocationCoordinates(route.arrivalLocation)[0]
-    // lat_depart,lon_depart = getLocationCoordinates(route.departLocation)[1]
-
-    setLatArrival(getLocationCoordinates(route.arrivalLocation)[0]);
-    setLonArrival(getLocationCoordinates(route.arrivalLocation)[1]);
-    setLatDeparture(getLocationCoordinates(route.departLocation)[0]);
-    setLonDeparture(getLocationCoordinates(route.departLocation)[1]);
-
-    console.log(latArrival);
-    console.log(lonArrival);
-    console.log(latDeparture);
-    console.log(lonDeparture);
-
-    // GET LOCATION COORD
-    // console.log(e);
+      const baseUrl = "https://www.google.com/maps/dir/?api=1";
+      const url = `${baseUrl}&origin=${encodeURIComponent(route.arrivalLocation)}&destination=${encodeURIComponent(route.departLocation)}`;
+      window.open(url, '_blank'); // Opens in a new tab
+      
+    } catch (error) {
+      console.error("Error getting coordinates:", error);
+      setError("Failed to load route coordinates. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  async function loadLatAndLonFromLocationName(locationName) {
+    try {
+      // Encode the location name properly for URL
+      const encodedLocation = encodeURIComponent(locationName);
+      
+      // Make the API call
+      const response = await fetch(
+        `http://127.0.0.1:5000/getLocationCoordinatesFromAddress?locationName=${encodedLocation}`,
+        {
+          method: "GET",
+          headers: {
+            "Accept": "application/json"
+          }
+        }
+      );
+      
+      // Check if the response is OK
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      
+      // Parse the JSON response
+      const data = await response.json();
+      console.log("Response data:", data);
+      
+      return data;
+    } catch (error) {
+      console.error("Error in loadLatAndLonFromLocationName:", error);
+      throw error;
+    }
+  }
 
   // Load saved routes
   useEffect(() => {
@@ -258,7 +297,8 @@ const CommuteRoutes = () => {
         <div id="mapAndButton">
           {/* <div id="commute-map-container"></div> */}
           <div id="commute-map-container">
-            <GoogleMap />
+            <GoogleMap departureCoords={departureCoords} 
+            arrivalCoords={arrivalCoords} />
           </div>
           <button id="newRouteButton" onClick={handleCreateNewRoute}>
             Create New Route
