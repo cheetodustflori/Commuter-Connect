@@ -68,9 +68,9 @@ class User:
         return
 
 class PlaceNode:
-    def __init__(self,dist,dict)->None:
-        self.left = None
-        self.right = None
+    def __init__(self,dist,dict=None,left=None,right=None)->None:
+        self.left = left
+        self.right = right
         self.dist = dist
         self.map = dict
         return
@@ -139,7 +139,7 @@ class Trie:
 
 UserStructure = User()
 Routes = {}
-Trie={}
+TrieTree = Trie()
 PlacesQueue = []
 
 @app.route('/')
@@ -177,7 +177,7 @@ def getUserInfo():
         if userPassword == password:
             constructDataStructure(doc_dict)
             populateRoutesMap()
-            # buildTrie()
+            buildTrie()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -194,6 +194,13 @@ def constructDataStructure(dictionary):
 
 def populateRoutesMap():
     global Routes
+
+    # route_ref = db.collection('Users').document(UserStructure.userName).collection('routes').stream()
+    
+    # for route_doc in route_ref:
+    #     route_data = route_doc.to_dict()
+    #     # print("HELLO")
+    #     print(route_data)
 
     if(UserStructure.routes != None):
         for route_name, route_map in UserStructure.routes.items():
@@ -316,17 +323,6 @@ def saveUserChanges():
     tempRoutes = []
     tempRoutes = UserStructure.routes
 
-    
-    # if(data['username']!=OriginalUserID):
-    #     newUser = data['username']
-    # else:
-    #     newUser = OriginalUserID
-
-    # if(data['email'] != UserStructure.email):
-    #     newEmail = data['email']
-    # else:
-    #     newEmail = UserStructure.email
-
     newUser = OriginalUserID
     newEmail = UserStructure.email
     newFirst = UserStructure.first_name
@@ -429,8 +425,18 @@ def addRoute():
         print(f"Error in addRoute: {str(e)}")
         return jsonify({'Message': f'Server error: {str(e)}'}), 500
 
+@app.route('/getFriendsAuto',methods=['GET'])
+def getFriendsAuto():
+    userRequest = request.args.get('userSearch')
+    print(userRequest)
+    result = TrieTree.search(userRequest)
 
+    if(result != None):
+        return jsonify({'Result':result})
+    else:
+        return jsonify({'Result':'NONE FOUND'})
 
+#gets routes for that single day
 @app.route('/getUsersRoutes', methods = ['GET'])
 def getUsersRoutes():
     try:
@@ -448,6 +454,33 @@ def getUsersRoutes():
         # Get the specific route document for today
         route_ref = db.collection('Users').document(userID).collection('routes').document(today)
         route_doc = route_ref.get()
+
+        print(route_doc.to_dict())
+        print('\n\n')
+
+
+        #  duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+        #                                 route_map['geoLocations']['origin']['lon'],
+        #                                 route_map['geoLocations']['dest']['lat'],
+        #                                 route_map['geoLocations']['dest']['lon'])
+            
+        #     arrivalTime = calculateArrival(route_map['Depart'], duration)
+        #     distance = convertToMiles(distance)
+
+        #     route = {
+        #         'Title': route_map['Title'],
+        #         'Origin': route_map['geoLocations']['origin']['address'],
+        #         'Dest': route_map['geoLocations']['dest']['address'],
+        #         'Depart': route_map['Depart'],
+        #         'Buddies': route_map['Commuter_Buddies'],
+        #         'Arrive':arrivalTime,
+        #         'Dist':distance,
+        #         'Durr':duration
+        #     }
+
+        routes = route_doc.to_dict()
+        for route in routes['routes']:
+            route['arrivalTime']
         
         if route_doc.exists:
             # Return just today's route
@@ -599,7 +632,7 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     }
 
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     duration = json_results['routes'][0]['duration']
@@ -637,16 +670,37 @@ def getPlacesPQ():
     # print(locations)
     getPlaces('cafe')
 
-
     return jsonify({'Message':'allGood'})
 
-@app.route('/getPlaces',methods=['GET'])
+def collectPlaces(node, places):
+    if node is None:
+        return
+
+    # Only add if the node is a leaf
+    if node.left is None and node.right is None:
+        if node.map is not None and node.map != {}:
+            places.append(node.map)
+    
+    collectPlaces(node.left, places)
+    collectPlaces(node.right, places)
+
+@app.route('/getPlaces', methods=['GET'])
 def getPlacesArray():
     PlacesArray = []
-    while(len(PlacesQueue)>0):
-        node = heapq.heappop(PlacesQueue)
-        PlacesArray.append(node)
-    return jsonify({'Places':PlacesArray})
+    if PlacesQueue:  # Check if queue is not empty
+        root = PlacesQueue[0]  # Get the root node
+        collectPlaces(root, PlacesArray)
+     # Remove duplicates
+    unique_places = []
+    seen = set()
+
+    for place in PlacesArray:
+        place_key = str(place)  # Or better: place['name'] if possible
+        if place_key not in seen:
+            unique_places.append(place)
+            seen.add(place_key)
+
+    return jsonify({'Places': unique_places})
 
 def getPlaces(locationTypes):
     global PlacesQueue
@@ -682,7 +736,7 @@ def getPlaces(locationTypes):
   }
     }
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     places = json_results['places']
@@ -713,17 +767,17 @@ def getPlaces(locationTypes):
         heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
         #print(f"{placeInfo}\n")
 
-        heapq.heapify(PlacesQueue)
+    heapq.heapify(PlacesQueue)
 
-        while(len(PlacesQueue)!=1):
-            leftNode = heapq.heappop(PlacesQueue)
-            rightNode = heapq.heappop(PlacesQueue)
+    while(len(PlacesQueue)!=1):
+        leftNode = heapq.heappop(PlacesQueue)
+        rightNode = heapq.heappop(PlacesQueue)
+        # print("INSIDE WHILE LOOP")
+        parentNode = PlaceNode(leftNode.dist+rightNode.dist)
+        parentNode.left = leftNode
+        parentNode.right = rightNode
 
-            parentNode = heapq.heappop(PlacesQueue)
-            parentNode.left = leftNode
-            parentNode.right = rightNode
-
-            heapq.heappush(PlacesQueue,parentNode)
+        heapq.heappush(PlacesQueue,parentNode)
     return
 
 def accessUsers():
@@ -733,8 +787,14 @@ def accessUsers():
         docIDs.append(doc.id)
     return docIDs
 
-def buildTrie(IDs):
-    #global Trie = Trie()
+def buildTrie():
+    global TrieTree
+
+    users = accessUsers()
+
+    for user in users:
+        TrieTree.insert(user)
+
     return
 
 @app.route('/getMap', methods=['GET'])
