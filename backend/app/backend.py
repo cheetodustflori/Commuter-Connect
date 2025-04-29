@@ -54,7 +54,7 @@ class User:
         self.first_name = None
         self.last_name = None
         self.password = None
-        self.routes = {}
+        self.routes = []
         return  
     def assign_values(self,dictionary)->None:
         # print( "HELLO")
@@ -64,7 +64,7 @@ class User:
         self.first_name = dictionary.get('first_name')
         self.last_name = dictionary.get('last_name')
         self.password = dictionary.get('password')
-        self.routes = dictionary.get('routes')
+        # self.routes = dictionary.get('routes')
         return
 
 class PlaceNode:
@@ -138,7 +138,7 @@ class Trie:
 
 
 UserStructure = User()
-Routes = {}
+Routes = []
 TrieTree = Trie()
 PlacesQueue = []
 
@@ -168,14 +168,34 @@ def getUserInfo():
     doc = db.collection('Users').document(userID).get()
     
     #possibly incorporate a try catch
-    
+    # print("ALL GOOD")
     if doc.exists:
         doc_dict = doc.to_dict()
         userPassword = doc_dict.get('password',None)
-    
+        routes = db.collection('Users').document(userID).collection("routes").stream()
         # return jsonify(doc.to_dict())
         if userPassword == password:
+            #print(doc_dict)
+            # print(routes.to_dict())
+
             constructDataStructure(doc_dict)
+            # print("ALMOST")
+            count = 0
+            for day in routes:
+                indDay = day.to_dict()
+                for route in indDay['routes']:
+                    # print("INSIDE EMBEDDED")
+                    ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
+                    dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
+                    duration,distance = getRoute(ori_lat,ori_lng,dest_lat,dest_lng)
+                    # print("AFTER INITIAL CALLS")
+                    route['arrivalTime'] = calculateArrival(route['departTime'], duration)
+                    route['distance'] = convertToMiles(distance)
+
+                    hours, minutes = convert_seconds_to_hours_minutes(duration)
+                    route['duration'] = {'hours':hours,'minutes':minutes}
+                    addRouteToUser(route)
+            # print("STILL OKAY")
             populateRoutesMap()
             buildTrie()
             return jsonify({'Response': 'All good!'}),200
@@ -192,39 +212,16 @@ def constructDataStructure(dictionary):
      UserStructure.assign_values(dictionary)
      return
 
+def addRouteToUser(route_map):
+    UserStructure.routes.append(route_map)
+    return
+
 def populateRoutesMap():
     global Routes
 
-    # route_ref = db.collection('Users').document(UserStructure.userName).collection('routes').stream()
-    
-    # for route_doc in route_ref:
-    #     route_data = route_doc.to_dict()
-    #     # print("HELLO")
-    #     print(route_data)
-
     if(UserStructure.routes != None):
-        for route_name, route_map in UserStructure.routes.items():
-
-            duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
-                                        route_map['geoLocations']['origin']['lon'],
-                                        route_map['geoLocations']['dest']['lat'],
-                                        route_map['geoLocations']['dest']['lon'])
-            
-            arrivalTime = calculateArrival(route_map['Depart'], duration)
-            distance = convertToMiles(distance)
-
-            route = {
-                'Title': route_map['Title'],
-                'Origin': route_map['geoLocations']['origin']['address'],
-                'Dest': route_map['geoLocations']['dest']['address'],
-                'Depart': route_map['Depart'],
-                'Buddies': route_map['Commuter_Buddies'],
-                'Arrive':arrivalTime,
-                'Dist':distance,
-                'Durr':duration
-            }
-
-            Routes[route_map['Title']] = route
+        for route_map in UserStructure.routes:
+            Routes.append(route_map)
     return
     
 @app.route('/getFriends',methods=['GET'])
@@ -479,8 +476,8 @@ def getUsersRoutes():
         #     }
 
         routes = route_doc.to_dict()
-        for route in routes['routes']:
-            route['arrivalTime']
+        #for route in routes['routes']:
+           # route['arrivalTime']
         
         if route_doc.exists:
             # Return just today's route
@@ -533,9 +530,9 @@ def getLocationCoordinates(locationName):
     #baseURL take from the website that will allow us to build call
     baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 
-    data = request.json
+    # data = request.json
     address = locationName
-
+    # print(address)
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
@@ -640,7 +637,9 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     return (duration,distance)
 
 def calculateArrival(depart,duration):
-
+    depart = depart.replace("A","")
+    depart = depart.replace("P","")
+    depart = depart.replace("M","")
     index = depart.find(':')
 
     hour = int(depart[:index])
@@ -659,6 +658,13 @@ def calculateArrival(depart,duration):
     arrival_time = f"{hour:02}:{minutes:02}"
 
     return arrival_time
+
+def convert_seconds_to_hours_minutes(secondString):
+    seconds = int(secondString.replace('s',""))
+    hours = seconds // 3600
+    remaining_seconds = seconds % 3600
+    minutes = remaining_seconds // 60
+    return hours, minutes
 
 def convertToMiles(distance):
     miles = distance / 1609.344
