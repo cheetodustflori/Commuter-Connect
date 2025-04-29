@@ -73,6 +73,64 @@ class PlaceNode:
     def __lt__(self,other):
         return self.dist<other.dist
 
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end_of_word = False
+        self.username = None  # Store just the username at end nodes
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, username):
+        """
+        Inserts a username into the Trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True
+        node.username = username  # Store the original username (preserving case)
+
+    def search(self, prefix):
+        """
+        Returns a list of usernames matching the prefix for autocomplete.
+        """
+        node = self.root
+        for char in prefix.lower():
+            if char not in node.children:
+                return []  # Prefix not found
+            node = node.children[char]
+        
+        # Collect all usernames that match the prefix
+        results = []
+        self._collect_usernames(node, results)
+        return results
+
+    def _collect_usernames(self, node, results):
+        """
+        Recursively collects all usernames from this node downward.
+        """
+        if node.is_end_of_word and node.username:
+            results.append(node.username)
+        
+        for child in node.children.values():
+            self._collect_usernames(child, results)
+
+    def exact_search(self, username):
+        """
+        Returns True if the exact username exists in the trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        
+        return node.is_end_of_word
 
 
 UserStructure = User()
@@ -665,13 +723,13 @@ def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
-@app.route('/buildPQ',methods=['GET'])
+@app.route('/buildPQ',methods=['POST'])
 def getPlacesPQ():
     # da = request.json()
     PlacesQueue.clear()
     data =  request.get_json()
     locs = data.get('locs')
-    # print(locs)
+    print(locs)
     locationsArray = compressArray(locs)
     # print(locationsArray)
     getPlaces(locationsArray)

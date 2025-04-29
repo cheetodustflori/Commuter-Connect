@@ -39,12 +39,12 @@ export default function Map() {
   };
 
 
-    const [locations, setLocations] = React.useState([]);
+    // const [locations, setLocations] = React.useState([]);
 
     // Function to add a new location string to the array
-    const addLocation = (newLocationString) => {
-      setLocations(prevLocations => [...prevLocations, newLocationString]);
-    };
+    // const addLocation = (newLocationString) => {
+    //   setLocations(prevLocations => [...prevLocations, newLocationString]);
+    // };
   
     useEffect(() => {
       fetchPlaces();
@@ -54,7 +54,6 @@ export default function Map() {
       try {
         await buildPQ();
         const data = await loadPlaces();
-        console.log(data);
         setPlacesData(data);
       } catch (error) {
         console.error("Error loading places:", error);
@@ -93,20 +92,17 @@ export default function Map() {
       return data;
     }
 
-    fetchPlaces();
-  }, []);
-
-  async function buildPQ() {
-    let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        // body: JSON.stringify(locations)
-      },
-    });
-  }
+  // async function buildPQ() {
+  //   let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
+  //     method: "POST",
+  //     mode: "cors",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //       body: JSON.stringify({'locs':locations})
+  //     },
+  //   });
+  // }
 
   async function loadPlaces() {
     let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {
