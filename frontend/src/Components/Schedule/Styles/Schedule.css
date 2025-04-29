@@ -460,6 +460,11 @@
   height: 250px;
 }
 
+.savedRoutes-li {
+    list-style-type: none;
+    margin-top: 20px;
+}
+
 #horizontalLine {
   width: 100%;
   float: left;
