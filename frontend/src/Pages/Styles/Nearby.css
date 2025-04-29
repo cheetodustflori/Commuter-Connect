@@ -1,0 +1,174 @@
+.Events{
+    margin: 50px;
+}
+
+.createAnEvent{
+    /* width: 40%; */
+}
+
+.eventsTitle{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+#createEvent{
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+#createEvent:hover {
+    cursor: pointer;
+}
+
+.listOfEvents{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 70px;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+#eventName{
+    width: 300px;
+    height: 40px;
+    padding-left: 20px;
+    font-size: 18px;
+    /* padding: 10px; */
+}
+
+.nameOfEvent{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#TimeDiv{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    padding-top: 10px;
+}
+
+#TOD{
+    background-color: rgba(240, 248, 255, 0);
+    padding: 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#eventTime{
+    width: 170px;
+    height: 40px;
+    padding-left: 20px;
+    font-size: 18px;
+}
+
+#descriptionText{
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+#descriptionText h2,
+#descriptionText h4{
+    margin: 2px;
+}
+
+#eventDescription{
+    width: 300px;
+    height: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+    border-width: 2px;
+    padding-top: 10px;
+}
+
+.textinputs{
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: fit-content;
+}
+
+.textInputsBoxes{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+}
+.eventsBoxOne{
+    display: flex;
+    flex-direction: row;
+    gap: 10%;
+    width: fit-content;
+    padding-right: 50px;
+}
+
+.allEvents{
+    display: flex;
+    flex-direction: row;
+    gap: 80px;
+}
+
+#button{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+}
+
+#colors{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#buttonHandleCreateEvent{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#createEventButton{
+    padding: 10px 30px 10px 30px;
+    font-size: 20px;
+    border-radius: 20px;
+    background-color: #7D91B8;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
+#cancelEventButton{
+    padding: 10px 30px 10px 30px;
+    font-size: 20px;
+    border-radius: 20px;
+    background-color: #EAEAEA;
+    color: black;
+    border: none;
+    cursor: pointer;
+}
+
+.bigComponentForCreateEvent{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (max-width: 1092px){
+    .allEvents{
+        display: flex;
+        flex-direction: column;
+        gap: 80px;
+    }
+}
