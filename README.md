@@ -9,7 +9,7 @@ Many lack a reliable network to coordinate rides, share routes, or connect with 
 
 Our mission is to turn commuting into an opportunity for connection, convenience, and community.
 
-![Alt text](relative%20path/to/gif.gif?raw=true "Title")
+![alt text](https://github.com/University-of-Illinois-Chicago/fgp-two-apples/edit/main/gif.gif?raw=true))
 
 ### Key Features
 
