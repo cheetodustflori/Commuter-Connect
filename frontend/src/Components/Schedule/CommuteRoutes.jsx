@@ -24,6 +24,12 @@ const CommuteRoutes = () => {
 
   const [user, setUser] = useState("");
 
+  const [latArrival, setLatArrival] = useState("");
+  const [lonArrival, setLonArrival] = useState("");
+  const [latDeparture, setLatDeparture] = useState("");
+  const [lonDeparture, setLonDeparture] = useState("");
+
+
   useEffect(() => {
     const fetchUser = async () => {
       const userId = await getUserID();
@@ -116,13 +122,34 @@ const CommuteRoutes = () => {
     }
   }
 
-  const handleClickSavedRoute = (e) => {
+  const handleClickSavedRoute = (route) => {
     // get destination and origin from clicked component 
     // get the depart,arrival
     // edit maps component with new Pois markers 
+    console.log("Here ");
+    console.log(route.arrivalLocation);
+    console.log(route.departLocation);
+
+  //   const [latArrival, setLatArrival] = useState("");
+  // const [lonArrival, setLonArrival] = useState("");
+  // const [latDeparture, setLatDeparture] = useState("");
+  // const [lonDeparture, setLonDeparture] = useState("");
+
+    // lat_arrival,lon_arrival = getLocationCoordinates(route.arrivalLocation)[0]
+    // lat_depart,lon_depart = getLocationCoordinates(route.departLocation)[1]
+
+    setLatArrival(getLocationCoordinates(route.arrivalLocation)[0]);
+    setLonArrival(getLocationCoordinates(route.arrivalLocation)[1]);
+    setLatDeparture(getLocationCoordinates(route.departLocation)[0]);
+    setLonDeparture(getLocationCoordinates(route.departLocation)[1]);
+
+    console.log(latArrival);
+    console.log(lonArrival);
+    console.log(latDeparture);
+    console.log(lonDeparture);
 
     // GET LOCATION COORD
-    console.log(e);
+    // console.log(e);
   };
 
   // Load saved routes
@@ -218,7 +245,7 @@ const CommuteRoutes = () => {
               <p>No saved routes yet!</p>
             ) : (
               routes.map((route, index) => (
-                <li key={index} className="savedRoutes-li" onClick={handleClickSavedRoute}>
+                <li key={index} className="savedRoutes-li" onClick={() => handleClickSavedRoute(route)}>
                   <SavedRoute routeTitle={route.commuteTitle} totalTime={15} arrivalLocation={route.arrivalLocation} departLocation={route.departLocation}/>
                 </li>
               ))
