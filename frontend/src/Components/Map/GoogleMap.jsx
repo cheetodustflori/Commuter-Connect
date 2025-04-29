@@ -10,6 +10,8 @@ import { useState } from "react";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
+const defaultCenter={ lat: 41.874450, lng: -87.656976 };
+
 const locations = [
   { key: 'operaHouse', name: 'Opera House', address: '1200 W Harrison', location: { lat: -33.8567844, lng: 151.213108 } },
   { key: 'tarongaZoo', location: { lat: -33.8472767, lng: 151.2188164 } },
@@ -52,16 +54,15 @@ const PoiMarkers = ({ pois }) => {
   );
 };
 
-const GoogleMapComponent = () => (
+const GoogleMapComponent = ({center}) => (
   <APIProvider
     apiKey={API_KEY || ""}
     onLoad={() => console.log("Maps API has loaded.")}
   >
     <Map
-      style={{ width: "1000px", height: "550px", alignContent: "center" }}
       defaultZoom={15}
       mapId="1338f5e3b126e04c"
-      defaultCenter={{ lat: -33.860664, lng: 151.208138 }}
+      defaultCenter={center || defaultCenter}
       onCameraChanged={(ev) =>
         console.log(
           "camera changed:",

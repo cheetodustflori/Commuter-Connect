@@ -2,7 +2,6 @@ import React, { useState, useEffect }  from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import GoogleMap from "../Components/Map/GoogleMap";
-// import { useState } from "react";
 
 export default function Map() {
   const [activeStations, setActiveStations] = useState([]);
@@ -11,9 +10,9 @@ export default function Map() {
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
-      setList(list.filter((i) => i !== item)); // remove it
+      setList(list.filter((i) => i !== item)); 
     } else {
-      setList([...list, item]); // add it
+      setList([...list, item]); 
     }
   };
 
@@ -34,6 +33,7 @@ export default function Map() {
         try {
           await buildPQ();
           const data = await loadPlaces();
+          console.log(data);
           setPlacesData(data);
         } catch (error) {
           console.error("Error loading places:", error);
@@ -42,17 +42,17 @@ export default function Map() {
         }
       }
   
-      fetchFriends();
+      fetchPlaces();
     }, []);
 
     async function buildPQ(){
       let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-        method: "GET",
+        method: "POST",
         mode: 'cors',
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          body: JSON.stringify(locations)
+          // body: JSON.stringify(locations)
         },
       });
     }
@@ -76,14 +76,20 @@ export default function Map() {
   return (
     <>
       <NavBar />
+      <div id="map-section">
       <div id="map-header">
+      <div id="map-title-container">
         <div id="map-title">
           <h1>Maps</h1>
           <p>
             View nearby stations and food and study spots for your convenience!
           </p>
+          
         </div>
         <div id="vl"></div>
+        
+        </div>
+        
         <div id="map-options">
           <div id="stations" className="grid-item">
             <h3>Stations</h3>
@@ -168,6 +174,8 @@ export default function Map() {
       <div id="map-container">
       <GoogleMap/>
       </div>
+      </div>
+      
       
     </>
   );
