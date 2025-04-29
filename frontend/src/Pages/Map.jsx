@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect }  from "react";
 import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import GoogleMap from "../Components/Map/GoogleMap";
@@ -16,6 +16,63 @@ export default function Map() {
       setList([...list, item]); 
     }
   };
+
+  const [placesData, setPlacesData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+
+
+    const [locations, setLocations] = React.useState([]);
+
+    // Function to add a new location string to the array
+    const addLocation = (newLocationString) => {
+      setLocations(prevLocations => [...prevLocations, newLocationString]);
+    };
+  
+    useEffect(() => {
+      async function fetchPlaces() {
+        try {
+          await buildPQ();
+          const data = await loadPlaces();
+          console.log(data);
+          setPlacesData(data);
+        } catch (error) {
+          console.error("Error loading places:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+  
+      fetchPlaces();
+    }, []);
+
+    async function buildPQ(){
+      let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
+        method: "POST",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          // body: JSON.stringify(locations)
+        },
+      });
+    }
+  
+    async function loadPlaces() {
+      let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {
+        method: "GET",
+        mode: 'cors',
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      
+      let data = await response.json();
+      console.log(data);
+      return data;
+    }
+
 
   return (
     <>
