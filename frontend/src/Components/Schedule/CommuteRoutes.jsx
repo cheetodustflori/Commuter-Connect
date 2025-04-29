@@ -62,7 +62,7 @@ const CommuteRoutes = () => {
         method: "GET",
         mode: "cors",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "ap plication/json",
           Accept: "application/json",
         },
       }
@@ -116,11 +116,13 @@ const CommuteRoutes = () => {
     }
   }
 
-  const handleClickSavedRoute = () => {
+  const handleClickSavedRoute = (e) => {
     // get destination and origin from clicked component 
     // get the depart,arrival
     // edit maps component with new Pois markers 
-    console.log("test");
+
+    // GET LOCATION COORD
+    console.log(e);
   };
 
   // Load saved routes
@@ -209,19 +211,19 @@ const CommuteRoutes = () => {
         </h3>
 
         {/* <div className="routes"> */}
-          <div className="savedRoutes"  >
+          {/* <div className="savedRoutes"  > */}
             {loading ? (
               <p>Loading routes...</p>
             ) : routes.length === 0 ? (
               <p>No saved routes yet!</p>
             ) : (
               routes.map((route, index) => (
-                <div key={index}>
-                  <SavedRoute routeTitle={route.commuteTitle} totalTime={15} onClick={handleClickSavedRoute} />
-                </div>
+                <li key={index} className="savedRoutes-li" onClick={handleClickSavedRoute}>
+                  <SavedRoute routeTitle={route.commuteTitle} totalTime={15} arrivalLocation={route.arrivalLocation} departLocation={route.departLocation}/>
+                </li>
               ))
             )}
-          </div>
+          {/* </div> */}
         {/* </div> */}
       </div>
 
