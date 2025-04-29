@@ -464,6 +464,7 @@ def getUsersRoutes():
     #that does not exist
     else:
         return jsonify({'Response':'User does not exist'}),400
+    
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)

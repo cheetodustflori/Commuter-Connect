@@ -4,9 +4,9 @@ import walking from "../../assets/walking.png";
 import trainLogo from "../../assets/trainLogo.png";
 import star from "../../assets/star.png";
 
-const SavedRoute = ({ routeTitle, totalTime }) => {
+const SavedRoute = ({ routeTitle, totalTime, arrivalLocation, departLocation}) => {
   return (
-    <div>
+    <button id="savedRoute-button">
       <div id="savedRoute">
         <h3>{routeTitle}</h3>
       </div>
@@ -15,7 +15,7 @@ const SavedRoute = ({ routeTitle, totalTime }) => {
         <p>{totalTime} min</p>
       </div>
       <div id="horizontalLine"></div>
-    </div>
+    </button>
   );
 };
 
