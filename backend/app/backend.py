@@ -128,6 +128,7 @@ def getUserInfo():
     #that does not exist
     else:
         return jsonify({'Response':'User does not exist'}),400
+    
 
 def constructDataStructure(dictionary):
      global UserStructure
@@ -693,3 +694,111 @@ def getMap():
 
 
     return ''
+
+@app.route('/getCommunityEvents', methods=['GET'])
+def getCommunityEvents():
+    try:
+        # Reference the Events collection
+        events_collection = db.collection("Events")
+        
+        # Get all documents in the collection
+        events_docs = events_collection.stream()
+        
+        # Initialize the result array
+        all_events = []
+        
+        # Process each document
+        for doc in events_docs:
+            doc_data = doc.to_dict()
+            
+            # Check if the document has events array
+            if 'events' in doc_data and isinstance(doc_data['events'], list):
+                # For each event in the document, add the document ID and event data
+                for event in doc_data['events']:
+                    # Add the document ID to each event for reference
+                    event_with_id = event.copy()
+                    event_with_id['id'] = doc.id
+                    all_events.append(event_with_id)
+        
+        # Sort events by date and time (if available)
+        def event_sort_key(event):
+            date = event.get('Date', '')
+            time = event.get('Time', '')
+            return (date, time)
+            
+        all_events.sort(key=event_sort_key)
+        
+        return jsonify(all_events)
+        
+    except Exception as e:
+        print(f"Error in getCommunityEvents: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500
+    
+@app.route('/setCommunityEvents', methods=['POST'])
+def addCommunityEvent():
+    try:
+        import datetime  # Add this import at the top of your file
+        
+        data = request.json
+        print(f"Received data: {data}")
+        
+        # Validate required fields
+        if 'random_id' not in data or 'event' not in data:
+            return jsonify({'message': 'Missing required fields: random_id and event data are required'}), 400
+            
+        event_data = data['event']
+        
+        # Check for required event fields
+        required_fields = ['Name', 'Date', 'Time', 'Location', 'Description', 'Email', 'Color', 'Type']
+        missing_fields = [field for field in required_fields if field not in event_data or not event_data[field]]
+        
+        if missing_fields:
+            return jsonify({'message': f'Missing required event fields: {", ".join(missing_fields)}'}), 400
+            
+        # Reference the events collection and the specific document
+        events_ref = db.collection("Events").document(data['random_id'])
+        
+        # Get the current data for the document (if exists)
+        events_doc = events_ref.get()
+        
+        # Create the new event data with the structure matching your React state
+        new_event = {
+            'Name': event_data['Name'],
+            'Date': event_data['Date'],
+            'Time': event_data['Time'],
+            'Location': event_data['Location'],
+            'Description': event_data['Description'],
+            'Email': event_data['Email'],
+            'Color': event_data['Color'],
+            'Type': event_data['Type'],
+            'created_at': datetime.datetime.now().isoformat()  # Use ISO string instead of Firestore timestamp
+        }
+        
+        if events_doc.exists:
+            # Document exists, update by adding new event to the events array
+            events_data = events_doc.to_dict()
+            
+            # Initialize events array if it doesn't exist
+            if 'events' not in events_data:
+                events_data['events'] = []
+                
+            # Add the new event
+            events_data['events'].append(new_event)
+            
+            # Update the document with the new event array
+            events_ref.update({'events': events_data['events']})
+        else:
+            # Document doesn't exist, create it with the event
+            events_ref.set({
+                'events': [new_event]
+            })
+        
+        return jsonify({
+            'message': 'Event successfully added!', 
+            'event_id': data['random_id'],
+            'event_name': event_data['Name'] 
+        })
+        
+    except Exception as e:
+        print(f"Error in addCommunityEvent: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500

@@ -222,7 +222,7 @@ const Schedule = () => {
   const handleExit = () => {
     setAddNewRoute(!addNewRoute);
     setSelectedOptions([]); // Empties the array
-};
+    };
 
     
   return (
