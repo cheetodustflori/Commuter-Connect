@@ -1,9 +1,6 @@
-
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom/client";
 import NavBar from "../components/NavBar/Nav";
 import "./Styles/Friends.css";
-import FriendsData from "../components/Friends/friends.json";
 import CommuteScheduleRoute from "../Components/Schedule/CommuteScheduleRoute";
 
 export default function Friends() {
@@ -50,10 +47,20 @@ export default function Friends() {
   useEffect(() => {
     async function fetchFriends() {
       try {
-        const data = await loadUserFriends();
-        setFriendsData(data);
+        const friends = await loadUserFriends();
+        setFriendsData(friends);
+
+        // Fetch each friend's routes
+        const routesData = {};
+        for (const friend of friends) {
+          const friendRoutes = await loadUserRouteSettings(friend);
+          routesData[friend] = friendRoutes;
+          console.log(routesData[friend]);
+        }
+
+        setFriendsRoutes(routesData);
       } catch (error) {
-        console.error("Error loading friends:", error);
+        console.error("Error loading friends or routes:", error);
       } finally {
         setLoading(false);
       }
@@ -65,28 +72,56 @@ export default function Friends() {
   async function loadUserFriends() {
     let response = await fetch(`http://127.0.0.1:5000/getFriends`, {
       method: "GET",
-      mode: 'cors',
+      mode: "cors",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     });
-    
+
     let data = await response.json();
-    console.log(data);
-    return data;
+    console.log("Friends fetched:", data);
+    return data; 
   }
 
-  // if (loading) {
-  //   return (
-  //     <>
-  //       <NavBar />
-  //       <div>Loading friends data...</div>
-  //     </>
-  //   );
-  // }
+  async function loadUserRouteSettings(friendUsername) {
+    try {
+      let response = await fetch(
+        `http://127.0.0.1:5000/getSavedRoutes?userID=${friendUsername}`,
+        {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
-return (
+      if (!response.ok) {
+        console.warn(`No routes found for ${friendUsername}`);
+        return [];
+      }
+
+      let data = await response.json();
+      const allRoutes = [];
+
+      for (const day in data.routes) {
+        if (data.routes.hasOwnProperty(day)) {
+          const dayRoutes = data.routes[day].routes || [];
+          allRoutes.push(...dayRoutes);
+        }
+      }
+
+      console.log(`Routes for ${friendUsername}:`, allRoutes);
+      return allRoutes;
+    } catch (error) {
+      console.error("Error fetching routes for", friendUsername, error);
+      return [];
+    }
+  }
+
+  return (
     <>
       <NavBar />
       <section className="friends-section">
@@ -110,9 +145,9 @@ return (
               <button id="add-friend">Add Friend +</button>
             </div>
             <div className="friends">
-              {friendsData.map((FriendsDataUsername, i) => (
+              {friendsData.map((friendUsername, i) => (
                 <ul key={i}>
-                  <li>{FriendsDataUsername}</li>
+                  <li>{friendUsername}</li>
                 </ul>
               ))}
             </div>
@@ -122,26 +157,26 @@ return (
         <div className="friends-commute-section">
           <h1 className="page-title">Your Friends' Commute Schedules</h1>
           <div className="friends-schedule">
-            {friendsData.map((friend, i) => (
+            {friendsData.map((friendUsername, i) => (
               <div className="friend-schedule-block" key={i}>
-                <h3>{friend.username}</h3>
+                <h3>{friendUsername}</h3>
 
-                {friend.routes && friend.routes.length > 0 ? (
+                {friendsRoutes[friendUsername] && friendsRoutes[friendUsername].length > 0 ? (
                   <ul className="route-list">
-                    {friend.routes.map((route, j) => (
+                    {friendsRoutes[friendUsername].map((route, j) => (
                       <li key={j}>
                         <CommuteScheduleRoute
-                          isActive={route.isActive === "true"}
-                          totalTime={route.totalTime}
-                          overallTime={route.overallTime}
-                          routeTitle={route.routeTitle}
-                          routeStatus={route.routeStatus}
-                          startLocation={route.startLocation}
-                          endLocation={route.endLocation}
+                          isActive={false}
+                          totalTime={100}
+                          overallTime={route.departTime}
+                          routeTitle={route.commuteTitle}
+                          routeStatus={"Upcoming"}
+                          startLocation={route.departLocation}
+                          endLocation={route.arrivalLocation}
                           departTime={route.departTime}
-                          arrivalTime={route.arrivalTime}
-                          buddies={[]} 
-                          editMode={false} 
+                          arrivalTime={"-"}
+                          buddies={route.friends || []}
+                          editMode={false}
                         />
                       </li>
                     ))}

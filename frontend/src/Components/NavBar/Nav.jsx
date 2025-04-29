@@ -17,10 +17,10 @@ export default function NavBar({user}) {
             <NavLink to="/map" className={({ isActive }) => (isActive ? "active" : "")}>Map</NavLink>
           </li>
           <li>
-          <NavLink to="/nearby" className={({ isActive }) => (isActive ? "active" : "")}>Nearby</NavLink>
+          <NavLink to="/friends" className={({ isActive }) => (isActive ? "active" : "")}>Friends</NavLink>
           </li>
           <li>
-          <NavLink to="/friends" className={({ isActive }) => (isActive ? "active" : "")}>Friends</NavLink>
+          <NavLink to="/nearby" className={({ isActive }) => (isActive ? "active" : "")}>Events</NavLink>
           </li>
           <li>
           <NavLink to="/profile" className={({ isActive }) => (isActive ? "active" : "")}>Your Profile</NavLink>

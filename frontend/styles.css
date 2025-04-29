@@ -344,9 +344,14 @@ input[type="checkbox"] {
 
 /* --------- MAP ---------- */
 
-#map-header {
+#map-section {
   display: flex;
   flex-direction: row;
+}
+
+#map-header {
+  display: flex;
+  flex-direction: column;
   margin: 30px;
 }
 
@@ -355,6 +360,10 @@ input[type="checkbox"] {
   flex-direction: column;
   width: 200px;
   margin-right: 15px;
+}
+
+#map-title-container {
+  display: flex;
 }
 
 #vl {
@@ -366,10 +375,10 @@ input[type="checkbox"] {
 
 #map-options {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-column-gap: 020px;
+  grid-template-rows: repeat(5, 1fr);
+  
   grid-row-gap: 0px;
-  margin-left: 30px;
+  /* margin-left: 30px; */
 }
 
 .grid-item {
@@ -473,14 +482,18 @@ input[type="checkbox"] {
 }
 
 #map-container {
-  display: flex;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  width: 1000px;
+  height: 750px;
+  align-content: center;
+  margin: 50px;
+  /* height: 80vh; */
 }
 
 /* SCHEDULE */
-
+/* 
 .savedRoutes{
   display: flex;
   flex-direction: column;
@@ -491,7 +504,7 @@ input[type="checkbox"] {
   overflow-x: hidden;
   padding: 0;
   margin-top: 20px;
-}
+} */
 
 #horizontalLine{
   width: 100%;
