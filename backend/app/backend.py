@@ -678,9 +678,9 @@ def getPlacesPQ():
     PlacesQueue.clear()
     data =  request.get_json()
     locs = data.get('locs')
-    print(locs)
+    # print(locs)
     locationsArray = compressArray(locs)
-    print(locationsArray)
+    # print(locationsArray)
     getPlaces(locationsArray)
 
     return jsonify({'Message':'allGood'})
@@ -754,7 +754,7 @@ def getPlaces(locationTypes):
 
     # if len(locationTypes) == 0:
     #     locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
-    print(locations)
+    # print(locations)
     origin_lat = 41.8719456
     origin_lng = -87.6474381
 
