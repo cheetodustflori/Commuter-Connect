@@ -60,7 +60,7 @@ const GoogleMapComponent = ({center}) => (
     onLoad={() => console.log("Maps API has loaded.")}
   >
     <Map
-      style={{ width: "1000px", height: "750px", alignContent: "center", margin: "50px" }}
+      style={{ width: "1000px", height: "750px", alignContent: "center", }}
       defaultZoom={15}
       mapId="1338f5e3b126e04c"
       defaultCenter={center || defaultCenter}
