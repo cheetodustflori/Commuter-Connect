@@ -466,44 +466,7 @@ def getUsersRoutes():
         return jsonify({'Response':'User does not exist'}),400
     
     
-# @app.route('/getAllUsersRoutes', methods = ['GET'])
-# def getAllUsersRoutes():
-#     try:
-#         # Get the userID from the request
-#         userID = request.args.get('userID')
-
-#         # Check if userID was provided
-#         if not userID:
-#             return jsonify({'Response': 'User not entered'}), 400
-        
-#         all_routes = []
-        
-#         # Get the specific route document for today
-#         route_ref = db.collection('Users').document(userID).collection('routes').stream()
-#         route_doc = route_ref.get()
-        
-#         for route in route_doc:
-#             route_doc = route.to_dict()
-    
-#             if 'routes' in route_doc and isinstance(route_doc['events'], list):
-#                         # For each event in the document, add the document ID and event data
-#                         for route in route_doc['routes']:
-#                             # Add the document ID to each event for reference
-#                             event_with_id = route.copy()
-#                             event_with_id['id'] = route.id
-#                             all_routes.append(event_with_id)
-        
-
-#             return jsonify(all_routes)
-    
-#     except Exception as e:
-#         print(f"Error in getUsersRoutes: {str(e)}")
-#         return jsonify({'Message': f'Server error: {str(e)}'}), 500
-    
-#     #this will return if the user attempted to log in with a username
-#     #that does not exist
-#     else:
-#         return jsonify({'Response':'User does not exist'}),400
+ 
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)

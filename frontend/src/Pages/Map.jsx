@@ -21,13 +21,19 @@ export default function Map() {
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item));
+      setLocations(locations.filter((i) => i !== item));
+      console.log("remove location: " + locations)
     } else {
       setList([...list, item]);
+      setLocations([...locations,item]);
+      console.log("set locations:" +  [...locations,item]);
     }
+    
   };
 
   const updateLocations = (e) => {
     console.log(e);
+    // GET PLACES: pass in location ARRAY (list of locations --> list)
   };
 
   const handleClick = (item, list, setList) => {
@@ -170,9 +176,9 @@ export default function Map() {
                 </li>
                 <li
                   id="campus-space"
-                  className={activeFood.includes("campus") ? "active" : ""}
+                  className={activeStudy.includes("campus") ? "active" : ""}
                   onClick={() =>
-                    handleClick("campus-space", activeStudy, setActiveStudy)
+                    handleClick("campus", activeStudy, setActiveStudy)
                   }
                 >
                   Campus Space
