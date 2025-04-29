@@ -1,7 +1,3 @@
-#This file will serve as our main backend file
-#Boeing, G. (2024). Modeling and Analyzing Urban Networks and Amenities with OSMnx. Working paper. https://geoffboeing.com/publications/osmnx-paper/
-
-
 from flask import Flask,render_template
 from flask_cors import CORS
 from flask import request,jsonify
@@ -77,64 +73,6 @@ class PlaceNode:
     def __lt__(self,other):
         return self.dist<other.dist
 
-class TrieNode:
-    def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
-        self.username = None  # Store just the username at end nodes
-
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
-
-    def insert(self, username):
-        """
-        Inserts a username into the Trie.
-        """
-        node = self.root
-        for char in username.lower():
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
-        node.username = username  # Store the original username (preserving case)
-
-    def search(self, prefix):
-        """
-        Returns a list of usernames matching the prefix for autocomplete.
-        """
-        node = self.root
-        for char in prefix.lower():
-            if char not in node.children:
-                return []  # Prefix not found
-            node = node.children[char]
-        
-        # Collect all usernames that match the prefix
-        results = []
-        self._collect_usernames(node, results)
-        return results
-
-    def _collect_usernames(self, node, results):
-        """
-        Recursively collects all usernames from this node downward.
-        """
-        if node.is_end_of_word and node.username:
-            results.append(node.username)
-        
-        for child in node.children.values():
-            self._collect_usernames(child, results)
-
-    def exact_search(self, username):
-        """
-        Returns True if the exact username exists in the trie.
-        """
-        node = self.root
-        for char in username.lower():
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        
-        return node.is_end_of_word
 
 
 UserStructure = User()
@@ -177,7 +115,7 @@ def getUserInfo():
         if userPassword == password:
             constructDataStructure(doc_dict)
             populateRoutesMap()
-            # buildTrie()
+            buildTrie()
             return jsonify({'Response': 'All good!'}),200
         else:
             return jsonify({'Response':'Wrong Password'}),400
@@ -186,6 +124,7 @@ def getUserInfo():
     #that does not exist
     else:
         return jsonify({'Response':'User does not exist'}),400
+    
 
 def constructDataStructure(dictionary):
      global UserStructure
@@ -464,7 +403,6 @@ def getUsersRoutes():
     #that does not exist
     else:
         return jsonify({'Response':'User does not exist'}),400
-    
 '''
 This one might not need a path and would be a helper function depending on 
 the implementation (this is before conversing with the rest of the team)
@@ -494,6 +432,60 @@ def getLocationName():
     #this will return the first element of the results which will contain the 
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
+
+# API Call to get the coordinates from an address
+@app.route('/getLocationCoordinatesFromAddress', methods=['GET'])
+def getLocationCoordinatesFromAddress():
+    # For GET requests, use request.args instead of request.json
+    locationName = request.args.get('locationName')
+    
+    if not locationName:
+        return jsonify({'error': 'No location name provided'}), 400
+    
+    try:
+        lat, lon = getNewLocationCoordinates(locationName)
+        return jsonify({'lat': lat, 'lon': lon})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+# Function to extract the lat and lon values from the location name from the api call above
+def getNewLocationCoordinates(locationName):
+    # baseURL take from the website that will allow us to build call
+    baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
+    
+    # No need to access request.json here as locationName is passed as parameter
+    address = locationName
+    
+    # this will be the address with the special characters replaced with their counterparts for web encoding
+    address_string = replaceSpecialCharacters(address)
+    
+    # building full call
+    string = f'address={address_string}&key={Google_Maps_Key}'
+    # print(baseURL+string)
+    
+    # get call and load it in with json
+    response = get(baseURL+string)
+    json_results = json.loads(response.content)
+    # print(json_results)
+    
+    # Add error handling for empty results
+    if not json_results.get('results'):
+        raise Exception("No results found for this location")
+    
+    try:
+        # Check if this is the correct path for your API response
+        # You might need to adjust this based on the actual Google Maps API response structure
+        location_coords = json_results['results'][0]['geometry']['location']
+        
+        # Google Maps API typically returns lat/lng not latitude/longitude
+        latitude = location_coords['lat']
+        longitude = location_coords['lng']
+        
+        return (latitude, longitude)
+    except KeyError as e:
+        # Better error handling with detailed message
+        raise Exception(f"Could not parse location coordinates: {str(e)}, Response: {json_results}")
+
 
 #@app.route('/getLocationCoordinates',methods = ['GET'])
 def getLocationCoordinates(locationName):
@@ -632,14 +624,14 @@ def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
-@app.route('/buildPQ',methods=['POST'])
+@app.route('/buildPQ',methods=['GET'])
 def getPlacesPQ():
-    # locations = request.json
-    # print(locations)
-    getPlaces('cafe')
+    locations = request.json
+    print(locations)
+    #getPlaces(locationTypes)
 
 
-    return jsonify({'Message':'allGood'})
+    return
 
 @app.route('/getPlaces',methods=['GET'])
 def getPlacesArray():
@@ -729,13 +721,12 @@ def getPlaces(locationTypes):
 
 def accessUsers():
     docs = db.collection('Users').stream()
-    docIDs = []
-    for doc in docs:
-        docIDs.append(doc.id)
-    return docIDs
 
-def buildTrie(IDs):
-    #global Trie = Trie()
+    for doc in docs:
+        print(doc.id)
+    return
+
+def buildTrie():
     return
 
 @app.route('/getMap', methods=['GET'])
@@ -753,3 +744,112 @@ def getMap():
 
 
     return ''
+
+@app.route('/getCommunityEvents', methods=['GET'])
+def getCommunityEvents():
+    try:
+        # Reference the Events collection
+        events_collection = db.collection("Events")
+        
+        # Get all documents in the collection
+        events_docs = events_collection.stream()
+        
+        # Initialize the result array
+        all_events = []
+        
+        # Process each document
+        for doc in events_docs:
+            doc_data = doc.to_dict()
+            
+            # Check if the document has events array
+            if 'events' in doc_data and isinstance(doc_data['events'], list):
+                # For each event in the document, add the document ID and event data
+                for event in doc_data['events']:
+                    # Add the document ID to each event for reference
+                    event_with_id = event.copy()
+                    event_with_id['id'] = doc.id
+                    all_events.append(event_with_id)
+        
+        # Sort events by date and time (if available)
+        def event_sort_key(event):
+            date = event.get('Date', '')
+            time = event.get('Time', '')
+            return (date, time)
+            
+        all_events.sort(key=event_sort_key)
+        
+        return jsonify(all_events)
+        
+    except Exception as e:
+        print(f"Error in getCommunityEvents: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500
+    
+@app.route('/setCommunityEvents', methods=['POST'])
+def addCommunityEvent():
+    try:
+        import datetime  # Add this import at the top of your file
+        
+        data = request.json
+        print(f"Received data: {data}")
+        
+        # Validate required fields
+        if 'random_id' not in data or 'event' not in data:
+            return jsonify({'message': 'Missing required fields: random_id and event data are required'}), 400
+            
+        event_data = data['event']
+        
+        # Check for required event fields
+        required_fields = ['Name', 'Date', 'Time', 'Location', 'Description', 'Email', 'Color', 'Type']
+        missing_fields = [field for field in required_fields if field not in event_data or not event_data[field]]
+        
+        if missing_fields:
+            return jsonify({'message': f'Missing required event fields: {", ".join(missing_fields)}'}), 400
+            
+        # Reference the events collection and the specific document
+        events_ref = db.collection("Events").document(data['random_id'])
+        
+        # Get the current data for the document (if exists)
+        events_doc = events_ref.get()
+        
+        # Create the new event data with the structure matching your React state
+        new_event = {
+            'Name': event_data['Name'],
+            'Date': event_data['Date'],
+            'Time': event_data['Time'],
+            'Location': event_data['Location'],
+            'Description': event_data['Description'],
+            'Email': event_data['Email'],
+            'Color': event_data['Color'],
+            'Type': event_data['Type'],
+            'created_at': datetime.datetime.now().isoformat()  # Use ISO string instead of Firestore timestamp
+        }
+        
+        if events_doc.exists:
+            # Document exists, update by adding new event to the events array
+            events_data = events_doc.to_dict()
+            
+            # Initialize events array if it doesn't exist
+            if 'events' not in events_data:
+                events_data['events'] = []
+                
+            # Add the new event
+            events_data['events'].append(new_event)
+            
+            # Update the document with the new event array
+            events_ref.update({'events': events_data['events']})
+        else:
+            # Document doesn't exist, create it with the event
+            events_ref.set({
+                'events': [new_event]
+            })
+        
+        return jsonify({
+            'message': 'Event successfully added!', 
+            'event_id': data['random_id'],
+            'event_name': event_data['Name'] 
+        })
+        
+
+    except Exception as e:
+        print(f"Error in addCommunityEvent: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500
