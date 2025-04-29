@@ -41,6 +41,9 @@ We chose Flask over Django because Flask is lightweight and flexible, making it 
 * 
 * and why to use this project.
 -->
+
+**LINK TO API KEYS: ** https://docs.google.com/document/d/1q31M4Fc75HLRCgkbx1FeDoGOIQiawCOuQS06W3nn134/edit?usp=sharing
+
 ### 1. Creating your own Project Repository
 - Click on **Fork** to create your own repo and then click **Create Fork**.
 
