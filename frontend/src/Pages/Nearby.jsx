@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../components/NavBar/Nav";
 import './Styles/Nearby.css'
 import Event from "../Components/Nearby/Event";
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 
 export default function Nearby() {
   const [user, setUser] = useState("");
@@ -34,6 +36,9 @@ export default function Nearby() {
   });
 
   const [updateEventInfo, setUpdateEventInfo] = useState({});
+
+  const scrollRef = useRef(null)
+
 
   // Update Time whenever time or AMPM changes
   useEffect(() => {
@@ -417,9 +422,15 @@ export default function Nearby() {
       </div>
 
       {!createEvent && (
+        
         <div className="listOfEvents">
+          
           {events && events.length > 0 ? (
             events.map((event, index) => (
+              <motion.div className='indJobComp'
+                whileInView={{ y: 0, // Start at the final position (0)
+                opacity: 1,  transition: { duration: 0.5 }}} initial={{y: '6vw', opacity: 0}}
+              >
               <div className="eventCard" key={event.id || index} onClick={() => handleClickOnCommunityEvent(event.id)}>
                 <Event 
                   eventTitle={event.Name}
@@ -432,6 +443,7 @@ export default function Nearby() {
                   type={event.Type}
                 />
               </div>
+              </motion.div>
             ))
           ) : (
             <div className="no-events-message">
