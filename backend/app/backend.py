@@ -1,7 +1,3 @@
-#This file will serve as our main backend file
-#Boeing, G. (2024). Modeling and Analyzing Urban Networks and Amenities with OSMnx. Working paper. https://geoffboeing.com/publications/osmnx-paper/
-
-
 from flask import Flask,render_template
 from flask_cors import CORS
 from flask import request,jsonify
@@ -54,7 +50,7 @@ class User:
         self.first_name = None
         self.last_name = None
         self.password = None
-        self.routes = {}
+        self.routes = []
         return  
     def assign_values(self,dictionary)->None:
         # print( "HELLO")
@@ -64,24 +60,82 @@ class User:
         self.first_name = dictionary.get('first_name')
         self.last_name = dictionary.get('last_name')
         self.password = dictionary.get('password')
-        self.routes = dictionary.get('routes')
+        # self.routes = dictionary.get('routes')
         return
 
 class PlaceNode:
-    def __init__(self,dist,dict)->None:
-        self.left = None
-        self.right = None
+    def __init__(self,dist,dict=None,left=None,right=None)->None:
+        self.left = left
+        self.right = right
         self.dist = dist
         self.map = dict
         return
     def __lt__(self,other):
         return self.dist<other.dist
 
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.is_end_of_word = False
+        self.username = None  # Store just the username at end nodes
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, username):
+        """
+        Inserts a username into the Trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                node.children[char] = TrieNode()
+            node = node.children[char]
+        node.is_end_of_word = True
+        node.username = username  # Store the original username (preserving case)
+
+    def search(self, prefix):
+        """
+        Returns a list of usernames matching the prefix for autocomplete.
+        """
+        node = self.root
+        for char in prefix.lower():
+            if char not in node.children:
+                return []  # Prefix not found
+            node = node.children[char]
+        
+        # Collect all usernames that match the prefix
+        results = []
+        self._collect_usernames(node, results)
+        return results
+
+    def _collect_usernames(self, node, results):
+        """
+        Recursively collects all usernames from this node downward.
+        """
+        if node.is_end_of_word and node.username:
+            results.append(node.username)
+        
+        for child in node.children.values():
+            self._collect_usernames(child, results)
+
+    def exact_search(self, username):
+        """
+        Returns True if the exact username exists in the trie.
+        """
+        node = self.root
+        for char in username.lower():
+            if char not in node.children:
+                return False
+            node = node.children[char]
+        
+        return node.is_end_of_word
 
 
 UserStructure = User()
-Routes = {}
-Trie={}
+Routes = []
+TrieTree = Trie()
 PlacesQueue = []
 
 @app.route('/')
@@ -110,14 +164,40 @@ def getUserInfo():
     doc = db.collection('Users').document(userID).get()
     
     #possibly incorporate a try catch
-    
+    # print("ALL GOOD")
     if doc.exists:
         doc_dict = doc.to_dict()
         userPassword = doc_dict.get('password',None)
-    
+        routes = db.collection('Users').document(userID).collection("routes").stream()
         # return jsonify(doc.to_dict())
         if userPassword == password:
+            #print(doc_dict)
+            # print(routes.to_dict())
+
             constructDataStructure(doc_dict)
+            # print("ALMOST")
+            count = 0
+            for day in routes:
+                indDay = day.to_dict()
+                print(indDay)
+                for route in indDay['routes']:
+                    # print("INSIDE EMBEDDED")
+                    try:
+                        ori_lat,ori_lng = getLocationCoordinates(route['departLocation'])
+                        dest_lat, dest_lng = getLocationCoordinates(route['arrivalLocation'])
+                    except Exception as e:
+                        return jsonify({'error': str(e)}), 500
+                    
+                    duration,distance = getRoute(ori_lat,ori_lng,dest_lat,dest_lng)
+                    # print("AFTER INITIAL CALLS")
+                    route['arrivalTime'] = calculateArrival(route['departTime'], duration)
+                    route['distance'] = convertToMiles(distance)
+
+                    hours, minutes = convert_seconds_to_hours_minutes(duration)
+                    route['duration'] = {'hours':hours,'minutes':minutes}
+                    route['day'] = indDay['day']
+                    addRouteToUser(route)
+            # print("STILL OKAY")
             populateRoutesMap()
             buildTrie()
             return jsonify({'Response': 'All good!'}),200
@@ -128,38 +208,23 @@ def getUserInfo():
     #that does not exist
     else:
         return jsonify({'Response':'User does not exist'}),400
+    
 
 def constructDataStructure(dictionary):
      global UserStructure
      UserStructure.assign_values(dictionary)
      return
 
+def addRouteToUser(route_map):
+    UserStructure.routes.append(route_map)
+    return
+
 def populateRoutesMap():
     global Routes
 
     if(UserStructure.routes != None):
-        for route_name, route_map in UserStructure.routes.items():
-
-            duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
-                                        route_map['geoLocations']['origin']['lon'],
-                                        route_map['geoLocations']['dest']['lat'],
-                                        route_map['geoLocations']['dest']['lon'])
-            
-            arrivalTime = calculateArrival(route_map['Depart'], duration)
-            distance = convertToMiles(distance)
-
-            route = {
-                'Title': route_map['Title'],
-                'Origin': route_map['geoLocations']['origin']['address'],
-                'Dest': route_map['geoLocations']['dest']['address'],
-                'Depart': route_map['Depart'],
-                'Buddies': route_map['Commuter_Buddies'],
-                'Arrive':arrivalTime,
-                'Dist':distance,
-                'Durr':duration
-            }
-
-            Routes[route_map['Title']] = route
+        for route_map in UserStructure.routes:
+            Routes.append(route_map)
     return
     
 @app.route('/getFriends',methods=['GET'])
@@ -257,17 +322,6 @@ def saveUserChanges():
 
     tempRoutes = []
     tempRoutes = UserStructure.routes
-
-    
-    # if(data['username']!=OriginalUserID):
-    #     newUser = data['username']
-    # else:
-    #     newUser = OriginalUserID
-
-    # if(data['email'] != UserStructure.email):
-    #     newEmail = data['email']
-    # else:
-    #     newEmail = UserStructure.email
 
     newUser = OriginalUserID
     newEmail = UserStructure.email
@@ -371,8 +425,18 @@ def addRoute():
         print(f"Error in addRoute: {str(e)}")
         return jsonify({'Message': f'Server error: {str(e)}'}), 500
 
+@app.route('/getFriendsAuto',methods=['GET'])
+def getFriendsAuto():
+    userRequest = request.args.get('userSearch')
+    print(userRequest)
+    result = TrieTree.search(userRequest)
 
+    if(result != None):
+        return jsonify({'Result':result})
+    else:
+        return jsonify({'Result':'NONE FOUND'})
 
+#gets routes for that single day
 @app.route('/getUsersRoutes', methods = ['GET'])
 def getUsersRoutes():
     try:
@@ -390,6 +454,33 @@ def getUsersRoutes():
         # Get the specific route document for today
         route_ref = db.collection('Users').document(userID).collection('routes').document(today)
         route_doc = route_ref.get()
+
+        print(route_doc.to_dict())
+        print('\n\n')
+
+
+        #  duration,distance = getRoute(route_map['geoLocations']['origin']['lat'],
+        #                                 route_map['geoLocations']['origin']['lon'],
+        #                                 route_map['geoLocations']['dest']['lat'],
+        #                                 route_map['geoLocations']['dest']['lon'])
+            
+        #     arrivalTime = calculateArrival(route_map['Depart'], duration)
+        #     distance = convertToMiles(distance)
+
+        #     route = {
+        #         'Title': route_map['Title'],
+        #         'Origin': route_map['geoLocations']['origin']['address'],
+        #         'Dest': route_map['geoLocations']['dest']['address'],
+        #         'Depart': route_map['Depart'],
+        #         'Buddies': route_map['Commuter_Buddies'],
+        #         'Arrive':arrivalTime,
+        #         'Dist':distance,
+        #         'Durr':duration
+        #     }
+
+        routes = route_doc.to_dict()
+        #for route in routes['routes']:
+           # route['arrivalTime']
         
         if route_doc.exists:
             # Return just today's route
@@ -436,15 +527,69 @@ def getLocationName():
     #full address that would be used for a map ie. 78 W Western Ave, Chicago, IL
     return json_results['results'][0]['formatted_address']
 
+# API Call to get the coordinates from an address
+@app.route('/getLocationCoordinatesFromAddress', methods=['GET'])
+def getLocationCoordinatesFromAddress():
+    # For GET requests, use request.args instead of request.json
+    locationName = request.args.get('locationName')
+    
+    if not locationName:
+        return jsonify({'error': 'No location name provided'}), 400
+    
+    try:
+        lat, lon = getNewLocationCoordinates(locationName)
+        return jsonify({'lat': lat, 'lon': lon})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+# Function to extract the lat and lon values from the location name from the api call above
+def getNewLocationCoordinates(locationName):
+    # baseURL take from the website that will allow us to build call
+    baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
+    
+    # No need to access request.json here as locationName is passed as parameter
+    address = locationName
+    
+    # this will be the address with the special characters replaced with their counterparts for web encoding
+    address_string = replaceSpecialCharacters(address)
+    
+    # building full call
+    string = f'address={address_string}&key={Google_Maps_Key}'
+    # print(baseURL+string)
+    
+    # get call and load it in with json
+    response = get(baseURL+string)
+    json_results = json.loads(response.content)
+    # print(json_results)
+    
+    # Add error handling for empty results
+    if not json_results.get('results'):
+        raise Exception("No results found for this location")
+    
+    try:
+        # Check if this is the correct path for your API response
+        # You might need to adjust this based on the actual Google Maps API response structure
+        location_coords = json_results['results'][0]['geometry']['location']
+        
+        # Google Maps API typically returns lat/lng not latitude/longitude
+        latitude = location_coords['lat']
+        longitude = location_coords['lng']
+        
+        return (latitude, longitude)
+    except KeyError as e:
+        # Better error handling with detailed message
+        raise Exception(f"Could not parse location coordinates: {str(e)}, Response: {json_results}")
+
+
 #@app.route('/getLocationCoordinates',methods = ['GET'])
 def getLocationCoordinates(locationName):
 
     #baseURL take from the website that will allow us to build call
     baseURL = "https://maps.googleapis.com/maps/api/geocode/json?"
 
-    data = request.json
+    # data = request.json
     address = locationName
-
+    print(address)
     #this will be the address with the special characters replaced with their counterparts for web encoding
     address_string = replaceSpecialCharacters(address)
 
@@ -454,17 +599,21 @@ def getLocationCoordinates(locationName):
     #get call and load it in with json
     response = get(baseURL+string)
     json_results = json.loads(response.content)
-    #print(json_results)
-
+    for result in json_results['results'][0]:
+        print(result)
+        print(json_results['results'][0][result])
+        # for subresult in result:
+        #     print(f'          {subresult}')
     #TODO---> IMPLEMENT EMPTY RESPONSE CASE
 
     '''this parses the response fully so that we get the accurate latitude and longitude
      there are various possible coordinates that are usable so this was to be as specific as possible
      location_coords is a map with two elements now --> {latitude: x.x, longitude: x.x} '''
-    location_coords = json_results['results'][0]['navigation_points'][0]['location']
+    location_coords = json_results['results'][0]['geometry']['location']
+    print(location_coords)
 
-    latitude = location_coords['latitude']
-    longitude = location_coords['longitude']
+    latitude = location_coords['lat']
+    longitude = location_coords['lng']
 
     return (latitude,longitude)
     #print(f"{latitude}   {longitude}")
@@ -541,7 +690,7 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     }
 
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     duration = json_results['routes'][0]['duration']
@@ -549,7 +698,9 @@ def getRoute(lat_origin,lon_origin,lat_dest,lon_dest):
     return (duration,distance)
 
 def calculateArrival(depart,duration):
-
+    depart = depart.replace("A","")
+    depart = depart.replace("P","")
+    depart = depart.replace("M","")
     index = depart.find(':')
 
     hour = int(depart[:index])
@@ -569,26 +720,65 @@ def calculateArrival(depart,duration):
 
     return arrival_time
 
+def convert_seconds_to_hours_minutes(secondString):
+    seconds = int(secondString.replace('s',""))
+    hours = seconds // 3600
+    remaining_seconds = seconds % 3600
+    minutes = remaining_seconds // 60
+    return hours, minutes
+
 def convertToMiles(distance):
     miles = distance / 1609.344
     return miles
 
-@app.route('/buildPQ',methods=['GET'])
+@app.route('/buildPQ',methods=['POST'])
 def getPlacesPQ():
-    locations = request.json
-    print(locations)
-    #getPlaces(locationTypes)
+    # da = request.json()
+    PlacesQueue.clear()
+    data =  request.get_json()
+    locs = data.get('locs')
+    print(locs)
+    locationsArray = compressArray(locs)
+    # print(locationsArray)
+    getPlaces(locationsArray)
 
+    return jsonify({'Message':'allGood'})
 
-    return
+def compressArray(array):
+    tmp = []
+    for index in array:
+        tmp.append(index)
+    return tmp
 
-@app.route('/getPlaces',methods=['GET'])
+def collectPlaces(node, places):
+    if node is None:
+        return
+
+    # Only add if the node is a leaf
+    if node.left is None and node.right is None:
+        if node.map is not None and node.map != {}:
+            places.append(node.map)
+    
+    collectPlaces(node.left, places)
+    collectPlaces(node.right, places)
+
+@app.route('/getPlaces', methods=['GET'])
 def getPlacesArray():
     PlacesArray = []
-    while(len(PlacesQueue)>0):
-        node = heapq.heappop(PlacesQueue)
-        PlacesArray.append(node)
-    return jsonify({'Places':PlacesArray})
+    if PlacesQueue:  # Check if queue is not empty
+        root = PlacesQueue[0]  # Get the root node
+        collectPlaces(root, PlacesArray)
+     # Remove duplicates
+    unique_places = []
+    seen = set()
+
+    for place in PlacesArray:
+        place_key = str(place)  # Or better: place['name'] if possible
+        if place_key not in seen:
+            unique_places.append(place)
+            seen.add(place_key)
+
+    return jsonify({'Places': unique_places})
 
 def getPlaces(locationTypes):
     global PlacesQueue
@@ -601,6 +791,29 @@ def getPlaces(locationTypes):
     #bus station  -> bus_station
     #train station > train_station
 
+    # : bus, train, groceries, cafe, fast, library
+    locations = []
+
+    if locationTypes == None:
+        locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    else:
+        for types in locationTypes:
+            if types == 'bus':
+                locations.append('bus_station')
+            elif types == 'cafe':
+                locations.append('cafe')
+            elif types == 'groceries':
+                locations.append('grocery_store')
+            elif types == 'fast':
+                locations.append('fast_food_restaurant')
+            elif types == 'train':
+                locations.append('train_station')
+            elif types == 'library':
+                locations.append('library')
+
+    # if len(locationTypes) == 0:
+    #     locations = ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"]
+    # print(locations)
     origin_lat = 41.8719456
     origin_lng = -87.6474381
 
@@ -611,7 +824,7 @@ def getPlaces(locationTypes):
     }
 
     query_string={
-        "includedTypes": ["cafe","library", "bus_station","train_station","grocery_store","fast_food_restaurant"],
+        "includedTypes": locations,
         "maxResultCount": 20, #range from 1-20
         # "rankPreference": "DISTANCE",
         "locationRestriction": {
@@ -624,7 +837,7 @@ def getPlaces(locationTypes):
   }
     }
     response = post(baseURL,headers=headers,data=json.dumps(query_string))
-    print(response.status_code)
+    # print(response.status_code)
     json_results = json.loads(response.content)
 
     places = json_results['places']
@@ -655,27 +868,34 @@ def getPlaces(locationTypes):
         heapq.heappush(PlacesQueue,PlaceNode(distance*100,placeInfo))
         #print(f"{placeInfo}\n")
 
-        heapq.heapify(PlacesQueue)
+    heapq.heapify(PlacesQueue)
 
-        while(len(PlacesQueue)!=1):
-            leftNode = heapq.heappop(PlacesQueue)
-            rightNode = heapq.heappop(PlacesQueue)
+    while(len(PlacesQueue)!=1):
+        leftNode = heapq.heappop(PlacesQueue)
+        rightNode = heapq.heappop(PlacesQueue)
+        # print("INSIDE WHILE LOOP")
+        parentNode = PlaceNode(leftNode.dist+rightNode.dist)
+        parentNode.left = leftNode
+        parentNode.right = rightNode
 
-            parentNode = heapq.heappop(PlacesQueue)
-            parentNode.left = leftNode
-            parentNode.right = rightNode
-
-            heapq.heappush(PlacesQueue,parentNode)
+        heapq.heappush(PlacesQueue,parentNode)
     return
 
 def accessUsers():
     docs = db.collection('Users').stream()
-
-    for doc in docs:
-        print(doc.id)
-    return
+    users = []
+    for names in docs:
+        users.append(names.id)
+    return users
 
 def buildTrie():
+    global TrieTree
+
+    users = accessUsers()
+
+    for user in users:
+        TrieTree.insert(user)
+
     return
 
 @app.route('/getMap', methods=['GET'])
@@ -693,3 +913,112 @@ def getMap():
 
 
     return ''
+
+@app.route('/getCommunityEvents', methods=['GET'])
+def getCommunityEvents():
+    try:
+        # Reference the Events collection
+        events_collection = db.collection("Events")
+        
+        # Get all documents in the collection
+        events_docs = events_collection.stream()
+        
+        # Initialize the result array
+        all_events = []
+        
+        # Process each document
+        for doc in events_docs:
+            doc_data = doc.to_dict()
+            
+            # Check if the document has events array
+            if 'events' in doc_data and isinstance(doc_data['events'], list):
+                # For each event in the document, add the document ID and event data
+                for event in doc_data['events']:
+                    # Add the document ID to each event for reference
+                    event_with_id = event.copy()
+                    event_with_id['id'] = doc.id
+                    all_events.append(event_with_id)
+        
+        # Sort events by date and time (if available)
+        def event_sort_key(event):
+            date = event.get('Date', '')
+            time = event.get('Time', '')
+            return (date, time)
+            
+        all_events.sort(key=event_sort_key)
+        
+        return jsonify(all_events)
+        
+    except Exception as e:
+        print(f"Error in getCommunityEvents: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500
+    
+@app.route('/setCommunityEvents', methods=['POST'])
+def addCommunityEvent():
+    try:
+        import datetime  # Add this import at the top of your file
+        
+        data = request.json
+        print(f"Received data: {data}")
+        
+        # Validate required fields
+        if 'random_id' not in data or 'event' not in data:
+            return jsonify({'message': 'Missing required fields: random_id and event data are required'}), 400
+            
+        event_data = data['event']
+        
+        # Check for required event fields
+        required_fields = ['Name', 'Date', 'Time', 'Location', 'Description', 'Email', 'Color', 'Type']
+        missing_fields = [field for field in required_fields if field not in event_data or not event_data[field]]
+        
+        if missing_fields:
+            return jsonify({'message': f'Missing required event fields: {", ".join(missing_fields)}'}), 400
+            
+        # Reference the events collection and the specific document
+        events_ref = db.collection("Events").document(data['random_id'])
+        
+        # Get the current data for the document (if exists)
+        events_doc = events_ref.get()
+        
+        # Create the new event data with the structure matching your React state
+        new_event = {
+            'Name': event_data['Name'],
+            'Date': event_data['Date'],
+            'Time': event_data['Time'],
+            'Location': event_data['Location'],
+            'Description': event_data['Description'],
+            'Email': event_data['Email'],
+            'Color': event_data['Color'],
+            'Type': event_data['Type'],
+            'created_at': datetime.datetime.now().isoformat()  # Use ISO string instead of Firestore timestamp
+        }
+        
+        if events_doc.exists:
+            # Document exists, update by adding new event to the events array
+            events_data = events_doc.to_dict()
+            
+            # Initialize events array if it doesn't exist
+            if 'events' not in events_data:
+                events_data['events'] = []
+                
+            # Add the new event
+            events_data['events'].append(new_event)
+            
+            # Update the document with the new event array
+            events_ref.update({'events': events_data['events']})
+        else:
+            # Document doesn't exist, create it with the event
+            events_ref.set({
+                'events': [new_event]
+            })
+        
+        return jsonify({
+            'message': 'Event successfully added!', 
+            'event_id': data['random_id'],
+            'event_name': event_data['Name'] 
+        })
+        
+
+    except Exception as e:
+        print(f"Error in addCommunityEvent: {str(e)}")
+        return jsonify({'message': f'Server error: {str(e)}'}), 500
