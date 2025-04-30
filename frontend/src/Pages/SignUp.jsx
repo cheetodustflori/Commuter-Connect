@@ -53,6 +53,13 @@ const SignUp = () => {
         }
       };
 
+      const handleSignIn = () => {
+        console.log("Sign In Button Clicked")
+        let path = `/`; 
+        navigate(path);
+        
+    };
+
   return (
     <div className='signup'>
         <div className='leftContainer'>
@@ -98,6 +105,11 @@ const SignUp = () => {
             </div>
             
             <button id="create-account" onClick={handleCreateAccount}>Create Account</button>
+
+            <div id="signinlink">
+                <p>Already have an account?</p>
+                <p onClick={handleSignIn} style={{ cursor: 'pointer', textDecoration: "underline" }}>Login</p>
+            </div>
             
         </div>
 

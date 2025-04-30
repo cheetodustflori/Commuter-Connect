@@ -77,6 +77,12 @@
     border-style: solid;
 }
 
+#signinlink > p{
+    color: #769EB8;
+    text-align: center;
+    margin: 0px;
+}
+
 @media (max-width: 1250px) {
     .signup{
         gap: clamp(10vh, 5%, 20vh);
