@@ -226,7 +226,7 @@ input[type="checkbox"] {
 
 }
 
-/*  FRIENDS */
+/* ---------  FRIENDS  ------------*/
 
 .friends-section {
   display: flex;
@@ -251,9 +251,46 @@ input[type="checkbox"] {
 
 } */
 
+#search-friend {
+  border: none;
+  padding: 10px;
+  background-color: #769EB8;
+  color: white;
+  border-radius: 30px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+#search-friend:active {
+  position: relative;
+  top: 1px;
+}
+
+#autocomplete-results {
+  list-style-type: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-left: 0;
+  background: white;
+  z-index: 10;
+}
+
+#autocomplete-results li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+#autocomplete-results li:hover {
+  background-color: #f0f0f0;
+}
+
 .find-friends {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .friends-list {
@@ -285,9 +322,10 @@ input[type="checkbox"] {
   cursor: pointer;
   font-weight: bold;
   text-align: left;
+  cursor: pointer;
 }
 
-#add-friend.active {
+#add-friend:active {
   position: relative;
   top: 1px;
 }

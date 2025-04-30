@@ -98,7 +98,7 @@ const CommuteRoutes = () => {
         method: "GET",
         mode: "cors",
         headers: {
-          "Content-Type": "ap plication/json",
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
       }

@@ -14,9 +14,9 @@ export default function Map() {
   const [locations, setLocations] = React.useState([]);
 
   // Function to add a new location string to the array
-  const addLocation = (newLocationString) => {
-    setLocations((prevLocations) => [...prevLocations, newLocationString]);
-  };
+  // const addLocation = (newLocationString) => {
+  //   setLocations((prevLocations) => [...prevLocations, newLocationString]);
+  // };
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
@@ -24,7 +24,7 @@ export default function Map() {
       setLocations(locations.filter((i) => i !== item));
     } else {
       setList([...list, item]); // add it
-      setLocations([...locations,item]);
+      setLocations((locations) => [...locations, item]);
     }
     fetchPlaces();
   };
@@ -38,71 +38,46 @@ export default function Map() {
     updateLocations(item);
   };
 
+  // const [locations, setLocations] = React.useState([]);
 
-    // const [locations, setLocations] = React.useState([]);
+  // Function to add a new location string to the array
+  // const addLocation = (newLocationString) => {
+  //   setLocations(prevLocations => [...prevLocations, newLocationString]);
+  // };
 
-    // Function to add a new location string to the array
-    // const addLocation = (newLocationString) => {
-    //   setLocations(prevLocations => [...prevLocations, newLocationString]);
-    // };
-  
-    useEffect(() => {
-      fetchPlaces();
-    }, []);
+  useEffect(() => {
+    fetchPlaces();
+  }, []);
 
-    async function fetchPlaces() {
-      try {
-        await buildPQ();
-        const data = await loadPlaces();
-        setPlacesData(data);
-      } catch (error) {
-        console.error("Error loading places:", error);
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    console.log("👀 placesData in Map.js:", placesData);
+  }, [placesData]);
+
+  async function fetchPlaces() {
+    try {
+      await buildPQ();
+      const data = await loadPlaces();
+      setPlacesData(data.Places || []);
+    } catch (error) {
+      console.error("Error loading places:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    async function buildPQ(){
+  async function buildPQ() {
+    console.log(locations);
 
-      console.log(locations);
-
-      let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-        method: "POST",
-        mode: 'cors',
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-          body: JSON.stringify({'locs':locations}),
-      });
-    }
-  
-    async function loadPlaces() {
-      let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {
-        method: "GET",
-        mode: 'cors',
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      
-      let data = await response.json();
-      console.log(data);
-      return data;
-    }
-
-  // async function buildPQ() {
-  //   let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
-  //     method: "POST",
-  //     mode: "cors",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //       body: JSON.stringify({'locs':locations})
-  //     },
-  //   });
-  // }
+    let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ locs: locations }),
+    });
+  }
 
   async function loadPlaces() {
     let response = await fetch(`http://127.0.0.1:5000/getPlaces`, {
@@ -167,9 +142,7 @@ export default function Map() {
                 <li
                   id="fast-food"
                   className={activeFood.includes("fast") ? "active" : ""}
-                  onClick={() =>
-                    handleClick("fast", activeFood, setActiveFood)
-                  }
+                  onClick={() => handleClick("fast", activeFood, setActiveFood)}
                 >
                   Fast Food
                 </li>
@@ -177,9 +150,7 @@ export default function Map() {
                 <li
                   id="cafe"
                   className={activeFood.includes("cafe") ? "active" : ""}
-                  onClick={() =>
-                    handleClick("cafe", activeFood, setActiveFood)
-                  }
+                  onClick={() => handleClick("cafe", activeFood, setActiveFood)}
                 >
                   Cafe
                 </li>
@@ -199,7 +170,7 @@ export default function Map() {
             <div id="study" className="grid-item">
               <h3>Study Spots</h3>
               <ul>
-              <li
+                <li
                   id="library"
                   className={activeStudy.includes("library") ? "active" : ""}
                   onClick={() =>
@@ -222,7 +193,7 @@ export default function Map() {
           </div>
         </div>
         <div id="map-container">
-          <GoogleMap />
+          <GoogleMap places={placesData} />
         </div>
       </div>
     </>
