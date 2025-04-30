@@ -1,5 +1,9 @@
 .Events{
     margin: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* added these properties to center child elements */
 }
 
 .createAnEvent{
@@ -11,6 +15,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
+    /* added width to maintain full width */
 }
 
 
@@ -156,6 +162,16 @@
     cursor: pointer;
 }
 
+#getDirections{
+    padding: 10px 20px 10px 20px;
+    font-size: 18px;
+    border-radius: 20px;
+    background-color: #7D91B8;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+}
+
 #cancelEventButton{
     padding: 10px 30px 10px 30px;
     font-size: 20px;
@@ -192,6 +208,38 @@
 
 .eventCard:active{
     transform: scale(1); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+.viewDetails{
+    display: flex;
+    flex-direction: column;
+    border: #7D91B8;
+    border-width: 5px;
+    border-style: solid;
+    padding: 50px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    width: fit-content;
+    margin: 0 auto;
+    /* added margin auto to center horizontally */
+}
+
+#buttonsForViewEvent{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.info{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.info h3,
+.info button{
+    margin: 5px;
 }
 
 @media (max-width: 1092px){

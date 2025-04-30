@@ -17,12 +17,14 @@ export default function Nearby() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [editEvent, setEditEvent] = useState(false);
+  const [viewEventDetails, setViewEventDetails] = useState(false);
 
   const [changeAMPM, setChangeAMPM] = useState(false);
   const [changeColor, setChangeColor] = useState(false);
   const [changeType, setChangeType] = useState(false);
   
   const [selectedID, setSelectedID] = useState("");
+  const [currLocation, setCurrLocation] = useState("");
 
   const [createEventChange, setCreateEventChange] = useState({
     Name: '',
@@ -158,11 +160,14 @@ export default function Nearby() {
   
   // Get the id of the event
   const handleClickOnCommunityEvent = (id) => {
+    setSelectedID(id);
+    loadSpecificEvents(id);
     if(isAdmin){
       setCreateEvent(true);
       setEditEvent(true);
-      loadSpecificEvents(id);
-      setSelectedID(id);
+    }else{
+      setViewEventDetails(true);
+      setCreateEvent(true);
     }
   }
 
@@ -307,6 +312,7 @@ export default function Nearby() {
     setChangeType(false);
     setChangeColor(false);
     setEditEvent(false);
+    setViewEventDetails(false);
   };
 
   const handleUpdateEvent = async () => {
@@ -402,6 +408,80 @@ export default function Nearby() {
     }
   }; 
 
+  const showDirections = async () => {
+    console.log("Hello");
+    console.log(selectedID);
+    
+    try {
+      const res = await fetch(`http://127.0.0.1:5000/getSpecificEvent?id=${selectedID}`);
+      const data = await res.json();
+
+      setCurrLocation(data.Location);
+  
+      // Get current position using Geolocation API
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // Format the current location as latitude,longitude
+            const currentLocation = `${position.coords.latitude},${position.coords.longitude}`;
+            
+            // Build directions URL
+            const baseUrl = "https://www.google.com/maps/dir/?api=1";
+            const url = `${baseUrl}&origin=${encodeURIComponent(currentLocation)}&destination=${encodeURIComponent(data.Location)}`;
+            
+            // Open in new tab
+            window.open(url, '_blank');
+          },
+          (error) => {
+            // Handle errors
+            console.error("Error getting current location:", error.message);
+            alert("Unable to access your location. Please check your browser settings and try again.");
+          }
+        );
+      } else {
+        // Browser doesn't support geolocation
+        alert("Your browser doesn't support geolocation. Please try a different browser.");
+      }
+    
+    } catch (err) {
+      console.error("Error fetching event data", err);
+    }
+  };
+
+  const handleSignUpForEvent = async () => {
+    // e.preventDefault();
+    console.log(updateEventInfo);
+
+    const sendEventReq = {
+      random_id: selectedID,
+      event: updateEventInfo,
+      user_id: user
+    };
+  
+    try {
+      const response = await fetch('http://127.0.0.1:5000/setCommunityEventForUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sendEventReq),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        console.error('Error response:', result.message);
+        alert('Failed to create event. Please try again.');
+      } else {
+        setViewEventDetails(false);
+        setCreateEvent(false);
+      }
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <>
     <NavBar/>
@@ -453,7 +533,7 @@ export default function Nearby() {
         </div>
       )}
 
-      {createEvent && (
+      {createEvent && !viewEventDetails && (
         <div className="bigComponentForCreateEvent">
           <div className="allEvents">
 
@@ -642,6 +722,33 @@ export default function Nearby() {
           
         </div>
       )}
+
+    
+      {viewEventDetails && (
+        <div className="viewDetails">
+          <h1 style={{fontWeight:'normal'}}>{updateEventInfo.Name}</h1>
+          <div className="info">
+
+            <h3 style={{fontWeight:'normal'}}>{updateEventInfo.Date} | {updateEventInfo.Time}</h3>
+            <h3 style={{fontWeight:'normal'}}>{updateEventInfo.Location}</h3>
+            <button id="getDirections" onClick={() => showDirections()}>Get Directions</button>
+
+          </div>
+          
+          
+          <h3 style={{fontWeight:'normal'}}>{updateEventInfo.Description}</h3>
+          <h3 style={{fontWeight:'normal'}}>{updateEventInfo.Email}</h3>
+
+          <div id="buttonsForViewEvent">
+
+            <button id="createEventButton" onClick={() => handleSignUpForEvent()}>Sign Up</button>
+            <button id="cancelEventButton" onClick={handleCancel}>Cancel</button>
+
+          </div>
+          
+        </div>
+      )}
+
     </div>
     </>
   );
