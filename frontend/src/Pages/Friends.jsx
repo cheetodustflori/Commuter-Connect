@@ -27,9 +27,21 @@ export default function Friends() {
   //   }
   // };
 
-  const handleAdd = async () => {
-    console.log('hello');
-  }
+  const handleAdd = () => {
+    const trimmedUsername = userNameSearch.trim();
+  
+    if (
+      trimmedUsername.length === 0 ||
+      friendsData.includes(trimmedUsername)
+    ) {
+      return; // Don't add empty or duplicate usernames
+    }
+  
+    setFriendsData((prev) => [...prev, trimmedUsername]);
+    setUserSearch(""); // Clear input
+    setSearchResult([]); // Clear autocomplete results
+  };
+  
 
   async function getTrieData(query) {
     let response = await fetch(
