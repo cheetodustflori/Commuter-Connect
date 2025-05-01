@@ -8,14 +8,25 @@ import {useNavigate} from "react-router-dom";
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [bothEmpty, setBothEmpty] = useState(true);
     const [isValid, setIsValid] = useState(true);
+    const [inValidPassword, setInValidPassword] = useState(true);
 
     const handleLogIn = () => {
         console.log("Sign In Button Clicked")
         let path = `/schedule`; 
-        if (email.length === 0 || password.length === 0) {
+        if (email.length === 0 && password.length !== 0) {
             // Array is empty
             setIsValid(false)
+
+        }else if (email.length !== 0 && password.length === 0) {
+            // Array is empty
+            setInValidPassword(false)
+
+        }else if (email.length === 0 || password.length === 0) {
+            // Array is empty
+            setBothEmpty(false)
 
         }else{
             // navigate(path);
@@ -50,9 +61,12 @@ const Login = () => {
         }
         else if(responseMessage == "Wrong Password"){
             //Display wrong password to user
+            setIsValid(true);
+            setInValidPassword(false);
         }
         else{
             //Display User does not exist
+            setIsValid(false);
         }
     };
 
@@ -81,21 +95,29 @@ const Login = () => {
         <div className='log-in-container'>
             
             <div className="emailpassInput">
-                <p>Email</p>
+                <p>Username</p>
                 <input
-                    style={{borderColor: isValid ? '#769EB8': 'red',}}
+                    style={{borderColor: bothEmpty ? '#769EB8': 'red',}}
                     type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}/>
+                {!isValid && (
+                    <p style={{color:"#FF0000"}}>Invalid username</p>
+                )}
+            
             </div>
             
             <div className="emailpassInput">
                 <p>Password</p>
                 <input
-                    style={{borderColor: isValid ? '#769EB8': 'red',}}
+                    style={{borderColor: bothEmpty ? '#769EB8': 'red',}}
                     type="text"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}/>
+                {!inValidPassword && (
+                    <p style={{color:"#FF0000"}}>Invalid password</p>
+                )}
+
             </div>
             
             <button id="login-button" onClick={handleLogIn}>Log In</button>
