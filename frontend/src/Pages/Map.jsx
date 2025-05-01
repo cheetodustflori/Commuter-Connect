@@ -14,16 +14,19 @@ export default function Map() {
   const [locations, setLocations] = React.useState([]);
 
   // Function to add a new location string to the array
-  const addLocation = (newLocationString) => {
-    setLocations((prevLocations) => [...prevLocations, newLocationString]);
-  };
+  // const addLocation = (newLocationString) => {
+  //   setLocations((prevLocations) => [...prevLocations, newLocationString]);
+  // };
 
   const toggleItem = (item, list, setList) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item)); // remove it
+      setLocations(locations.filter((i) => i !== item));
     } else {
       setList([...list, item]); // add it
+      setLocations((locations) => [...locations, item]);
     }
+    fetchPlaces();
   };
 
   const updateLocations = (e) => {
@@ -35,32 +38,44 @@ export default function Map() {
     updateLocations(item);
   };
 
-  useEffect(() => {
-    async function fetchPlaces() {
-      try {
-        await buildPQ();
-        const data = await loadPlaces();
-        console.log(data);
-        setPlacesData(data);
-      } catch (error) {
-        console.error("Error loading places:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // const [locations, setLocations] = React.useState([]);
 
+  // Function to add a new location string to the array
+  // const addLocation = (newLocationString) => {
+  //   setLocations(prevLocations => [...prevLocations, newLocationString]);
+  // };
+
+  useEffect(() => {
     fetchPlaces();
   }, []);
 
+  useEffect(() => {
+    console.log("👀 placesData in Map.js:", placesData);
+  }, [placesData]);
+
+  async function fetchPlaces() {
+    try {
+      await buildPQ();
+      const data = await loadPlaces();
+      setPlacesData(data.Places || []);
+    } catch (error) {
+      console.error("Error loading places:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function buildPQ() {
+    console.log(locations);
+
     let response = await fetch(`http://127.0.0.1:5000/buildPQ`, {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // body: JSON.stringify(locations)
       },
+      body: JSON.stringify({ locs: locations }),
     });
   }
 
@@ -128,9 +143,7 @@ export default function Map() {
                 <li
                   id="fast-food"
                   className={activeFood.includes("fast") ? "active" : ""}
-                  onClick={() =>
-                    handleClick("fast", activeFood, setActiveFood)
-                  }
+                  onClick={() => handleClick("fast", activeFood, setActiveFood)}
                 >
                   Fast Food
                 </li>
@@ -138,9 +151,7 @@ export default function Map() {
                 <li
                   id="cafe"
                   className={activeFood.includes("cafe") ? "active" : ""}
-                  onClick={() =>
-                    handleClick("cafe", activeFood, setActiveFood)
-                  }
+                  onClick={() => handleClick("cafe", activeFood, setActiveFood)}
                 >
                   Cafe
                 </li>
@@ -160,7 +171,7 @@ export default function Map() {
             <div id="study" className="grid-item">
               <h3>Study Spots</h3>
               <ul>
-              <li
+                <li
                   id="library"
                   className={activeStudy.includes("library") ? "active" : ""}
                   onClick={() =>
@@ -183,7 +194,7 @@ export default function Map() {
           </div>
         </div>
         <div id="map-container">
-          <GoogleMap />
+          <GoogleMap places={placesData} />
         </div>
       </div>
       

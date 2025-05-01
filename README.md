@@ -9,6 +9,13 @@ Many lack a reliable network to coordinate rides, share routes, or connect with 
 
 Our mission is to turn commuting into an opportunity for connection, convenience, and community.
 
+![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/d45225ef-a660-4010-bca0-f31fa1cf9459)
+![2-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/76913d12-81c5-4ef1-9f22-173524794d83)
+![3-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9346a6c3-df37-4533-b561-d3d9d3ae5d91)
+![4-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/47771db3-a6e6-4e8c-8694-949b362e451f)
+![5-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f8e13d7-fa55-49b5-8826-d5398996834b)
+
+
 ### Key Features
 
 *Create Route System:*
@@ -41,6 +48,9 @@ We chose Flask over Django because Flask is lightweight and flexible, making it 
 * 
 * and why to use this project.
 -->
+
+**LINK TO API KEYS: ** https://docs.google.com/document/d/1q31M4Fc75HLRCgkbx1FeDoGOIQiawCOuQS06W3nn134/edit?usp=sharing
+
 ### 1. Creating your own Project Repository
 - Click on **Fork** to create your own repo and then click **Create Fork**.
 
