@@ -914,58 +914,92 @@ def getMap():
 
     return ''
 
+@app.route('/getSpecificEvent', methods=['GET'])
+def getSpecificEvent():
+    # Gets the event ID from the request from front end
+    event_id = request.args.get('id')
+    
+    if not event_id:
+        return jsonify({'message': 'Missing event ID in request'}), 400
+
+    # Accessing the database for the event
+    try:
+        doc = db.collection('Events').document(event_id).get()
+        
+        if doc.exists:
+            doc_dict = doc.to_dict()
+            return jsonify(doc_dict), 200
+        else:
+            return jsonify({'message': 'Event does not exist'}), 404
+    except Exception as e:
+        return jsonify({'message': f'Database error: {str(e)}'}), 500
+    
 @app.route('/getCommunityEvents', methods=['GET'])
 def getCommunityEvents():
     try:
-        # Reference the Events collection
-        events_collection = db.collection("Events")
-        
-        # Get all documents in the collection
-        events_docs = events_collection.stream()
-        
-        # Initialize the result array
-        all_events = []
-        
-        # Process each document
-        for doc in events_docs:
-            doc_data = doc.to_dict()
-            
-            # Check if the document has events array
-            if 'events' in doc_data and isinstance(doc_data['events'], list):
-                # For each event in the document, add the document ID and event data
-                for event in doc_data['events']:
-                    # Add the document ID to each event for reference
-                    event_with_id = event.copy()
-                    event_with_id['id'] = doc.id
-                    all_events.append(event_with_id)
-        
-        # Sort events by date and time (if available)
-        def event_sort_key(event):
-            date = event.get('Date', '')
-            time = event.get('Time', '')
-            return (date, time)
-            
-        all_events.sort(key=event_sort_key)
-        
-        return jsonify(all_events)
-        
+        events_ref = db.collection('Events')
+        docs = events_ref.stream()
+
+        events_list = []
+        for doc in docs:
+            event_data = doc.to_dict()
+            # Include the document ID in the returned data
+            event_data['id'] = doc.id
+            events_list.append(event_data)
+
+        return jsonify(events_list), 200
     except Exception as e:
-        print(f"Error in getCommunityEvents: {str(e)}")
-        return jsonify({'message': f'Server error: {str(e)}'}), 500
-    
-@app.route('/setCommunityEvents', methods=['POST'])
-def addCommunityEvent():
+        return jsonify({'message': f'Database error: {str(e)}'}), 500
+
+      
+@app.route('/updateSpecificCommunityEvent', methods=['POST'])
+def updateSpecificCommunityEvent():
     try:
-        import datetime  # Add this import at the top of your file
-        
-        data = request.json
-        print(f"Received data: {data}")
-        
-        # Validate required fields
-        if 'random_id' not in data or 'event' not in data:
-            return jsonify({'message': 'Missing required fields: random_id and event data are required'}), 400
+        data = request.get_json()
+        if not data:
+            return jsonify({'message': 'No JSON data received'}), 400
             
-        event_data = data['event']
+        event_data = data.get('event')
+        event_id = data.get('id')
+
+        if not event_data or not event_id:
+            return jsonify({'message': 'Missing event or id in request body'}), 400
+
+        # Check for required event fields
+        required_fields = ['Name', 'Date', 'Time', 'Location', 'Description', 'Email', 'Color', 'Type']
+        missing_fields = [field for field in required_fields if field not in event_data or not event_data[field]]
+        
+        if missing_fields:
+            return jsonify({'message': f'Missing required event fields: {", ".join(missing_fields)}'}), 400
+            
+        # Reference the events collection and the specific document
+        events_ref = db.collection("Events").document(event_id)
+        
+        # Check if the event exists before updating
+        if not events_ref.get().exists:
+            return jsonify({'message': 'Event not found'}), 404
+            
+        # Update the document
+        events_ref.set(event_data)
+    
+        return jsonify({'message': 'Event successfully updated!', 'id': event_id}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+
+@app.route('/setCommunityEvents', methods=['POST'])
+def setCommunityEvents():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'message': 'No JSON data received'}), 400
+            
+        event_data = data.get('event')
+        event_id = data.get('random_id')  # Consider renaming this parameter to 'id' for consistency
+
+        if not event_data or not event_id:
+            return jsonify({'message': 'Missing event or id in request body'}), 400
         
         # Check for required event fields
         required_fields = ['Name', 'Date', 'Time', 'Location', 'Description', 'Email', 'Color', 'Type']
@@ -975,49 +1009,123 @@ def addCommunityEvent():
             return jsonify({'message': f'Missing required event fields: {", ".join(missing_fields)}'}), 400
             
         # Reference the events collection and the specific document
-        events_ref = db.collection("Events").document(data['random_id'])
+        events_ref = db.collection("Events").document(event_id)
         
-        # Get the current data for the document (if exists)
-        events_doc = events_ref.get()
-        
-        # Create the new event data with the structure matching your React state
-        new_event = {
-            'Name': event_data['Name'],
-            'Date': event_data['Date'],
-            'Time': event_data['Time'],
-            'Location': event_data['Location'],
-            'Description': event_data['Description'],
-            'Email': event_data['Email'],
-            'Color': event_data['Color'],
-            'Type': event_data['Type'],
-            'created_at': datetime.datetime.now().isoformat()  # Use ISO string instead of Firestore timestamp
-        }
-        
-        if events_doc.exists:
-            # Document exists, update by adding new event to the events array
-            events_data = events_doc.to_dict()
+        # Create/Set the document
+        events_ref.set(event_data)
+    
+        return jsonify({'message': 'Event successfully created!', 'id': event_id}), 201
+
+    except Exception as e:
+            return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+
+@app.route('/deleteSpecificCommunityEvent', methods=['POST'])
+def deleteSpecificCommunityEvent():
+    try:
+
+        event_id = request.args.get('id')
+
+        if not event_id:
+            return jsonify({'message': 'Missing event id in request body'}), 400
             
-            # Initialize events array if it doesn't exist
-            if 'events' not in events_data:
-                events_data['events'] = []
-                
-            # Add the new event
-            events_data['events'].append(new_event)
+        # Reference the events collection and the specific document
+        event_ref = db.collection("Events").document(event_id)
+        
+        # Check if the event exists before deleting
+        doc = event_ref.get()
+        if not doc.exists:
+            return jsonify({'message': 'Event not found'}), 404
             
-            # Update the document with the new event array
-            events_ref.update({'events': events_data['events']})
-        else:
-            # Document doesn't exist, create it with the event
-            events_ref.set({
-                'events': [new_event]
-            })
+        # Delete the document
+        event_ref.delete()
+    
+        return jsonify({'message': 'Event successfully deleted', 'id': event_id}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+@app.route('/setCommunityEventForUser', methods=['POST'])
+def setCommunityEventForUser():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'message': 'No JSON data received'}), 400
+            
+        event_data = data.get('event')
+        event_id = data.get('random_id') 
+        user_id = data.get('user_id') # Consider renaming this parameter to 'id' for consistency
+
+        # Reference the events collection and the specific document
+        events_ref = db.collection("Users").document(user_id).collection("Events").document(event_id)
         
-        return jsonify({
-            'message': 'Event successfully added!', 
-            'event_id': data['random_id'],
-            'event_name': event_data['Name'] 
-        })
+        # Create/Set the document
+        events_ref.set(event_data)
+    
+        return jsonify({'message': 'Event successfully created!', 'id': event_id}), 201
+
+    except Exception as e:
+            return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+@app.route('/getCommunityEventsForUser', methods=['GET'])
+def getCommunityEventsForUser():
+    try:
+        # Gets the event ID from the request from front end
+        user_id = request.args.get('id')
+
+        events_ref = db.collection('Users').document(user_id).collection('Events')
+        docs = events_ref.stream()
+
+        events_list = []
+        for doc in docs:
+            event_data = doc.to_dict()
+            # Include the document ID in the returned data
+            event_data['id'] = doc.id
+            events_list.append(event_data)
+
+        return jsonify(events_list), 200
+    except Exception as e:
+        return jsonify({'message': f'Database error: {str(e)}'}), 500
+
+@app.route('/deleteSpecificCommunityEventForUser', methods=['POST'])
+def deleteSpecificCommunityEventForUser():
+    try:
+        event_id = request.args.get('id')
+        user_id = request.args.get('userId')
         
+        print(f"Request received to delete event: {event_id} for user: {user_id}")
+        print(f"All request args: {request.args}")
+        
+        if not event_id:
+            print("Error: Missing event id in request")
+            return jsonify({'message': 'Missing event id in request'}), 400
+            
+        if not user_id:
+            print("Error: Missing user id in request")
+            return jsonify({'message': 'Missing user id in request'}), 400
+            
+        # Reference the events collection and the specific document
+        event_ref = db.collection("Users").document(user_id).collection("Events").document(event_id)
+        
+        # Check if the event exists before deleting
+        doc = event_ref.get()
+        print(f"Event document exists: {doc.exists}")
+        
+        if not doc.exists:
+            print(f"Event not found at path: Users/{user_id}/Events/{event_id}")
+            return jsonify({'message': 'Event not found'}), 404
+            
+        # Delete the document
+        event_ref.delete()
+        print(f"Event {event_id} deleted successfully")
+    
+        return jsonify({'message': 'Event successfully deleted', 'id': event_id}), 200
+
+    except Exception as e:
+        print(f"Exception occurred: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
     except Exception as e:
         print(f"Error in addCommunityEvent: {str(e)}")

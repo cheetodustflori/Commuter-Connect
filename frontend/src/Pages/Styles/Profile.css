@@ -89,3 +89,10 @@
     gap: 20px;
     height: 100%;
 }
+
+.selectedEvents{
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    flex-wrap: wrap;
+}
